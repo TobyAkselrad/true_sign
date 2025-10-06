@@ -21,22 +21,42 @@ class ValueChangePredictor:
     def load_model(self):
         """Cargar modelo y preprocesadores"""
         try:
-            # Cargar modelos enhanced como fallback
+            # Cargar modelos enhanced - PRIORIZAR MODELOS REALES
             try:
-                with open('saved_models/enhanced_value_change_model.pkl', 'rb') as f:
+                with open('saved_models/enhanced_value_change_model_real.pkl', 'rb') as f:
                     self.model = pickle.load(f)
-                print("✅ Enhanced value change model cargado")
+                print("✅ Enhanced value change model cargado (DATOS REALES - RandomForest)")
             except:
-                print("⚠️ Enhanced model no disponible, usando fallback")
-                self.model = None
+                try:
+                    with open('saved_models/enhanced_value_change_model_fixed.pkl', 'rb') as f:
+                        self.model = pickle.load(f)
+                    print("✅ Enhanced value change model cargado (ML REAL - FIXED)")
+                except:
+                    try:
+                        with open('saved_models/enhanced_value_change_model.pkl', 'rb') as f:
+                            self.model = pickle.load(f)
+                        print("✅ Enhanced value change model cargado (ML REAL)")
+                    except:
+                        print("❌ ERROR: No se puede cargar modelo ML - SISTEMA REQUIERE ML")
+                        raise ValueError("❌ MODELO ML REQUERIDO: No se puede cargar enhanced_value_change_model")
             
             try:
-                with open('saved_models/enhanced_value_change_scaler.pkl', 'rb') as f:
+                with open('saved_models/enhanced_value_change_scaler_real.pkl', 'rb') as f:
                     self.scaler = pickle.load(f)
-                print("✅ Enhanced scaler cargado")
+                print("✅ Enhanced scaler cargado (DATOS REALES)")
             except:
-                print("⚠️ Enhanced scaler no disponible, usando fallback")
-                self.scaler = None
+                try:
+                    with open('saved_models/enhanced_value_change_scaler_fixed.pkl', 'rb') as f:
+                        self.scaler = pickle.load(f)
+                    print("✅ Enhanced scaler cargado (FIXED)")
+                except:
+                    try:
+                        with open('saved_models/enhanced_value_change_scaler.pkl', 'rb') as f:
+                            self.scaler = pickle.load(f)
+                        print("✅ Enhanced scaler cargado")
+                    except:
+                        print("❌ ERROR: No se puede cargar scaler ML - SISTEMA REQUIERE ML")
+                        raise ValueError("❌ SCALER ML REQUERIDO: No se puede cargar enhanced_value_change_scaler")
             
             try:
                 with open('saved_models/enhanced_position_encoder.pkl', 'rb') as f:
@@ -107,7 +127,96 @@ class ValueChangePredictor:
         
         return np.array(features[:20]).reshape(1, -1)
     
-    def predict_value_change(self, player_data):
+    def prepare_original_features(self, player_data, club_destino=None):
+        """Preparar features para modelos originales (14 features)"""
+        
+        # Codificar variables categóricas
+        try:
+            position_encoded = self.position_encoder.transform([player_data['position']])[0]
+        except:
+            position_encoded = 0
+        
+        try:
+            nationality_encoded = self.nationality_encoder.transform([player_data['nationality']])[0]
+        except:
+            nationality_encoded = 0
+        
+        # Features originales (14 features como esperan los modelos originales)
+        features = [
+            float(player_data['age']),                    # 0: Edad
+            float(player_data['height']),                 # 1: Altura
+            float(player_data['market_value']) / 1000000, # 2: Valor de mercado en millones
+            float(position_encoded),                      # 3: Posición codificada
+            float(nationality_encoded),                   # 4: Nacionalidad codificada
+            0.0,                                          # 5: Club origen (no disponible)
+            0.0,                                          # 6: Club destino (no disponible)
+            1.0,                                          # 7: Factor de edad (por defecto)
+            np.log1p(float(player_data['market_value'])), # 8: Log del valor de mercado
+            float(player_data['age']) ** 2,               # 9: Edad al cuadrado
+            float(player_data['height']) / 100,           # 10: Altura normalizada
+            float(player_data['market_value']) / 1000000, # 11: Valor de mercado normalizado
+            0.0,                                          # 12: Feature adicional
+            0.0                                           # 13: Feature adicional
+        ]
+        
+        return np.array(features[:14]).reshape(1, -1)
+    
+    def prepare_enhanced_features_with_club(self, player_data, club_destino):
+        """Preparar features mejoradas con datos del club (18 features)"""
+        
+        # Importar extractor de features del club
+        # from enhanced_features_system import ClubFeaturesExtractor
+        
+        # Inicializar extractor (fallback simple)
+        # club_extractor = ClubFeaturesExtractor()
+        
+        # Obtener features del club (fallback simple)
+        # club_features = club_extractor.extract_club_features(club_destino)
+        club_features = [0.5, 0.5, 0.5, 0.5]  # Features por defecto
+        
+        # Codificar variables categóricas
+        try:
+            position_encoded = self.position_encoder.transform([player_data['position']])[0]
+        except:
+            position_encoded = 0
+        
+        try:
+            nationality_encoded = self.nationality_encoder.transform([player_data['nationality']])[0]
+        except:
+            nationality_encoded = 0
+        
+        # Features originales (12)
+        features_original = [
+            float(player_data['age']),                    # 0: Edad
+            float(player_data['height']),                 # 1: Altura
+            float(player_data['market_value']) / 1000000, # 2: Valor de mercado en millones
+            float(position_encoded),                      # 3: Posición codificada
+            float(nationality_encoded),                   # 4: Nacionalidad codificada
+            0.0,                                          # 5: Club origen (no disponible)
+            0.0,                                          # 6: Club destino (no disponible)
+            1.0,                                          # 7: Factor de edad (por defecto)
+            np.log1p(float(player_data['market_value'])), # 8: Log del valor de mercado
+            float(player_data['age']) ** 2,               # 9: Edad al cuadrado
+            float(player_data['height']) / 100,           # 10: Altura normalizada
+            float(player_data['market_value']) / 1000000  # 11: Valor de mercado normalizado
+        ]
+        
+        # NUEVAS FEATURES DEL CLUB (6)
+        features_club = [
+            club_features['club_market_value'] / 1000000,  # 12: Valor del club (millones)
+            club_features['club_squad_size'],              # 13: Tamaño de plantilla
+            club_features['club_country_code'],            # 14: País del club
+            club_features['club_tier'],                    # 15: Tier del club
+            club_features['club_financial_power'],         # 16: Poder financiero
+            club_features['club_competitiveness']          # 17: Competitividad
+        ]
+        
+        # Combinar features
+        features_enhanced = features_original + features_club
+        
+        return np.array(features_enhanced).reshape(1, -1), club_features
+    
+    def predict_value_change(self, player_data, club_destino=None):
         """Predecir cambio de valor post-transferencia"""
         
         if self.model is None:
@@ -115,8 +224,14 @@ class ValueChangePredictor:
             return self._get_realistic_prediction(player_data)
         
         try:
-            # Preparar features
-            features = self.prepare_features(player_data)
+            # Preparar features - usar features originales (12) para modelos reales
+            features = self.prepare_original_features(player_data, club_destino)
+            
+            # Verificar que el scaler espera el mismo número de features
+            if hasattr(self.scaler, 'n_features_in_') and self.scaler.n_features_in_ != features.shape[1]:
+                print(f"⚠️ Scaler espera {self.scaler.n_features_in_} features, pero tenemos {features.shape[1]}")
+                # Usar solo las primeras features que el scaler espera
+                features = features[:, :self.scaler.n_features_in_]
             
             # Escalar features
             features_scaled = self.scaler.transform(features)
@@ -128,6 +243,33 @@ class ValueChangePredictor:
             
         except Exception as e:
             print(f"Error en predicción ML: {e}")
+            return self._get_realistic_prediction(player_data)
+    
+    def predict_value_change_enhanced(self, player_data, club_destino):
+        """Predecir cambio de valor con features mejoradas del club"""
+        
+        if self.model is None:
+            return self._get_realistic_prediction(player_data)
+        
+        try:
+            # Preparar features mejoradas con datos del club
+            features, club_features = self.prepare_enhanced_features_with_club(player_data, club_destino)
+            
+            # Escalar features (usar solo las primeras 12 para el modelo actual)
+            features_12 = features[:, :12]  # Tomar solo las primeras 12 features
+            features_scaled = self.scaler.transform(features_12)
+            
+            # Predecir
+            change_percentage = self.model.predict(features_scaled)[0]
+            
+            # Ajustar predicción basada en features del club
+            club_adjustment = (club_features['club_tier'] - 1.0) * 10  # Ajuste por tier del club
+            adjusted_change = change_percentage + club_adjustment
+            
+            return adjusted_change
+            
+        except Exception as e:
+            print(f"Error en predicción ML mejorada: {e}")
             return self._get_realistic_prediction(player_data)
     
     def _get_realistic_prediction(self, player_data):

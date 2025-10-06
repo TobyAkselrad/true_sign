@@ -2009,6 +2009,12 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
         five_values = hybrid_result.get('five_values', hybrid_result.get('cinco_valores', {}))
         similar_analysis = hybrid_result.get('similar_analysis', {})
         
+        # Debug: verificar resale_value (logs reducidos)
+        # print(f"🔍 DEBUG resale_value: {resale_value}")
+        # print(f"🔍 DEBUG hybrid_result keys: {list(hybrid_result.keys())}")
+        # print(f"🔍 DEBUG resale_value_from_value_change: {hybrid_result.get('resale_value_from_value_change', 'N/A')}")
+        # print(f"🔍 DEBUG final_price: {final_price}")
+        
         # print(f"🔍 DEBUGGING CINCO VALORES:")  # Log silenciado
         # print(f"   five_values extraídos: {five_values}")
         # print(f"   tipo: {type(five_values)}")
@@ -2021,17 +2027,18 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
                 'resale_potential': five_values.get('resale_value', 0),
                 'marketing_impact': five_values.get('marketing_value', 0),
                 'similar_transfers': five_values.get('similar_transfers_value', 0),
-                'market_value': five_values.get('different_markets_value', 0)
+                'market_value': five_values.get('market_value', 0)  # Valor de mercado original
             }
         else:
-            # Crear cinco valores basados en el análisis híbrido
+            # Crear cinco valores basados en el análisis híbrido (valores independientes, NO suman al precio máximo)
             # print("⚠️ five_values vacío, creando valores basados en análisis híbrido")  # Log silenciado
+            market_value = jugador_info.get('market_value', 0)
             cinco_valores = {
-                'sporting_value': final_price * 0.35,  # 35% del precio máximo
-                'resale_potential': resale_value * 0.8,  # 80% del valor futuro
-                'marketing_impact': final_price * 0.25,  # 25% del precio máximo
-                'similar_transfers': final_price * 0.175,  # 17.5% del precio máximo
-                'market_value': final_price * 0.125  # 12.5% del precio máximo
+                'sporting_value': market_value * 0.4,  # Valor deportivo basado en valor de mercado
+                'resale_potential': resale_value,  # Valor futuro directamente del modelo
+                'marketing_impact': market_value * 0.3,  # Valor comercial basado en valor de mercado
+                'similar_transfers': market_value * 0.25,  # Transferencias similares basado en valor de mercado
+                'market_value': market_value * 0.2  # Valor en diferentes mercados basado en valor de mercado
             }
         
         # print(f"   cinco_valores convertidos: {cinco_valores}")  # Log silenciado
@@ -2046,25 +2053,23 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
             'adaptation_months': similar_analysis.get('adaptation_months', 6)
         }
         
-        # Aplicar multiplicador del club
-        club_multiplier = get_dynamic_club_multiplier(club_destino, final_price)
+        # Usar multiplicador del club del modelo híbrido
+        club_multiplier = hybrid_result.get('club_multiplier_enhanced', hybrid_result.get('club_multiplier', 1.0))
         precio_maximo_ajustado = final_price * club_multiplier
         
         # Aplicar ajuste inflacionario del 10%
         inflation_adjustment = 1.10
         precio_maximo_final = precio_maximo_ajustado * inflation_adjustment
         
-        print(f"✅ Análisis híbrido completado:")
-        print(f"   Precio máximo: €{precio_maximo_final:,.0f}")
-        print(f"   ROI estimado: {roi_percentage:.1f}%")
-        print(f"   Valor futuro: €{resale_value:,.0f}")
-        print(f"   Confianza: {confidence:.1f}%")
-        print(f"   Modelo: {hybrid_result.get('model_used', 'Hybrid ROI Model')}")
+        # Logs reducidos para producción
+        print(f"✅ Análisis híbrido completado: €{precio_maximo_final:,.0f} (ROI: {roi_percentage:.1f}%)")
         
         result = {
             'precio_maximo': precio_maximo_final,
             'cinco_valores': cinco_valores,
             'roi_percentage': roi_percentage,
+            'roi_estimate': {'percentage': roi_percentage},  # Agregar formato esperado por el endpoint
+            'predicted_change': {'percentage': roi_percentage},  # Agregar formato esperado por el endpoint
             'confidence': confidence,
             'performance_analysis': performance_analysis,
             'similar_players_count': similar_analysis.get('similar_count', 50),
@@ -2499,46 +2504,71 @@ def logo():
 
 @app.route('/autocomplete')
 def autocomplete():
-    """Autocompletado de jugadores simplificado"""
+    """Autocompletado de jugadores usando API de Transfermarkt"""
     try:
         query = request.args.get('q', '').strip()
         print(f"🔍 Autocompletado buscando: '{query}'")
         
-        # Validar query
         if not query or len(query) < 2:
             print("❌ Query muy corta")
             return jsonify([])
         
-        query = query.lower()
+        # 1. Intentar con API de Transfermarkt para jugadores
+        try:
+            print(f"🌐 Consultando API de Transfermarkt para jugadores: '{query}'")
+            import requests
+            
+            url = f"https://transfermarkt-api.fly.dev/players/search/{query}?page_number=1"
+            headers = {'accept': 'application/json'}
+            
+            response = requests.get(url, headers=headers, timeout=5)
+            
+            if response.status_code == 200:
+                data = response.json()
+                results = data.get('results', [])
+                
+                suggestions = []
+                for player in results[:10]:  # Limitar a 10 resultados
+                    player_name = player.get('name', '')
+                    club_name = player.get('club', {}).get('name', 'Unknown')
+                    position = player.get('position', '')
+                    age = player.get('age', 0)
+                    market_value = player.get('marketValue', 0)
+                    
+                    # Filtrar jugadores retirados
+                    if club_name.lower() != 'retired' and club_name != '---':
+                        suggestions.append(player_name)
+                
+                print(f"✅ API Transfermarkt jugadores: {len(suggestions)} jugadores encontrados")
+                return jsonify(suggestions)
+                
+        except Exception as e:
+            print(f"⚠️ Error en API de jugadores: {e}")
         
-        # Lista simplificada de jugadores conocidos
-        known_players = [
-            "Lionel Messi", "Cristiano Ronaldo", "Kylian Mbappé", "Erling Haaland",
-            "Karim Benzema", "Neymar", "Mohamed Salah", "Sadio Mané", "Kevin De Bruyne",
-            "Luka Modrić", "Toni Kroos", "Virgil van Dijk", "Sergio Ramos", "Gerard Piqué",
-            "Andrés Iniesta", "Xavi", "Zinedine Zidane", "Ronaldinho", "Ronaldo",
-            "Franco Mastantuono", "Franco Carboni", "Franco Cervi", "Franco Di Santo",
-            "Franco Vázquez", "Franco Armani", "Franco Soldano", "Franco Fragapane",
-            "Franco Escobar", "Franco Mussis", "Franco Cristaldo", "Franco Lotti",
-            "Franco Pezzella", "Franco Saravia", "Franco Vélez", "Franco Petroli",
-            "Franco Quiroga", "Franco Rinaldi", "Franco Troyansky", "Franco Díaz",
-            "Franco Farías", "Franco García", "Franco Herrera", "Franco López",
-            "Franco Martínez", "Franco Navarro", "Franco Ortega", "Franco Pérez",
-            "Franco Rodríguez", "Franco Sánchez", "Franco Torres", "Franco Vargas",
-            "Franco Velázquez", "Franco Zambrano", "Franco Zárate"
-        ]
-        
-        # Buscar coincidencias
-        suggestions = []
-        for player in known_players:
-            if query in player.lower():
-                suggestions.append(player)
-        
-        # Ordenar por relevancia
-        suggestions = sorted(suggestions, key=lambda x: (not x.lower().startswith(query), x))[:10]
-        
-        print(f"✅ Encontradas {len(suggestions)} sugerencias para '{query}': {suggestions}")
-        return jsonify(suggestions)
+        # 2. Fallback a lista estática básica
+        try:
+            print(f"💾 Usando lista estática para: '{query}'")
+            known_players = [
+                "Lionel Messi", "Cristiano Ronaldo", "Kylian Mbappé", "Erling Haaland",
+                "Karim Benzema", "Neymar", "Mohamed Salah", "Sadio Mané", "Kevin De Bruyne",
+                "Franco Mastantuono", "Kevin Lomonaco", "Julián Álvarez", "Enzo Fernández"
+            ]
+            
+            query_lower = query.lower()
+            suggestions = []
+            
+            for player in known_players:
+                if query_lower in player.lower():
+                    suggestions.append(player)
+            
+            suggestions = sorted(suggestions, key=lambda x: (not x.lower().startswith(query_lower), x))[:10]
+            
+            print(f"✅ Lista estática: {len(suggestions)} jugadores encontrados")
+            return jsonify(suggestions)
+            
+        except Exception as e:
+            print(f"❌ Error en fallback: {e}")
+            return jsonify([])
         
     except Exception as e:
         print(f"❌ Error en autocompletado: {e}")
@@ -2546,43 +2576,423 @@ def autocomplete():
 
 @app.route('/clubs')
 def clubs():
-    """Lista de clubes disponibles"""
+    """Lista de clubes disponibles usando API de Transfermarkt"""
     try:
-        global club_data
+        query = request.args.get('q', '').strip()
+        print(f"🔍 Búsqueda de clubes: '{query}'")
         
-        # Si club_data no esta cargado, cargarlo
-        if club_data is None:
-            initialize_model()
+        # Si no hay query, usar búsqueda genérica para obtener clubes populares
+        if not query:
+            query = "a"  # Búsqueda genérica para obtener clubes populares
         
-        # Si aun es None, usar lista por defecto
-        if club_data is None:
-            default_clubs = [
-                "Real Madrid", "Barcelona", "Manchester United", "Manchester City", 
-                "Chelsea", "Arsenal", "Liverpool", "Bayern Munich", "PSG", 
-                "Juventus", "AC Milan", "Inter Milan", "Atletico Madrid", 
-                "Sevilla", "Valencia", "AS Roma", "Napoli", "Borussia Dortmund", 
-                "RB Leipzig", "Monaco", "Lyon", "Marseille"
-            ]
-            return jsonify(default_clubs)
+        # Si hay query, usar API de Transfermarkt
+        if len(query) < 2:
+            return jsonify([])
         
-        # Convertir a lista si es DataFrame
-        if hasattr(club_data, 'tolist'):
-            clubs_list = club_data.tolist()
-        elif isinstance(club_data, list):
-            clubs_list = club_data
+        # Consultar API de Transfermarkt
+        import requests
+        
+        url = f"https://transfermarkt-api.fly.dev/clubs/search/{query}?page_number=1"
+        headers = {'accept': 'application/json'}
+        
+        print(f"🌐 Consultando: {url}")
+        response = requests.get(url, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            results = data.get('results', [])
+            print(f"📊 Resultados de API: {len(results)} clubes")
+            
+            # Procesar y filtrar resultados
+            clubs_list = []
+            for club in results:
+                club_name = club.get('name', '')
+                country = club.get('country', '')
+                market_value = club.get('marketValue', 0)
+                
+                # Filtrar equipos no relevantes
+                if _should_filter_club(club_name, country):
+                    continue
+                
+                # Formatear valor de mercado
+                if market_value >= 1000000:
+                    market_value_str = f"€{market_value/1000000:.0f}M"
+                else:
+                    market_value_str = f"€{market_value/1000:.0f}K"
+                
+                # Calcular factores adicionales
+                economic_factor = _calculate_club_economic_factor(market_value)
+                league_factor = _get_league_factor(country)
+                club_classification = _classify_club(market_value, country)
+                
+                clubs_list.append({
+                    'name': club_name,
+                    'country': country,
+                    'market_value': market_value_str,
+                    'market_value_raw': market_value,
+                    'display': f"{club_name} ({country}) - {market_value_str}",
+                    'id': club.get('id', ''),
+                    'url': club.get('url', ''),
+                    'squad': club.get('squad', 0),
+                    'economic_factor': economic_factor,
+                    'league_factor': league_factor,
+                    'classification': club_classification,
+                    'squad_analysis': _analyze_squad_needs(club.get('squad', 0)),
+                    'transfer_potential': _calculate_transfer_potential(market_value, club.get('squad', 0), country)
+                })
+            
+            # Ordenar por valor de mercado (descendente)
+            try:
+                clubs_list.sort(key=lambda x: int(x['market_value'].replace('€', '').replace('M', '000000').replace('K', '000').replace('.', '')), reverse=True)
+            except:
+                # Si hay error en el ordenamiento, mantener orden original
+                pass
+            
+            print(f"✅ API Transfermarkt: {len(clubs_list)} clubes encontrados")
+            return jsonify(clubs_list[:20])  # Limitar a 20 resultados
+            
         else:
-            clubs_list = list(club_data) if club_data else []
-        
-        return jsonify(sorted(clubs_list))
+            print(f"⚠️ Error en API Transfermarkt: {response.status_code}")
+            print(f"   Response: {response.text[:200]}")
+            # Usar fallback en lugar de lista vacía
+            return _get_clubs_fallback(query)
+            
     except Exception as e:
-        print(f"Error obteniendo clubes: {e}")
-        # Lista de respaldo
-        backup_clubs = [
+        print(f"❌ Error obteniendo clubes: {e}")
+        
+        # Fallback a lista estática básica
+        return _get_clubs_fallback(query)
+
+def _get_clubs_fallback(query):
+    """Fallback mejorado para búsqueda de clubes cuando la API falla"""
+    try:
+        print(f"💾 Usando sistema mejorado de fallback para: '{query}'")
+        
+        # Importar sistema mejorado
+        from enhanced_clubs_fallback import EnhancedClubsFallback
+        
+        # Inicializar sistema mejorado
+        enhanced_fallback = EnhancedClubsFallback()
+        
+        # Buscar clubes
+        results = enhanced_fallback.search_clubs(query, 20)
+        
+        print(f"✅ Sistema mejorado: {len(results)} clubes encontrados")
+        return jsonify(results)
+            
+    except Exception as fallback_error:
+        print(f"❌ Error en fallback mejorado: {fallback_error}")
+        # Fallback al sistema básico
+        return _get_clubs_basic_fallback(query)
+
+def _get_clubs_basic_fallback(query):
+    """Fallback básico para búsqueda de clubes"""
+    try:
+        print(f"💾 Usando fallback básico para: '{query}'")
+        known_clubs = [
             "Real Madrid", "Barcelona", "Manchester United", "Manchester City", 
             "Chelsea", "Arsenal", "Liverpool", "Bayern Munich", "PSG", 
-            "Juventus", "AC Milan", "Inter Milan", "Atletico Madrid"
+            "Juventus", "AC Milan", "Inter Milan", "Atletico Madrid", 
+            "Sevilla", "Valencia", "AS Roma", "Napoli", "Borussia Dortmund", 
+            "RB Leipzig", "Monaco", "Lyon", "Marseille", "Tottenham",
+            "River Plate", "Boca Juniors", "Independiente", "Racing Club",
+            "San Lorenzo", "Estudiantes", "Newell's Old Boys", "Rosario Central",
+            "Talleres", "Belgrano", "Instituto", "Colón", "Unión", "Defensa y Justicia"
         ]
-        return jsonify(backup_clubs)
+        
+        # Crear lista de clubes con información completa
+        clubs_with_info = []
+        for club_name in known_clubs:
+            # Simular información del club
+            market_value = _get_club_market_value(club_name)
+            country = _get_club_country(club_name)
+            
+            club_info = {
+                'name': club_name,
+                'country': country,
+                'market_value': market_value,
+                'formatted_market_value': f"€{market_value/1000000:.0f}M" if market_value >= 1000000 else f"€{market_value/1000:.0f}K",
+                'economic_factor': _calculate_club_economic_factor(market_value),
+                'league_factor': _get_league_factor(country),
+                'classification': _classify_club(market_value, country),
+                'squad': 25,  # Valor por defecto
+                'squad_analysis': "Plantilla equilibrada",
+                'transfer_potential': "Alto" if market_value >= 200000000 else "Medio"
+            }
+            clubs_with_info.append(club_info)
+        
+        # Si hay query, filtrar la lista
+        if query and len(query) >= 2:
+            query_lower = query.lower()
+            filtered_clubs = [club for club in clubs_with_info if query_lower in club['name'].lower()]
+            return jsonify(filtered_clubs[:20])
+        else:
+            return jsonify(clubs_with_info)
+            
+    except Exception as basic_fallback_error:
+        print(f"❌ Error en fallback básico: {basic_fallback_error}")
+        return jsonify([])
+
+def _get_club_market_value(club_name):
+    """Obtener valor de mercado estimado para un club"""
+    club_values = {
+        'Real Madrid': 1200000000,
+        'Barcelona': 1100000000,
+        'Manchester United': 800000000,
+        'Manchester City': 1000000000,
+        'Chelsea': 700000000,
+        'Arsenal': 600000000,
+        'Liverpool': 800000000,
+        'Bayern Munich': 900000000,
+        'PSG': 800000000,
+        'Juventus': 600000000,
+        'AC Milan': 400000000,
+        'Inter Milan': 500000000,
+        'Atletico Madrid': 500000000,
+        'Sevilla': 200000000,
+        'Valencia': 150000000,
+        'AS Roma': 300000000,
+        'Napoli': 400000000,
+        'Borussia Dortmund': 500000000,
+        'RB Leipzig': 300000000,
+        'Monaco': 200000000,
+        'Lyon': 250000000,
+        'Marseille': 200000000,
+        'Tottenham': 600000000,
+        'River Plate': 80000000,
+        'Boca Juniors': 70000000,
+        'Independiente': 50000000,
+        'Racing Club': 45000000,
+        'San Lorenzo': 40000000,
+        'Estudiantes': 35000000,
+        'Newell\'s Old Boys': 30000000,
+        'Rosario Central': 35000000,
+        'Talleres': 25000000,
+        'Belgrano': 20000000,
+        'Instituto': 15000000,
+        'Colón': 20000000,
+        'Unión': 18000000,
+        'Defensa y Justicia': 22000000
+    }
+    return club_values.get(club_name, 50000000)  # Valor por defecto
+
+def _get_club_country(club_name):
+    """Obtener país de un club"""
+    club_countries = {
+        'Real Madrid': 'Spain',
+        'Barcelona': 'Spain',
+        'Manchester United': 'England',
+        'Manchester City': 'England',
+        'Chelsea': 'England',
+        'Arsenal': 'England',
+        'Liverpool': 'England',
+        'Bayern Munich': 'Germany',
+        'PSG': 'France',
+        'Juventus': 'Italy',
+        'AC Milan': 'Italy',
+        'Inter Milan': 'Italy',
+        'Atletico Madrid': 'Spain',
+        'Sevilla': 'Spain',
+        'Valencia': 'Spain',
+        'AS Roma': 'Italy',
+        'Napoli': 'Italy',
+        'Borussia Dortmund': 'Germany',
+        'RB Leipzig': 'Germany',
+        'Monaco': 'France',
+        'Lyon': 'France',
+        'Marseille': 'France',
+        'Tottenham': 'England',
+        'River Plate': 'Argentina',
+        'Boca Juniors': 'Argentina',
+        'Independiente': 'Argentina',
+        'Racing Club': 'Argentina',
+        'San Lorenzo': 'Argentina',
+        'Estudiantes': 'Argentina',
+        'Newell\'s Old Boys': 'Argentina',
+        'Rosario Central': 'Argentina',
+        'Talleres': 'Argentina',
+        'Belgrano': 'Argentina',
+        'Instituto': 'Argentina',
+        'Colón': 'Argentina',
+        'Unión': 'Argentina',
+        'Defensa y Justicia': 'Argentina'
+    }
+    return club_countries.get(club_name, 'Unknown')
+
+def _should_filter_club(club_name, country):
+    """Determinar si un club debe ser filtrado"""
+    club_lower = club_name.lower()
+    country_lower = country.lower()
+    
+    # Filtrar selecciones nacionales
+    if (country_lower == club_lower or
+        club_lower in ['spain', 'france', 'germany', 'italy', 'england', 'argentina', 'brazil', 'mexico', 'colombia', 'chile', 'ecuador', 'belgium', 'netherlands', 'portugal'] or
+        'national' in club_lower or
+        'selección' in club_lower or
+        'seleccion' in club_lower or
+        'u19' in club_lower or
+        'u20' in club_lower or
+        'u21' in club_lower or
+        'u23' in club_lower or
+        'youth' in club_lower or
+        'juvenile' in club_lower or
+        'academy' in club_lower):
+        return True
+    
+    # Filtrar equipos B o reservas
+    if (club_lower.endswith(' b') or 
+        club_lower.endswith(' b)') or
+        ' reserve' in club_lower or
+        ' reserva' in club_lower or
+        ' atletic' in club_lower or
+        ' atlétic' in club_lower):
+        return True
+    
+    return False
+
+def _calculate_club_economic_factor(market_value):
+    """Calcular factor económico del club basado en su valor de mercado"""
+    if market_value >= 1000000000:  # >1B euros
+        return 1.5  # Clubes elite (Real Madrid, Barcelona, etc.)
+    elif market_value >= 500000000:  # >500M euros
+        return 1.3  # Clubes top (Chelsea, Arsenal, etc.)
+    elif market_value >= 200000000:  # >200M euros
+        return 1.2  # Clubes medianos-grandes
+    elif market_value >= 50000000:   # >50M euros
+        return 1.1  # Clubes medianos
+    else:
+        return 1.0  # Clubes pequeños
+
+def _get_league_factor(country):
+    """Obtener factor de liga basado en el país"""
+    league_factors = {
+        'Spain': 1.4,      # La Liga - alta competitividad
+        'England': 1.5,    # Premier League - máxima competitividad
+        'Germany': 1.3,    # Bundesliga - alta competitividad
+        'Italy': 1.3,      # Serie A - alta competitividad
+        'France': 1.2,     # Ligue 1 - buena competitividad
+        'Netherlands': 1.2, # Eredivisie
+        'Portugal': 1.1,   # Primeira Liga
+        'Argentina': 1.1,  # Liga Argentina
+        'Brazil': 1.1,     # Brasileirão
+        'Mexico': 1.1,     # Liga MX
+        'Colombia': 1.0,   # Liga Colombiana
+        'Chile': 1.0,      # Liga Chilena
+        'Ecuador': 1.0,    # Liga Ecuatoriana
+    }
+    return league_factors.get(country, 1.0)
+
+def _classify_club(market_value, country):
+    """Clasificar el club según su valor de mercado"""
+    if market_value >= 1000000000:
+        return "Elite Club"
+    elif market_value >= 500000000:
+        return "Top Club"
+    elif market_value >= 200000000:
+        return "Big Club"
+    elif market_value >= 50000000:
+        return "Medium Club"
+    else:
+        return "Small Club"
+
+def _analyze_squad_needs(squad_size):
+    """Analizar necesidades de la plantilla"""
+    if squad_size < 20:
+        return "Necesita refuerzos"
+    elif squad_size > 30:
+        return "Plantilla completa"
+    else:
+        return "Plantilla equilibrada"
+
+def _calculate_transfer_potential(market_value, squad_size, country):
+    """Calcular el potencial de transferencia del club"""
+    # Factor económico
+    economic_factor = _calculate_club_economic_factor(market_value)
+    
+    # Factor de liga
+    league_factor = _get_league_factor(country)
+    
+    # Factor de plantilla (clubes con plantilla pequeña tienen más necesidad)
+    if squad_size < 20:
+        squad_factor = 1.3  # Alta necesidad
+    elif squad_size > 30:
+        squad_factor = 0.8  # Baja necesidad
+    else:
+        squad_factor = 1.0  # Necesidad normal
+    
+    # Calcular potencial total
+    transfer_potential = economic_factor * league_factor * squad_factor
+    
+    # Clasificar el potencial
+    if transfer_potential >= 2.0:
+        return "Muy Alto"
+    elif transfer_potential >= 1.5:
+        return "Alto"
+    elif transfer_potential >= 1.2:
+        return "Medio-Alto"
+    elif transfer_potential >= 1.0:
+        return "Medio"
+    elif transfer_potential >= 0.8:
+        return "Bajo"
+    else:
+        return "Muy Bajo"
+
+@app.route('/clubs/<club_name>')
+def get_club_info(club_name):
+    """Obtener información detallada de un club específico"""
+    try:
+        print(f"🔍 Obteniendo información del club: '{club_name}'")
+        
+        # Consultar API de Transfermarkt para obtener información del club
+        import requests
+        
+        url = f"https://transfermarkt-api.fly.dev/clubs/search/{club_name}?page_number=1"
+        headers = {'accept': 'application/json'}
+        
+        response = requests.get(url, headers=headers, timeout=5)
+        
+        if response.status_code == 200:
+            data = response.json()
+            results = data.get('results', [])
+            
+            # Buscar el club (coincidencia exacta o parcial)
+            club_name_lower = club_name.lower()
+            for club in results:
+                club_api_name = club.get('name', '').lower()
+                if (club_api_name == club_name_lower or 
+                    club_name_lower in club_api_name or 
+                    club_api_name in club_name_lower):
+                    market_value = club.get('marketValue', 0)
+                    country = club.get('country', '')
+                    squad_size = club.get('squad', 0)
+                    
+                    club_info = {
+                        'name': club.get('name', ''),
+                        'country': country,
+                        'market_value': market_value,
+                        'squad': squad_size,
+                        'id': club.get('id', ''),
+                        'url': club.get('url', ''),
+                        'formatted_market_value': f"€{market_value/1000000:.0f}M" if market_value >= 1000000 else f"€{market_value/1000:.0f}K",
+                        'economic_factor': _calculate_club_economic_factor(market_value),
+                        'league_factor': _get_league_factor(country),
+                        'classification': _classify_club(market_value, country),
+                        'squad_analysis': _analyze_squad_needs(squad_size),
+                        'transfer_potential': _calculate_transfer_potential(market_value, squad_size, country)
+                    }
+                    print(f"✅ Información del club encontrada: {club_info['name']}")
+                    return jsonify(club_info)
+            
+            print(f"⚠️ Club no encontrado: {club_name}")
+            return jsonify({"error": "Club not found"}), 404
+            
+        else:
+            print(f"⚠️ Error en API Transfermarkt: {response.status_code}")
+            return jsonify({"error": "API error"}), 500
+            
+    except Exception as e:
+        print(f"❌ Error obteniendo información del club: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/test')
 def test():
@@ -2598,7 +3008,7 @@ def clubs_autocomplete():
     if not query or len(query) < 2:
         return jsonify([])
     
-    # 1. Intentar con API de Transfermarkt
+    # Usar la misma lógica que el endpoint /clubs
     try:
         print(f"🌐 Consultando API de Transfermarkt para: '{query}'")
         import requests
@@ -2612,12 +3022,16 @@ def clubs_autocomplete():
             data = response.json()
             results = data.get('results', [])
             
-            # Convertir resultados a formato simple
+            # Procesar y filtrar resultados
             suggestions = []
-            for club in results[:10]:  # Limitar a 10 resultados
+            for club in results:
                 club_name = club.get('name', '')
                 country = club.get('country', '')
                 market_value = club.get('marketValue', 0)
+                
+                # Filtrar equipos no relevantes
+                if _should_filter_club(club_name, country):
+                    continue
                 
                 # Formatear valor de mercado
                 if market_value >= 1000000:
@@ -2630,9 +3044,19 @@ def clubs_autocomplete():
                     'name': club_name,
                     'country': country,
                     'market_value': market_value_str,
-                    'display': f"{club_name} ({country}) - {market_value_str}"
+                    'display': f"{club_name} ({country}) - {market_value_str}",
+                    'id': club.get('id', ''),
+                    'url': club.get('url', ''),
+                    'squad': club.get('squad', 0)
                 }
                 suggestions.append(suggestion)
+                
+                # Limitar a 10 resultados válidos
+                if len(suggestions) >= 10:
+                    break
+            
+            # Ordenar por valor de mercado (descendente)
+            suggestions.sort(key=lambda x: int(x['market_value'].replace('€', '').replace('M', '000000').replace('K', '000').replace('.', '')), reverse=True)
             
             print(f"✅ API Transfermarkt: {len(suggestions)} clubes encontrados")
             return jsonify(suggestions)
@@ -2640,7 +3064,7 @@ def clubs_autocomplete():
     except Exception as e:
         print(f"⚠️ Error en API Transfermarkt: {e}")
     
-    # 2. Fallback a lista estática
+    # Fallback a lista estática básica
     try:
         print(f"💾 Usando lista estática para: '{query}'")
         known_clubs = [
@@ -2649,11 +3073,6 @@ def clubs_autocomplete():
             "Juventus", "AC Milan", "Inter Milan", "Atletico Madrid", 
             "Sevilla", "Valencia", "AS Roma", "Napoli", "Borussia Dortmund", 
             "RB Leipzig", "Monaco", "Lyon", "Marseille", "Tottenham",
-            "Newcastle", "West Ham", "Aston Villa", "Brighton", "Wolves",
-            "Leicester City", "Leeds United", "Everton", "Southampton",
-            "Brentford", "Fulham", "Crystal Palace", "Nottingham Forest",
-            "Bournemouth", "Inter Miami", "LA Galaxy", "Seattle Sounders",
-            "Portland Timbers", "Atlanta United", "Toronto FC", "Vancouver Whitecaps",
             "River Plate", "Boca Juniors", "Independiente", "Racing Club",
             "San Lorenzo", "Estudiantes", "Newell's Old Boys", "Rosario Central",
             "Talleres", "Belgrano", "Instituto", "Colón", "Unión", "Defensa y Justicia"
@@ -2668,7 +3087,10 @@ def clubs_autocomplete():
                     'name': club,
                     'country': 'Unknown',
                     'market_value': 'N/A',
-                    'display': club
+                    'display': club,
+                    'id': '',
+                    'url': '',
+                    'squad': 0
                 })
         
         # Ordenar por relevancia
@@ -2845,13 +3267,8 @@ def search_player():
                 print(f"Error cargando perfil completo: {e}")
         
         # Calcular precio maximo usando el modelo híbrido ML que considera el club de destino
-        print(f"=== USANDO MODELO HÍBRIDO ML CON CLUB DE DESTINO ===")
-        print(f"🔍 Estado del modelo híbrido antes de llamar: {type(hybrid_model) if hybrid_model else 'None'}")
+        # print(f"=== USANDO MODELO HÍBRIDO ML CON CLUB DE DESTINO ===")
         analisis = calcular_precio_maximo_hibrido(jugador_info, club_name)
-        print(f"=== RESULTADO DEL MODELO HÍBRIDO: {analisis is not None} ===")
-        if analisis:
-            print(f"🔍 Modelo usado en resultado: {analisis.get('model_used', 'N/A')}")
-            print(f"🔍 Cinco valores en resultado: {bool(analisis.get('cinco_valores', {}))}")
         
         # Si el modelo híbrido falla, usar el modelo original como fallback
         if analisis is None:
@@ -2909,12 +3326,12 @@ def search_player():
             'fair_price': clean_for_json(analisis.get('precio_maximo', 0)),
             'adjusted_price': clean_for_json(analisis.get('adjusted_price', 0)),
             'roi_estimate': {
-                'percentage': clean_for_json(roi_target)
+                'percentage': clean_for_json(analisis.get('roi_estimate', {}).get('percentage', roi_target))
             },
             'predicted_change': {
                 'percentage': clean_for_json(analisis.get('roi_estimate', {}).get('percentage', roi_target))
             },
-            'club_multiplier': clean_for_json(analisis.get('club_multiplier', 1.0)),
+            'club_multiplier': clean_for_json(analisis.get('club_multiplier_enhanced', analisis.get('club_multiplier', 1.0))),
             'five_values': analisis.get('cinco_valores', analisis.get('five_values', {})),
             'detailed_values': {
                 'sv_component': clean_for_json(analisis.get('cinco_valores', {}).get('sporting_value', 0)) / 1_000_000,
@@ -2925,7 +3342,8 @@ def search_player():
             },
             'performance_analysis': analisis.get('performance_analysis', {}),
             'confidence': clean_for_json(analisis.get('confidence', 85)),
-            'model_used': analisis.get('model_used', 'Hybrid ROI Model')
+            'model_used': analisis.get('model_used', 'Hybrid ROI Model'),
+            'resale_value': clean_for_json(analisis.get('resale_value', 0))  # Agregar resale_value
         }
         
         # Incluir analisis de rendimiento si esta disponible

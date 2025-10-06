@@ -46,33 +46,279 @@ class HybridROIModel:
             print("⚠️ Modelo no inicializado, usando fallback")
             return self._fallback_analysis(player_data, club_destino, roi_target)
         
-        print(f"🔄 Calculando análisis híbrido para: {player_data.get('player_name', 'N/A')}")
+        # print(f"🔄 Calculando análisis híbrido para: {player_data.get('player_name', 'N/A')}")
         
         try:
-            # 1. Obtener análisis de ValueChangePredictor (para resale value)
-            print("📊 Obteniendo análisis de ValueChangePredictor...")
+            # 1. Obtener resale value de ValueChangePredictor
+            # print("📊 Obteniendo resale value de ValueChangePredictor...")
             value_analysis = self.value_change_predictor.calculate_maximum_price(
                 player_data, club_destino, roi_target
             )
             
-            # 2. Obtener análisis de UltimateTransferModel (para precio máximo)
-            print("🎯 Obteniendo análisis de UltimateTransferModel...")
+            # 2. Obtener precio máximo de UltimateTransferModel
+            # print("🎯 Obteniendo precio máximo de UltimateTransferModel...")
+            print(f"🔍 DEBUG Hybrid - player_data antes de UltimateTransferModel: {player_data}")
             ultimate_analysis = self.ultimate_model.predict_ultimate_maximum_price(
                 player_data, club_destino
             )
             
             # 3. Combinar resultados
-            print("🔗 Combinando resultados...")
-            hybrid_result = self._combine_analyses(
+            # print("🔗 Combinando resultados...")
+            hybrid_result = self._combine_analyses_final(
                 value_analysis, ultimate_analysis, player_data, club_destino
             )
             
-            print("✅ Análisis híbrido completado")
+            # 4. Mejorar con datos del club
+            # print("🏆 Mejorando con datos del club...")
+            hybrid_result = self._enhance_with_club_data(hybrid_result, club_destino)
+            
+            # print("✅ Análisis híbrido completado")
             return hybrid_result
             
         except Exception as e:
             print(f"❌ Error en análisis híbrido: {e}")
             return self._fallback_analysis(player_data, club_destino, roi_target)
+    
+    def _get_club_multiplier_simple(self, club_name: str) -> float:
+        """Obtener multiplicador del club de forma simple"""
+        club_name_lower = club_name.lower()
+        
+        # Clubes Tier 1 (Elite)
+        elite_clubs = ['barcelona', 'real madrid', 'manchester city', 'manchester united', 
+                      'chelsea', 'arsenal', 'liverpool', 'bayern munich', 'psg', 
+                      'juventus', 'inter', 'milan', 'atletico madrid', 'tottenham']
+        
+        # Clubes Tier 2 (Top)
+        top_clubs = ['dortmund', 'leipzig', 'leverkusen', 'napoli', 'roma', 'lazio',
+                    'sevilla', 'valencia', 'villarreal', 'newcastle', 'brighton',
+                    'aston villa', 'west ham', 'leicester']
+        
+        # Clubes Tier 3 (Mid)
+        mid_clubs = ['everton', 'crystal palace', 'fulham', 'brentford', 'wolves',
+                    'southampton', 'burnley', 'sheffield', 'norwich', 'watford']
+        
+        if any(elite in club_name_lower for elite in elite_clubs):
+            return 1.4  # Barcelona, Real Madrid, etc.
+        elif any(top in club_name_lower for top in top_clubs):
+            return 1.2  # Clubes top
+        elif any(mid in club_name_lower for mid in mid_clubs):
+            return 1.1  # Clubes mid
+        else:
+            return 1.05  # Clubes menores
+    
+    def calculate_hybrid_analysis_enhanced(self, player_data: Dict, club_destino: str, roi_target: float = 30) -> Dict:
+        """Análisis híbrido con features mejoradas del club"""
+        if not self.is_initialized:
+            print("⚠️ Modelo no inicializado, usando fallback")
+            return self._fallback_analysis(player_data, club_destino, roi_target)
+        
+        print(f"🔄 Calculando análisis híbrido MEJORADO para: {player_data.get('player_name', 'N/A')}")
+        
+        try:
+            # 1. Obtener resale value de ValueChangePredictor (mejorado)
+            print("📊 Obteniendo resale value de ValueChangePredictor (con features del club)...")
+            value_analysis = self.value_change_predictor.calculate_maximum_price(
+                player_data, club_destino, roi_target
+            )
+            
+            # 2. Obtener precio máximo de UltimateTransferModel (mejorado)
+            print("🎯 Obteniendo precio máximo de UltimateTransferModel (con features del club)...")
+            ultimate_analysis = self.ultimate_model.predict_ultimate_maximum_price_enhanced(
+                player_data, club_destino
+            )
+            
+            # 3. Combinar resultados
+            print("🔗 Combinando resultados...")
+            hybrid_result = self._combine_analyses_final(
+                value_analysis, ultimate_analysis, player_data, club_destino
+            )
+            
+            # 4. Agregar información del club
+            club_features = ultimate_analysis.get('club_features', {})
+            hybrid_result['club_features'] = club_features
+            hybrid_result['model_used'] = 'Hybrid ROI Model Enhanced (con features del club)'
+            
+            print("✅ Análisis híbrido MEJORADO completado")
+            return hybrid_result
+            
+        except Exception as e:
+            print(f"❌ Error en análisis híbrido mejorado: {e}")
+            return self._fallback_analysis(player_data, club_destino, roi_target)
+    
+    def _enhance_with_club_data(self, base_result: Dict, club_destino: str) -> Dict:
+        """Mejorar resultado con datos del club"""
+        try:
+            # from simple_club_enhancement import SimpleClubEnhancer
+            
+            # enhancer = SimpleClubEnhancer()
+            
+            # Obtener multiplicador del club (sistema simple)
+            club_multiplier = self._get_club_multiplier_simple(club_destino)
+            
+            # Mejorar predicciones (fallback simple)
+            base_price = base_result.get('final_price', 0)
+            enhanced_price = base_price * club_multiplier
+            
+            # Actualizar resultado
+            base_result['final_price'] = enhanced_price
+            base_result['fair_price'] = enhanced_price
+            base_result['adjusted_price'] = enhanced_price
+            base_result['club_multiplier'] = club_multiplier  # Cambiar nombre para consistencia
+            base_result['club_multiplier_enhanced'] = club_multiplier
+            base_result['club_name'] = club_destino
+            
+            return base_result
+            
+        except Exception as e:
+            print(f"Error mejorando con datos del club: {e}")
+            return base_result
+    
+    def _combine_analyses_final(self, value_analysis: Dict, ultimate_analysis: Dict, 
+                               player_data: Dict, club_destino: str) -> Dict:
+        """Combinar análisis con la lógica FINAL: ValueChangePredictor = Resale Value, UltimateTransferModel = Precio Máximo"""
+        
+        # Extraer resale value de ValueChangePredictor
+        predicted_change_percentage = value_analysis.get('predicted_change_percentage', 0)
+        current_market_value = value_analysis.get('current_market_value', player_data.get('market_value', 0))
+        predicted_future_value = value_analysis.get('predicted_future_value', current_market_value)
+        value_change_confidence = value_analysis.get('confidence', 50)
+        
+        # Debug: verificar valores de ValueChangePredictor (logs reducidos)
+        # print(f"🔍 DEBUG ValueChangePredictor:")
+        # print(f"   predicted_change_percentage: {predicted_change_percentage}")
+        # print(f"   current_market_value: {current_market_value}")
+        # print(f"   predicted_future_value: {predicted_future_value}")
+        # print(f"   value_analysis keys: {list(value_analysis.keys())}")
+        
+        # Extraer precio máximo de UltimateTransferModel
+        maximum_price = ultimate_analysis.get('maximum_price', 0)
+        ultimate_confidence = ultimate_analysis.get('confidence', 50)
+        success_rate = ultimate_analysis.get('success_rate', 0.7)
+        five_values = ultimate_analysis.get('five_values', {})
+        
+        # Calcular ROI basado en el cambio predicho de ValueChangePredictor
+        roi_percentage = predicted_change_percentage if predicted_change_percentage > 0 else 30
+        roi_percentage = max(0, min(200, roi_percentage))  # Limitar entre 0% y 200%
+        
+        # Calcular confianza combinada
+        combined_confidence = (value_change_confidence + ultimate_confidence) / 2
+        
+        # Análisis de jugadores similares (estimado)
+        similar_analysis = self._estimate_similar_analysis(
+            player_data, predicted_change_percentage, combined_confidence
+        )
+        
+        return {
+            # Datos principales
+            'player_name': player_data.get('player_name', 'N/A'),
+            'market_value': current_market_value,
+            'final_price': maximum_price,  # Precio máximo de UltimateTransferModel
+            'fair_price': maximum_price,
+            'adjusted_price': maximum_price,
+            
+            # ROI y valor futuro (de ValueChangePredictor)
+            'roi_estimate': {
+                'percentage': roi_percentage
+            },
+            'predicted_change': {
+                'percentage': predicted_change_percentage
+            },
+            'resale_value': predicted_future_value,  # Resale value de ValueChangePredictor
+            
+            # Confianza combinada
+            'confidence': combined_confidence,
+            'value_change_confidence': value_change_confidence,
+            'ultimate_confidence': ultimate_confidence,
+            
+            # Los 5 valores fundamentales (de UltimateTransferModel)
+            'five_values': five_values,
+            'cinco_valores': five_values,  # Compatibilidad con la aplicación web
+            
+            # Análisis de jugadores similares
+            'similar_analysis': similar_analysis,
+            
+            # Detalles técnicos
+            'model_used': 'Hybrid ROI Model (ValueChange = Resale Value, Ultimate = Precio Máximo)',
+            'analysis_type': 'Hybrid Analysis Final',
+            'value_change_prediction': predicted_change_percentage,
+            'resale_value_from_value_change': predicted_future_value,
+            'maximum_price_from_ultimate': maximum_price,
+            
+            # Métricas adicionales
+            'value_change_multiplier': 1.0 + (predicted_change_percentage / 100),
+            'price_to_market_ratio': maximum_price / current_market_value if current_market_value > 0 else 1.0,
+            'expected_return': predicted_future_value - maximum_price
+        }
+    
+    def _combine_analyses_correct(self, value_analysis: Dict, ultimate_analysis: Dict, 
+                                 player_data: Dict, club_destino: str) -> Dict:
+        """Combinar análisis con la lógica correcta: ValueChangePredictor = precio máximo, UltimateTransferModel = 5 valores"""
+        
+        # Extraer precio máximo de ValueChangePredictor
+        maximum_price = value_analysis.get('maximum_price', 0)
+        predicted_change_percentage = value_analysis.get('predicted_change_percentage', 0)
+        current_market_value = value_analysis.get('current_market_value', player_data.get('market_value', 0))
+        predicted_future_value = value_analysis.get('predicted_future_value', current_market_value)
+        value_change_confidence = value_analysis.get('confidence', 50)
+        
+        # Extraer los 5 valores de análisis de UltimateTransferModel
+        five_values = ultimate_analysis.get('five_values', {})
+        ultimate_confidence = ultimate_analysis.get('confidence', 50)
+        success_rate = ultimate_analysis.get('success_rate', 0.7)
+        
+        # Calcular ROI basado en el precio máximo de ValueChangePredictor
+        roi_percentage = (predicted_future_value / maximum_price - 1) * 100 if maximum_price > 0 else 30
+        roi_percentage = max(0, min(200, roi_percentage))  # Limitar entre 0% y 200%
+        
+        # Calcular confianza combinada
+        combined_confidence = (value_change_confidence + ultimate_confidence) / 2
+        
+        # Análisis de jugadores similares (estimado)
+        similar_analysis = self._estimate_similar_analysis(
+            player_data, predicted_change_percentage, combined_confidence
+        )
+        
+        return {
+            # Datos principales
+            'player_name': player_data.get('player_name', 'N/A'),
+            'market_value': current_market_value,
+            'final_price': maximum_price,  # Precio máximo de ValueChangePredictor
+            'fair_price': maximum_price,
+            'adjusted_price': maximum_price,
+            
+            # ROI y valor futuro (de ValueChangePredictor)
+            'roi_estimate': {
+                'percentage': roi_percentage
+            },
+            'predicted_change': {
+                'percentage': predicted_change_percentage
+            },
+            'resale_value': predicted_future_value,  # Valor futuro esperado
+            
+            # Confianza combinada
+            'confidence': combined_confidence,
+            'value_change_confidence': value_change_confidence,
+            'ultimate_confidence': ultimate_confidence,
+            
+            # Los 5 valores fundamentales (de UltimateTransferModel)
+            'five_values': five_values,
+            'cinco_valores': five_values,  # Compatibilidad con la aplicación web
+            
+            # Análisis de jugadores similares
+            'similar_analysis': similar_analysis,
+            
+            # Detalles técnicos
+            'model_used': 'Hybrid ROI Model (ValueChange = Precio, Ultimate = 5 Valores)',
+            'analysis_type': 'Hybrid Analysis Correct',
+            'value_change_prediction': predicted_change_percentage,
+            'maximum_price_from_value_change': maximum_price,
+            'five_values_from_ultimate': five_values,
+            
+            # Métricas adicionales
+            'value_change_multiplier': 1.0 + (predicted_change_percentage / 100),
+            'price_to_market_ratio': maximum_price / current_market_value if current_market_value > 0 else 1.0,
+            'expected_return': predicted_future_value - maximum_price
+        }
     
     def _combine_analyses(self, value_analysis: Dict, ultimate_analysis: Dict, 
                          player_data: Dict, club_destino: str) -> Dict:
@@ -152,46 +398,51 @@ class HybridROIModel:
     
     def _calculate_five_values_hybrid(self, market_value: float, future_value: float, 
                                     max_price: float, player_data: Dict, change_percentage: float) -> Dict:
-        """Calcular los 5 valores fundamentales basados en análisis híbrido"""
+        """Calcular los 5 valores fundamentales como análisis independiente (NO suman al precio máximo)"""
         
         age = player_data.get('age', 25)
         position = player_data.get('position', '').lower()
         nationality = player_data.get('nationality', '').lower()
         
-        # Marketing Value (20-30% del precio máximo)
-        marketing_value = max_price * 0.25
+        # Los cinco valores son análisis independientes, NO componentes del precio máximo
+        # El precio máximo viene directamente del UltimateTransferModel
+        
+        # Marketing Value - Valor comercial del jugador
+        marketing_value = market_value * 0.3  # 30% del valor de mercado como base
         if 'forward' in position or 'winger' in position:
-            marketing_value *= 1.3
+            marketing_value *= 1.5  # Delanteros tienen más valor comercial
         if 'brazil' in nationality or 'argentina' in nationality:
-            marketing_value *= 1.2
+            marketing_value *= 1.3  # Nacionalidades con alto valor comercial
         
-        # Sport Value (30-40% del precio máximo)
-        sport_value = max_price * 0.35
+        # Sport Value - Valor deportivo basado en rendimiento esperado
+        sport_value = market_value * 0.4  # 40% del valor de mercado como base
         if age <= 25:
-            sport_value *= 1.2
+            sport_value *= 1.4  # Jóvenes tienen más potencial
         elif age > 30:
-            sport_value *= 0.8
+            sport_value *= 0.7  # Mayores tienen menos potencial
+        if change_percentage > 20:
+            sport_value *= 1.3  # Si se predice buen rendimiento
         
-        # Resale Value (usar predicción de ValueChangePredictor)
-        resale_value = future_value * 0.8  # 80% del valor futuro esperado
+        # Resale Value - Valor de reventa (directamente del ValueChangePredictor)
+        resale_value = future_value  # Usar directamente el valor futuro predicho
         if age <= 22:
-            resale_value *= 1.3
+            resale_value *= 1.2  # Jóvenes tienen mejor valor de reventa
         elif age > 28:
-            resale_value *= 0.7
+            resale_value *= 0.8  # Mayores tienen menor valor de reventa
         
-        # Similar Transfers Value (15-20% del precio máximo)
-        similar_transfers_value = max_price * 0.175
-        if change_percentage > 20:  # Si se predice buen rendimiento
-            similar_transfers_value *= 1.2
-        elif change_percentage < -10:  # Si se predice mal rendimiento
-            similar_transfers_value *= 0.8
+        # Similar Transfers Value - Comparación con transferencias similares
+        similar_transfers_value = market_value * 0.25  # 25% del valor de mercado como base
+        if change_percentage > 20:
+            similar_transfers_value *= 1.4  # Transferencias exitosas
+        elif change_percentage < -10:
+            similar_transfers_value *= 0.6  # Transferencias menos exitosas
         
-        # Different Markets Value (10-15% del precio máximo)
-        different_markets_value = max_price * 0.125
+        # Different Markets Value - Valor en diferentes mercados
+        different_markets_value = market_value * 0.2  # 20% del valor de mercado como base
         if 'brazil' in nationality or 'argentina' in nationality:
-            different_markets_value *= 1.3
+            different_markets_value *= 1.5  # Alto valor en mercados sudamericanos
         elif 'spain' in nationality or 'france' in nationality:
-            different_markets_value *= 1.1
+            different_markets_value *= 1.2  # Buen valor en mercados europeos
         
         return {
             'marketing_value': marketing_value,

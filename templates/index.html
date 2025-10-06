@@ -1652,14 +1652,20 @@
             const confidence = parseFloat(analysis.confidence) || 0;
             const marketValue = parseFloat(data.market_value) || 0;
             
-            // Calcular valores predichos
-            const futureValue = marketValue * (1 + predictedChange / 100);
+            // Usar valores del backend directamente
+            const resaleValue = parseFloat(analysis.resale_value) || 0;
+            const roiEstimate = parseFloat(analysis.roi_estimate?.percentage) || 0;
+            
+            // Usar resale_value del backend como valor futuro
+            const futureValue = resaleValue > 0 ? resaleValue : marketValue * (1 + predictedChange / 100);
             
             console.log('Valores calculados:', {
                 predictedChange,
                 marketValue,
                 futureValue,
-                confidence
+                confidence,
+                resaleValue,
+                roiEstimate
             });
             
             // Formatear valores
@@ -2085,20 +2091,26 @@
             
             clubTimeout = setTimeout(async () => {
                 try {
-                    const response = await fetch(`/clubs`);
+                    const response = await fetch(`/clubs?q=${encodeURIComponent(query)}`);
                     const clubs = await response.json();
                     
-                    const filteredClubs = clubs.filter(club => 
-                        club.toLowerCase().includes(query.toLowerCase())
-                    ).slice(0, 10);
-                    
                     const dropdown = document.getElementById('clubDropdown');
-                    if (filteredClubs.length > 0) {
-                        dropdown.innerHTML = filteredClubs.map(club => `
-                            <div class="p-3 hover:bg-gray-600 cursor-pointer text-white" onclick="selectClub('${club}')">
-                                ${club}
-                            </div>
-                        `).join('');
+                    if (clubs.length > 0) {
+                        dropdown.innerHTML = clubs.map(club => {
+                            const clubName = typeof club === 'string' ? club : club.name;
+                            const displayText = typeof club === 'string' ? club : club.display;
+                            return `
+                                <div class="p-3 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0" onclick="selectClub('${clubName}')">
+                                    <div class="font-medium">${clubName}</div>
+                                    ${typeof club !== 'string' ? `
+                                        <div class="text-sm text-gray-400">${club.country} - ${club.market_value}</div>
+                                        <div class="text-xs text-green-400 mt-1">
+                                            ${club.classification} • ${club.squad_analysis} • Potencial: ${club.transfer_potential || 'N/A'}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('');
                         dropdown.classList.remove('hidden');
                     } else {
                         dropdown.classList.add('hidden');
@@ -2106,8 +2118,8 @@
                 } catch (error) {
                     console.error('Club search error:', error);
                 }
-                }, 300);
-            });
+            }, 300);
+        });
         }
             
         // Select club from dropdown
@@ -2117,6 +2129,40 @@
             if (clubSearch) clubSearch.value = clubName;
             if (clubDropdown) clubDropdown.classList.add('hidden');
             updateClubAnalysis(clubName);
+            loadClubInfo(clubName);
+        }
+        
+        // Load additional club information
+        async function loadClubInfo(clubName) {
+            try {
+                const response = await fetch(`/clubs/${encodeURIComponent(clubName)}`);
+                if (response.ok) {
+                    const clubInfo = await response.json();
+                    console.log('Club info loaded:', clubInfo);
+                    
+                    // Actualizar información del club en la interfaz si existe
+                    const clubInfoElement = document.getElementById('clubInfo');
+                    if (clubInfoElement) {
+                        clubInfoElement.innerHTML = `
+                            <div class="bg-gray-800 p-4 rounded-lg">
+                                <h3 class="text-lg font-semibold text-white mb-2">${clubInfo.name}</h3>
+                                <div class="text-sm text-gray-300 space-y-1">
+                                    <p><strong>País:</strong> ${clubInfo.country}</p>
+                                    <p><strong>Valor de mercado:</strong> ${clubInfo.formatted_market_value}</p>
+                                    <p><strong>Plantilla:</strong> ${clubInfo.squad} jugadores</p>
+                                    <p><strong>Clasificación:</strong> <span class="text-blue-400">${clubInfo.classification}</span></p>
+                                    <p><strong>Análisis de plantilla:</strong> <span class="text-yellow-400">${clubInfo.squad_analysis}</span></p>
+                                    <p><strong>Potencial de transferencia:</strong> <span class="text-green-400">${clubInfo.transfer_potential}</span></p>
+                                    <p><strong>Factor económico:</strong> ${clubInfo.economic_factor}x</p>
+                                    <p><strong>Factor de liga:</strong> ${clubInfo.league_factor}x</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading club info:', error);
+            }
         }
 
         // Hide club dropdown when clicking outside
@@ -2237,24 +2283,24 @@
                 
                 clubTimeout = setTimeout(async () => {
                     try {
-                        const response = await fetch(`/clubs`);
+                        const response = await fetch(`/clubs?q=${encodeURIComponent(query)}`);
                         const clubs = await response.json();
                         
-                        const filteredClubs = clubs.filter(club => 
-                            club.toLowerCase().includes(query.toLowerCase())
-                        ).slice(0, 10);
-                        
                         const dropdown = document.getElementById(dropdownId);
-                        if (filteredClubs.length > 0) {
-                            dropdown.innerHTML = filteredClubs.map(club => `
-                                <div class="p-3 hover:bg-gray-600 cursor-pointer text-white" onclick="selectClubForPage('${club}', '${inputId}', '${dropdownId}')">
-                                    ${club}
-                        </div>
-                            `).join('');
+                        if (clubs.length > 0) {
+                            dropdown.innerHTML = clubs.map(club => {
+                                const clubName = typeof club === 'string' ? club : club.name;
+                                return `
+                                    <div class="p-3 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0" onclick="selectClubForPage('${clubName}', '${inputId}', '${dropdownId}')">
+                                        <div class="font-medium">${clubName}</div>
+                                        ${typeof club !== 'string' ? `<div class="text-sm text-gray-400">${club.country} - ${club.market_value}</div>` : ''}
+                                    </div>
+                                `;
+                            }).join('');
                             dropdown.classList.remove('hidden');
-                } else {
-            dropdown.classList.add('hidden');
-        }
+                        } else {
+                            dropdown.classList.add('hidden');
+                        }
                     } catch (error) {
                         console.error('Club search error:', error);
                     }
@@ -2272,6 +2318,7 @@
         function selectClubForPage(clubName, inputId, dropdownId) {
             document.getElementById(inputId).value = clubName;
             document.getElementById(dropdownId).classList.add('hidden');
+            loadClubInfo(clubName);
         }
 
         // Player comparison functions
