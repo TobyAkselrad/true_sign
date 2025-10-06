@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrueSign Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        .sidebar {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .main-content {
+            background: rgba(15, 23, 42, 0.8);
+        }
+        .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(75, 85, 99, 0.3);
+        }
+        .admin-card {
+            background: rgba(55, 65, 81, 0.4);
+            border: 1px solid rgba(75, 85, 99, 0.5);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <!-- Top Header -->
+    <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+        <div class="flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="text-2xl font-bold">
+                    <span class="text-emerald-400">TRUE</span><span class="text-white">SIGN</span>
+                    <span class="text-red-400 ml-2">ADMIN</span>
+                </div>
+            </div>
+            
+            <!-- User Info -->
+            <div class="flex items-center space-x-4">
+                <div class="text-sm">
+                    <span class="text-gray-400">Bienvenido,</span>
+                    <span class="text-emerald-400 font-semibold" id="adminUsername">Admin</span>
+                </div>
+                <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <i class="fas fa-sign-out-alt mr-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <nav class="sidebar w-64 min-h-screen p-6">
+            <div class="space-y-2">
+                <a href="#dashboard" onclick="showSection('dashboard')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#users" onclick="showSection('users')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                    <i class="fas fa-users"></i>
+                    <span>Usuarios</span>
+                </a>
+                <a href="#analytics" onclick="showSection('analytics')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </a>
+                <a href="#settings" onclick="showSection('settings')" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </a>
+                <a href="/" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition-colors">
+                    <i class="fas fa-home"></i>
+                    <span>Ir a App Principal</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 p-8">
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="section">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Dashboard Administrativo</h1>
+                    <p class="text-gray-400">Panel de control completo para TrueSign</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Usuarios</p>
+                                <p class="text-2xl font-bold text-emerald-400" id="totalUsers">--</p>
+                            </div>
+                            <i class="fas fa-users text-emerald-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">Sesiones Activas</p>
+                                <p class="text-2xl font-bold text-blue-400" id="activeSessions">--</p>
+                            </div>
+                            <i class="fas fa-user-check text-blue-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">Administradores</p>
+                                <p class="text-2xl font-bold text-red-400" id="adminUsers">--</p>
+                            </div>
+                            <i class="fas fa-crown text-red-400 text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card rounded-lg p-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-400 text-sm">Usuarios Regulares</p>
+                                <p class="text-2xl font-bold text-yellow-400" id="regularUsers">--</p>
+                            </div>
+                            <i class="fas fa-user text-yellow-400 text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card rounded-lg p-6">
+                    <h2 class="text-xl font-semibold mb-4">Acciones Rápidas</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <button onclick="showSection('users')" class="admin-card rounded-lg p-4 text-left hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-user-plus text-emerald-400 text-xl mb-2"></i>
+                            <h3 class="font-semibold">Crear Usuario</h3>
+                            <p class="text-gray-400 text-sm">Agregar nuevo usuario al sistema</p>
+                        </button>
+                        
+                        <button onclick="refreshStats()" class="admin-card rounded-lg p-4 text-left hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-sync text-blue-400 text-xl mb-2"></i>
+                            <h3 class="font-semibold">Actualizar Stats</h3>
+                            <p class="text-gray-400 text-sm">Refrescar estadísticas del sistema</p>
+                        </button>
+                        
+                        <button onclick="exportData()" class="admin-card rounded-lg p-4 text-left hover:bg-gray-600 transition-colors">
+                            <i class="fas fa-download text-yellow-400 text-xl mb-2"></i>
+                            <h3 class="font-semibold">Exportar Datos</h3>
+                            <p class="text-gray-400 text-sm">Descargar datos del sistema</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Gestión de Usuarios</h1>
+                    <p class="text-gray-400">Administrar usuarios del sistema</p>
+                </div>
+
+                <!-- Create User Form -->
+                <div class="card rounded-lg p-6 mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Crear Nuevo Usuario</h2>
+                    <form id="createUserForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Nombre de Usuario</label>
+                            <input type="text" id="newUsername" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                            <input type="email" id="newEmail" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Contraseña</label>
+                            <input type="password" id="newPassword" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Rol</label>
+                            <select id="newRole" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none">
+                                <option value="user">Usuario</option>
+                                <option value="admin">Administrador</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 px-6 py-2 rounded-lg font-medium transition-colors">
+                                <i class="fas fa-plus mr-2"></i>Crear Usuario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Users List -->
+                <div class="card rounded-lg p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-xl font-semibold">Lista de Usuarios</h2>
+                        <button onclick="loadUsers()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                            <i class="fas fa-refresh mr-2"></i>Actualizar
+                        </button>
+                    </div>
+                    <div id="usersList" class="space-y-4">
+                        <!-- Users will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div id="analytics-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Analytics del Sistema</h1>
+                    <p class="text-gray-400">Estadísticas y métricas del sistema</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="card rounded-lg p-6">
+                        <h2 class="text-xl font-semibold mb-4">Actividad de Usuarios</h2>
+                        <div id="userActivityChart" class="h-64 flex items-center justify-center text-gray-400">
+                            <i class="fas fa-chart-bar text-4xl"></i>
+                            <p class="ml-4">Gráfico de actividad</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card rounded-lg p-6">
+                        <h2 class="text-xl font-semibold mb-4">Sesiones por Día</h2>
+                        <div id="sessionsChart" class="h-64 flex items-center justify-center text-gray-400">
+                            <i class="fas fa-chart-line text-4xl"></i>
+                            <p class="ml-4">Gráfico de sesiones</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Section -->
+            <div id="settings-section" class="section hidden">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Configuración del Sistema</h1>
+                    <p class="text-gray-400">Ajustes y configuración del sistema</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="card rounded-lg p-6">
+                        <h2 class="text-xl font-semibold mb-4">Configuración General</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Nombre del Sistema</label>
+                                <input type="text" value="TrueSign" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Versión</label>
+                                <input type="text" value="2.0" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card rounded-lg p-6">
+                        <h2 class="text-xl font-semibold mb-4">Configuración de Seguridad</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Duración de Sesión (horas)</label>
+                                <input type="number" value="24" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Intentos de Login Máximos</label>
+                                <input type="number" value="5" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-emerald-400 focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="fixed top-4 right-4 z-50"></div>
+
+    <script>
+        let currentUser = null;
+        let sessionToken = null;
+
+        // Initialize admin panel
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            sessionToken = localStorage.getItem('adminSessionToken');
+            if (!sessionToken) {
+                window.location.href = '/admin/login';
+                return;
+            }
+
+            // Validate session
+            validateSession();
+            
+            // Load initial data
+            loadStats();
+            loadUsers();
+            
+            // Show dashboard by default
+            showSection('dashboard');
+        });
+
+        function validateSession() {
+            fetch('/admin/validate-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ session_token: sessionToken })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    localStorage.removeItem('adminSessionToken');
+                    window.location.href = '/admin/login';
+                    return;
+                }
+                
+                currentUser = data.user;
+                document.getElementById('adminUsername').textContent = currentUser.username;
+            })
+            .catch(error => {
+                console.error('Error validating session:', error);
+                localStorage.removeItem('adminSessionToken');
+                window.location.href = '/admin/login';
+            });
+        }
+
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName + '-section').classList.remove('hidden');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('bg-gray-700', 'text-white');
+                item.classList.add('text-gray-300');
+            });
+            
+            // Highlight current nav item
+            event.target.closest('.nav-item').classList.remove('text-gray-300');
+            event.target.closest('.nav-item').classList.add('bg-gray-700', 'text-white');
+        }
+
+        function loadStats() {
+            fetch('/admin/stats')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('totalUsers').textContent = data.stats.total_users;
+                    document.getElementById('activeSessions').textContent = data.stats.active_sessions;
+                    document.getElementById('adminUsers').textContent = data.stats.admin_users;
+                    document.getElementById('regularUsers').textContent = data.stats.regular_users;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading stats:', error);
+                showMessage('Error cargando estadísticas', 'error');
+            });
+        }
+
+        function loadUsers() {
+            fetch('/admin/users')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayUsers(data.users);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading users:', error);
+                showMessage('Error cargando usuarios', 'error');
+            });
+        }
+
+        function displayUsers(users) {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '';
+
+            Object.values(users).forEach(user => {
+                const userCard = document.createElement('div');
+                userCard.className = 'admin-card rounded-lg p-4';
+                userCard.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 bg-emerald-600 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold">${user.username}</h3>
+                                <p class="text-gray-400 text-sm">${user.email}</p>
+                                <p class="text-xs ${user.role === 'admin' ? 'text-red-400' : 'text-blue-400'}">${user.role.toUpperCase()}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-gray-400 text-sm">Creado: ${new Date(user.created_at).toLocaleDateString()}</span>
+                            ${user.username !== 'admin' ? `
+                                <button onclick="deleteUser('${user.username}')" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-sm transition-colors">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                usersList.appendChild(userCard);
+            });
+        }
+
+        function refreshStats() {
+            loadStats();
+            showMessage('Estadísticas actualizadas', 'success');
+        }
+
+        function exportData() {
+            fetch('/admin/export-data')
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'truesign-data.json';
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error exporting data:', error);
+                showMessage('Error exportando datos', 'error');
+            });
+        }
+
+        function deleteUser(username) {
+            if (confirm(`¿Estás seguro de que quieres eliminar al usuario ${username}?`)) {
+                fetch('/admin/delete-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: username })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showMessage('Usuario eliminado exitosamente', 'success');
+                        loadUsers();
+                        loadStats();
+                    } else {
+                        showMessage(data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting user:', error);
+                    showMessage('Error eliminando usuario', 'error');
+                });
+            }
+        }
+
+        function logout() {
+            if (sessionToken) {
+                fetch('/admin/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ session_token: sessionToken })
+                });
+            }
+            
+            localStorage.removeItem('adminSessionToken');
+            window.location.href = '/admin/login';
+        }
+
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `px-6 py-3 rounded-lg mb-4 ${
+                type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
+            } text-white`;
+            messageDiv.textContent = message;
+            
+            container.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Handle create user form
+        document.getElementById('createUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('newUsername').value,
+                email: document.getElementById('newEmail').value,
+                password: document.getElementById('newPassword').value,
+                role: document.getElementById('newRole').value
+            };
+            
+            fetch('/admin/create-user', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('Usuario creado exitosamente', 'success');
+                    document.getElementById('createUserForm').reset();
+                    loadUsers();
+                    loadStats();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error creating user:', error);
+                showMessage('Error creando usuario', 'error');
+            });
+        });
+    </script>
+</body>
+</html>
