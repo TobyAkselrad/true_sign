@@ -121,23 +121,23 @@ ROI Objetivo: 30%
 
 ### **Kevin Lomónaco → FC Barcelona**
 
-| Métrica                       | Valor  | Fuente                |
-| ----------------------------- | ------ | --------------------- |
-| **Valor de Mercado**          | €12.0M | Transfermarkt         |
-| **Precio Máximo Recomendado** | €15.8M | UltimateTransferModel |
-| **Resale Value**              | €50.6M | ValueChangePredictor  |
-| **ROI Estimado**              | 200%   | ML Prediction         |
-| **Cambio Predicho**           | +200%  | ML Prediction         |
-| **Confianza**                 | 77.5%  | Model Confidence      |
-| **Club Multiplier**           | 1.4x   | Barcelona (Tier 1)    |
+| Métrica                       | Valor   | Fuente                |
+| ----------------------------- | ------- | --------------------- |
+| **Valor de Mercado**          | €12.0M  | Transfermarkt         |
+| **Precio Máximo Recomendado** | €129.4M | UltimateTransferModel |
+| **Resale Value**              | €50.6M  | ValueChangePredictor  |
+| **ROI Estimado**              | 200%    | ML Prediction         |
+| **Cambio Predicho**           | +200%   | ML Prediction         |
+| **Confianza**                 | 75%     | Model Confidence      |
+| **Club Multiplier**           | 1.4x    | Barcelona (Tier 1)    |
 
 ### **Los 5 Valores Fundamentales**
 
 - **Valor Marketing**: €4.7M
-- **Valor Deportivo**: €6.7M
-- **Valor Reventa**: €9.4M
-- **Transferencias Similares**: €3.0M
-- **Valores de Mercado**: €3.6M
+- **Valor Deportivo**: €8.7M
+- **Valor Reventa**: €28.8M
+- **Transferencias Similares**: €4.2M
+- **Valores de Mercado**: €12.0M
 
 ## 🚀 Tecnologías Utilizadas
 

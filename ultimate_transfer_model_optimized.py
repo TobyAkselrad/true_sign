@@ -560,7 +560,11 @@ class UltimateTransferModelOptimized:
             features_array = features.reshape(1, -1)
             features_scaled = self.scaler.transform(features_array)
             prediction = self.value_change_model.predict(features_scaled)[0]
-            return max(-50, min(200, prediction))  # Limitar entre -50% y +200%
+            print(f"🔍 DEBUG - Value change prediction RAW: {prediction}")
+            # Limitar a un rango más realista para transferencias
+            limited_prediction = max(-30, min(50, prediction))  # Limitar entre -30% y +50%
+            print(f"🔍 DEBUG - Value change prediction LIMITED: {limited_prediction}")
+            return limited_prediction
         except Exception as e:
             raise ValueError(f"❌ ERROR EN MODELO ML: No se puede predecir cambio de valor: {e}")
     
@@ -591,23 +595,36 @@ class UltimateTransferModelOptimized:
         """Combinar predicciones de manera inteligente"""
         market_value = player_data.get('market_value', 10000000)
         
-        # Precio base del ensemble
+        # Usar directamente el ensemble prediction (está funcionando bien)
         base_price = ensemble_pred
+        print(f"🔍 DEBUG - Ensemble prediction (usado): {ensemble_pred}")
+        print(f"🔍 DEBUG - Market value: {market_value}")
+        print(f"🔍 DEBUG - Base price (ensemble): {base_price}")
         
-        # Ajustar por cambio de valor predicho
+        # Ajustar por cambio de valor predicho (limitado para evitar valores extremos)
         if value_change != 0:
-            value_adjustment = 1.0 + (value_change * 0.3)
+            print(f"🔍 DEBUG - Value change recibido: {value_change}")
+            # Limitar el cambio de valor a máximo 10% de ajuste
+            limited_change = min(abs(value_change), 10) / 100.0
+            value_adjustment = 1.0 + (limited_change * 0.05)  # Máximo 0.5% de ajuste
+            print(f"🔍 DEBUG - Limited change: {limited_change}, Adjustment: {value_adjustment}")
             base_price *= value_adjustment
+            print(f"🔍 DEBUG - Base price after value adjustment: {base_price}")
         
-        # Ajustar por tasa de éxito
-        success_adjustment = 0.8 + (success_rate * 0.4)  # Entre 0.8 y 1.2
+        # Ajustar por tasa de éxito (reducido para evitar acumulación)
+        success_adjustment = 0.95 + (success_rate * 0.1)  # Entre 0.95 y 1.05
         base_price *= success_adjustment
         
         # Asegurar mínimo razonable
         min_price = market_value * 1.2
         max_price = market_value * 5.0
         
-        return max(min_price, min(max_price, base_price))
+        final_price = max(min_price, min(max_price, base_price))
+        print(f"🔍 DEBUG - Final price before limits: {base_price}")
+        print(f"🔍 DEBUG - Min price: {min_price}, Max price: {max_price}")
+        print(f"🔍 DEBUG - Final price after limits: {final_price}")
+        
+        return final_price
     
     def _calculate_confidence(self, ensemble_pred, value_change, success_rate):
         """Calcular confianza basada en los modelos disponibles"""
@@ -662,10 +679,14 @@ class UltimateTransferModelOptimized:
         return 0
     
     def _encode_club(self, club, encoder):
-        """Codificar club"""
+        """Codificar club (normalizado para evitar valores extremos)"""
         if encoder:
             try:
-                return encoder.transform([club])[0]
+                encoded_value = encoder.transform([club])[0]
+                # Normalizar valores extremos (más de 50 → dividir por 50)
+                if encoded_value > 50:
+                    return encoded_value / 50
+                return encoded_value
             except:
                 pass
         return 0

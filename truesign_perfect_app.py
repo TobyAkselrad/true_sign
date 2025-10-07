@@ -2053,9 +2053,9 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
             'adaptation_months': similar_analysis.get('adaptation_months', 6)
         }
         
-        # Usar multiplicador del club del modelo híbrido
+        # El club multiplier ya se aplicó en el modelo híbrido, no aplicar nuevamente
         club_multiplier = hybrid_result.get('club_multiplier_enhanced', hybrid_result.get('club_multiplier', 1.0))
-        precio_maximo_ajustado = final_price * club_multiplier
+        precio_maximo_ajustado = final_price  # Ya incluye el club multiplier
         
         # Aplicar ajuste inflacionario del 10%
         inflation_adjustment = 1.10
