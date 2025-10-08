@@ -1,14 +1,1 @@
-services:
-  - type: web
-    name: truesign-app
-    env: python
-    buildCommand: ./build.sh
-    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 4 --timeout 120 truesign_perfect_app:app
-    plan: starter
-    envVars:
-      - key: FLASK_ENV
-        value: production
-      - key: PYTHONPATH
-        value: /opt/render/project/src
-      - key: PYTHONUNBUFFERED
-        value: 1
+config/render.yaml

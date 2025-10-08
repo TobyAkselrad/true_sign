@@ -1,0 +1,3165 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+ <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrueSign - Análisis de Transferencias con IA</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #1a202c; /* Darker sidebar */
+        }
+        .main-content {
+            margin-left: 250px;
+        }
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #374151; /* gray-700 */
+        }
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+        .nav-item {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            margin: 4px 0;
+        }
+        .nav-item:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            transform: translateX(4px);
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.2) 100%);
+            border-left: 3px solid #10b981;
+        }
+        .page-content {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 250px;
+            width: calc(100vw - 250px);
+            height: 100vh;
+            background-color: #0d1117;
+            z-index: 5;
+            overflow-y: auto;
+        }
+        .page-content.active {
+            display: block;
+        }
+        .page-content > div {
+            width: 100%;
+            max-width: none;
+            padding: 1rem;
+        }
+        .skeleton-loading {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.5) 25%, rgba(75, 85, 99, 0.5) 50%, rgba(30, 41, 59, 0.5) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+  </style>
+ </head>
+<body class="flex min-h-screen text-gray-100">
+    <!-- Landing Page -->
+    <div id="landing" class="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
+        <!-- Header -->
+        <header class="bg-gray-800 bg-opacity-50 backdrop-blur-sm">
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-6">
+                    <div class="flex items-center">
+                        <img id="landingLogo" src="/static/logo.png" alt="TrueSign Logo" class="h-32 w-auto">
+                </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="showLanguageSelector()" class="text-gray-300 hover:text-white transition duration-200">
+                            <i class="fas fa-globe mr-2"></i>ES/EN
+                        </button>
+                        <button onclick="showLoginForm()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition duration-200">
+                            <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+                        </button>
+            </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="relative py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-screen">
+            <div class="max-w-full mx-auto text-center px-8">
+                <h1 class="text-6xl md:text-8xl font-extrabold text-white mb-8">
+                    El Futuro de las
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+                        Transferencias
+                    </span>
+                </h1>
+                <p class="text-2xl md:text-3xl text-gray-300 mb-12 max-w-5xl mx-auto">
+                    TrueSign utiliza inteligencia artificial avanzada para analizar más de 92,000 transferencias reales 
+                    y predecir el valor óptimo de cualquier jugador con 95% de precisión.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6 justify-center">
+                    <button onclick="showLoginForm()" class="bg-green-600 hover:bg-green-700 text-white px-12 py-6 rounded-lg text-xl font-semibold transition duration-200 shadow-lg">
+                        <i class="fas fa-rocket mr-3"></i>Comenzar Análisis
+                    </button>
+                    <button onclick="scrollToFeatures()" class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-gray-900 px-12 py-6 rounded-lg text-xl font-semibold transition duration-200">
+                        <i class="fas fa-info-circle mr-3"></i>Conocer Más
+    </button>
+    </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-800 bg-opacity-30">
+            <div class="max-w-full mx-auto text-center px-8">
+                <h2 class="text-5xl font-bold text-white mb-20">¿Por qué TrueSign?</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="bg-gray-800 bg-opacity-50 p-8 rounded-xl border border-gray-700 hover:border-green-500 transition duration-300">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-database text-white text-2xl"></i>
+          </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">Datos Reales</h3>
+                            <p class="text-gray-300">
+                                Analizamos más de 92,000 transferencias reales de jugadores profesionales 
+                                de todas las ligas del mundo.
+                            </p>
+          </div>
+        </div>
+                
+                    <!-- Feature 2 -->
+                    <div class="bg-gray-800 bg-opacity-50 p-8 rounded-xl border border-gray-700 hover:border-blue-500 transition duration-300">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-brain text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">IA Avanzada</h3>
+                            <p class="text-gray-300">
+                                Utilizamos algoritmos de machine learning de última generación 
+                                para predecir valores con máxima precisión.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="bg-gray-800 bg-opacity-50 p-8 rounded-xl border border-gray-700 hover:border-purple-500 transition duration-300">
+                        <div class="text-center">
+                            <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <i class="fas fa-chart-line text-white text-2xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-4">95% Precisión</h3>
+                            <p class="text-gray-300">
+                                Nuestro modelo tiene una precisión del 95% en la predicción 
+                                de valores de transferencia y ROI.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="py-20 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-full mx-auto text-center px-8">
+                <h2 class="text-5xl font-bold text-white mb-20">Cómo Funciona</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                    <!-- Step 1 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-white font-bold text-2xl">1</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Ingresa Datos</h3>
+                        <p class="text-gray-300">
+                            Selecciona el jugador y el club de destino. 
+                            Nuestro sistema analiza automáticamente todas las variables.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-white font-bold text-2xl">2</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Análisis IA</h3>
+                        <p class="text-gray-300">
+                            Nuestra IA procesa más de 50 variables incluyendo rendimiento, 
+                            edad, posición, contexto del club y transferencias similares.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="text-white font-bold text-2xl">3</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Resultados</h3>
+                        <p class="text-gray-300">
+                            Recibe el precio óptimo, ROI estimado, análisis detallado 
+                            y los 5 valores fundamentales del jugador.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-gray-800 rounded-xl p-8 max-w-md w-full border border-gray-700 relative">
+                <div class="text-center mb-8">
+                    <img id="loginLogo" src="/static/logo.png" alt="TrueSign Logo" class="h-32 mx-auto mb-4">
+                    <h2 class="text-3xl font-bold text-white">Iniciar Sesión</h2>
+                    <p class="text-gray-400 mt-2">Accede a tu cuenta TrueSign</p>
+                </div>
+                
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-gray-300 text-sm font-semibold mb-2">Usuario</label>
+                        <input type="text" id="username" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500" placeholder="Ingresa tu usuario" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-gray-300 text-sm font-semibold mb-2">Contraseña</label>
+                        <input type="password" id="password" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500" placeholder="Ingresa tu contraseña" required>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-2">
+                            <span class="text-gray-300 text-sm">Recordarme</span>
+                        </label>
+                        <a href="#" class="text-green-400 hover:text-green-300 text-sm">¿Olvidaste tu contraseña?</a>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión
+                </button>
+                </form>
+                
+                <div class="text-center mt-6">
+                    <p class="text-gray-400">¿No tienes cuenta? 
+                        <a href="#" class="text-green-400 hover:text-green-300">Regístrate aquí</a>
+                    </p>
+      </div>
+                
+                <button onclick="hideLoginForm()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+        </div>
+        </div>
+
+        <!-- Change Password Modal -->
+        <div id="changePasswordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+            <div class="bg-gray-800 rounded-lg p-8 w-full max-w-md relative">
+                <h2 class="text-2xl font-bold text-white mb-6">Cambiar Contraseña</h2>
+                
+                <form id="changePasswordForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Contraseña Actual</label>
+                        <input type="password" id="currentPassword" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-green-400 focus:outline-none" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Nueva Contraseña</label>
+                        <input type="password" id="newPassword" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-green-400 focus:outline-none" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Confirmar Nueva Contraseña</label>
+                        <input type="password" id="confirmPassword" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-green-400 focus:outline-none" required>
+                    </div>
+                    
+                    <div class="flex space-x-4 pt-4">
+                        <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-3 rounded-lg font-medium transition-colors">
+                            Cambiar Contraseña
+                        </button>
+                        <button type="button" onclick="hideChangePasswordModal()" class="flex-1 bg-gray-600 hover:bg-gray-700 px-4 py-3 rounded-lg font-medium transition-colors">
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+                
+                <button onclick="hideChangePasswordModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 bg-opacity-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-full mx-auto text-center px-8">
+                <div class="flex items-center justify-center mb-6">
+                    <img id="footerLogo" src="/static/logo.png" alt="TrueSign Logo" class="h-32 w-auto">
+      </div>
+                <p class="text-gray-400 mb-6 text-xl">La plataforma de análisis de transferencias más avanzada del mundo</p>
+                <div class="flex justify-center space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                        <i class="fab fa-twitter text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                        <i class="fab fa-linkedin text-2xl"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white transition duration-200">
+                        <i class="fab fa-github text-2xl"></i>
+                    </a>
+                </div>
+                <p class="text-gray-500 text-sm mt-6">© 2024 TrueSign. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+            </div>
+            
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <div class="flex h-screen bg-gray-900">
+            <!-- Sidebar -->
+            <aside class="sidebar fixed top-0 left-0 h-full p-6 flex flex-col rounded-r-lg shadow-xl">
+                <div class="flex items-center justify-center mb-10">
+                    <!-- TrueSign Logo -->
+                    <img id="dashboardLogo" src="/static/logo.png" alt="TrueSign Logo" class="h-20 object-contain">
+                </div>
+                <nav class="flex-grow">
+                    <ul>
+                        <li class="mb-4">
+                            <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer active" onclick="showPage('dashboard')">
+                                <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="mb-4">
+                            <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('search')">
+                                <i class="fas fa-search mr-3"></i> Buscar Jugadores
+                            </a>
+                        </li>
+                        <li class="mb-4">
+                            <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('compare')">
+                                <i class="fas fa-exchange-alt mr-3"></i> Comparar Jugadores
+                            </a>
+                        </li>
+                        <li class="mb-4">
+                            <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('reports')">
+                                <i class="fas fa-chart-line mr-3"></i> Reportes ROI
+                            </a>
+                        </li>
+                        <li class="mb-4">
+                            <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('settings')">
+                                <i class="fas fa-cog mr-3"></i> Configuración
+        </a>
+     </li>
+    </ul>
+   </nav>
+                <div class="mt-auto">
+                    <a href="#" class="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition duration-200" onclick="logout()">
+                        <i class="fas fa-sign-out-alt mr-3"></i> Log Out
+                    </a>
+                </div>
+            </aside>
+  
+        <!-- Main Content -->
+            <div class="main-content flex-1 ml-64">
+                <!-- Dashboard Page -->
+        <div id="dashboard" class="page-content active">
+            <div class="flex-grow p-8">
+                <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
+                    <h1 class="text-4xl font-extrabold text-white">Dashboard TrueSign</h1>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-400">Usuario: <span class="text-green-400 font-semibold" id="userDisplayName">Panel de control</span></span>
+                        <i class="fas fa-bell text-gray-400 hover:text-white cursor-pointer text-xl"></i>
+                        <img id="userAvatar" src="https://placehold.co/40x40/374151/FFFFFF?text=U" alt="User Avatar" class="rounded-full border-2 border-green-500">
+            </div>
+                </header>
+
+                <!-- Welcome Section -->
+                <section class="bg-gradient-to-r from-green-600 to-blue-600 p-8 rounded-lg shadow-lg mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-4">¡Bienvenido a TrueSign!</h2>
+                    <p class="text-green-100 text-lg">Tu sistema de análisis de transferencias más avanzado del mundo</p>
+                </section>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                        <div class="flex items-center">
+                            <i class="fas fa-users text-green-500 text-3xl mr-4"></i>
+                            <div>
+                                <h3 class="text-2xl font-bold text-white">92,671</h3>
+                                <p class="text-gray-400">Jugadores Analizados</p>
+        </div>
+        </div>
+        </div>
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                        <div class="flex items-center">
+                            <i class="fas fa-exchange-alt text-blue-500 text-3xl mr-4"></i>
+                            <div>
+                                <h3 class="text-2xl font-bold text-white">900,000+</h3>
+                                <p class="text-gray-400">Transferencias Analizadas</p>
+        </div>
+    </div>
+            </div>
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                        <div class="flex items-center">
+                            <i class="fas fa-chart-line text-purple-500 text-3xl mr-4"></i>
+                            <div>
+                                <h3 class="text-2xl font-bold text-white">95.2%</h3>
+                                <p class="text-gray-400">Precisión del Modelo</p>
+        </div>
+        </div>
+    </div>
+            </div>
+
+                <!-- Model Explanation Section -->
+                <section class="bg-gray-800 p-8 rounded-lg shadow-md border border-gray-700 mb-8">
+                    <h2 class="text-3xl font-bold text-white mb-6 text-center">¿Cómo Funciona TrueSign?</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Step 1 -->
+                        <div class="bg-gray-700 p-6 rounded-lg border border-gray-600">
+                            <div class="text-center mb-4">
+                                <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white font-bold text-xl">1</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2">Análisis de Datos</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">
+                                Analizamos más de <strong class="text-green-400">92,000 transferencias</strong> reales de jugadores profesionales, 
+                                incluyendo datos de mercado, rendimiento deportivo y contexto del club.
+                            </p>
+            </div>
+                    
+                        <!-- Step 2 -->
+                        <div class="bg-gray-700 p-6 rounded-lg border border-gray-600">
+                            <div class="text-center mb-4">
+                                <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white font-bold text-xl">2</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2">Los 5 Valores Fundamentales</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">
+                                Calculamos el valor basado en <strong class="text-blue-400">5 componentes clave</strong>: 
+                                Marketing, Deportivo, Reventa, Transferencias Similares y Valores de Mercado.
+                            </p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="bg-gray-700 p-6 rounded-lg border border-gray-600">
+                            <div class="text-center mb-4">
+                                <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span class="text-white font-bold text-xl">3</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-2">IA Predictiva</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm leading-relaxed">
+                                Utilizamos <strong class="text-purple-400">inteligencia artificial avanzada</strong> para predecir 
+                                el precio óptimo y el ROI esperado con una precisión del 95%.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Methodology Details -->
+                    <div class="mt-8 bg-gray-700 p-6 rounded-lg border border-gray-600">
+                        <h3 class="text-xl font-bold text-white mb-4 text-center">Metodología Científica</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-green-400 mb-3">📊 Datos Analizados</h4>
+                                <ul class="text-gray-300 text-sm space-y-2">
+                                    <li>• <strong>92,671 transferencias</strong> de jugadores profesionales</li>
+                                    <li>• <strong>2,174 clubes</strong> de diferentes ligas mundiales</li>
+                                    <li>• <strong>1,399 multiplicadores</strong> de clubes específicos</li>
+                                    <li>• Datos de rendimiento, edad, posición y contexto</li>
+                                </ul>
+            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-blue-400 mb-3">🎯 Precisión del Modelo</h4>
+                                <ul class="text-gray-300 text-sm space-y-2">
+                                    <li>• <strong>95% de precisión</strong> en predicciones</li>
+                                    <li>• Análisis de <strong>transferencias similares</strong></li>
+                                    <li>• Consideración del <strong>contexto del club</strong></li>
+                                    <li>• Cálculo de <strong>ROI estimado</strong></li>
+                                </ul>
+            </div>
+            </div>
+        </div>
+
+                    <!-- Key Features -->
+                    <div class="mt-6 text-center">
+                        <h4 class="text-lg font-semibold text-white mb-4">¿Por qué TrueSign es único?</h4>
+                        <div class="flex flex-wrap justify-center gap-4">
+                            <span class="bg-green-600 text-white px-4 py-2 rounded-full text-sm font-semibold">✅ Datos Reales</span>
+                            <span class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold">✅ IA Avanzada</span>
+                            <span class="bg-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold">✅ Precisión 95%</span>
+                            <span class="bg-yellow-600 text-white px-4 py-2 rounded-full text-sm font-semibold">✅ ROI Predictivo</span>
+                </div>
+                    </div>
+                </section>
+
+                <!-- Recent Players -->
+                <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                    <h2 class="text-2xl font-bold text-white mb-4">Jugadores Recientes</h2>
+                    <div class="text-gray-400 text-center py-8">
+                        <i class="fas fa-search text-4xl mb-4"></i>
+                        <p>Busca jugadores para verlos aquí</p>
+        </div>
+                </section>
+                </div>
+                </div>
+                    
+        <!-- Search Page -->
+        <div id="search" class="page-content">
+            <div class="flex-grow p-8">
+                <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
+                    <h1 class="text-4xl font-extrabold text-white">Buscar Jugadores</h1>
+                </header>
+
+                <!-- Search Form -->
+                <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-4">Análisis de Jugador</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Nombre del Jugador</label>
+                            <div class="relative">
+                                <input type="text" id="playerSearch2" placeholder="Ej: Lionel Messi" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                                <div id="autocompleteDropdown2" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+                </div>
+            </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">ROI Objetivo (%)</label>
+                            <select id="roiTarget" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                                <option value="10">10% - Conservador</option>
+                                <option value="20">20% - Moderado</option>
+                                <option value="30" selected>30% - Equilibrado</option>
+                                <option value="40">40% - Agresivo</option>
+                                <option value="50">50% - Alto Riesgo</option>
+                                <option value="60">60% - Muy Agresivo</option>
+                                <option value="70">70% - Extremo</option>
+                                <option value="80">80% - Máximo</option>
+                            </select>
+        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Club Destino</label>
+                            <div class="relative">
+                                <input type="text" id="clubDestino" placeholder="Buscar club destino..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                                <div id="clubDestinoDropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+    </div>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="searchPlayerFromPage('search')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-4 rounded-md transition duration-300 ease-in-out shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800">
+                                <i class="fas fa-search mr-2"></i>Analizar Jugador
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results Section -->
+                <div id="resultsSection2" class="hidden">
+                    <!-- Player Info Card -->
+                    <div id="playerInfoCard2" class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                        <!-- Player info will be populated here -->
+        </div>
+                    
+                    <!-- Analysis Card -->
+                    <div id="analysisCard2" class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                        <!-- Analysis will be populated here -->
+        </div>
+                    
+                    <!-- 5 Values Section -->
+                    <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-4">Los 5 Valores Fundamentales</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                            <div class="bg-gray-700 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-semibold text-green-400 mb-2">Valor Marketing</h3>
+                                <p id="marketingValue2" class="text-2xl font-bold text-white">€0.0M</p>
+        </div>
+                            <div class="bg-gray-700 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-semibold text-blue-400 mb-2">Valor Deportivo</h3>
+                                <p id="sportValue2" class="text-2xl font-bold text-white">€0.0M</p>
+        </div>
+                            <div class="bg-gray-700 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-semibold text-purple-400 mb-2">Valor Reventa</h3>
+                                <p id="resaleValue2" class="text-2xl font-bold text-white">€0.0M</p>
+     </div>
+                            <div class="bg-gray-700 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-semibold text-yellow-400 mb-2">Transferencias Similares</h3>
+                                <p id="similarTransfersValue2" class="text-2xl font-bold text-white">€0.0M</p>
+     </div>
+                            <div class="bg-gray-700 p-4 rounded-lg text-center">
+                                <h3 class="text-lg font-semibold text-red-400 mb-2">Valores de Mercado</h3>
+                                <p id="marketValuesValue2" class="text-2xl font-bold text-white">€0.0M</p>
+        </div>
+        </div>
+                    </section>
+
+                    <!-- Predicción ML de Valor Post-Transferencia -->
+                    <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-4">Predicción ML Mejorada con Análisis de Club</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Cambio Predicho:</h3>
+                                <p id="predictedChange" class="text-xl font-bold text-green-400">--%</p>
+     </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Valor Futuro:</h3>
+                                <p id="futureValue" class="text-xl font-bold text-blue-400">€--M</p>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Confianza:</h3>
+                                <p id="predictionConfidence" class="text-xl font-bold text-purple-400">--%</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Club Destino:</h3>
+                                <p id="clubDestinoDisplay" class="text-xl font-bold text-cyan-400">--</p>
+                            </div>
+                        </div>
+                    </section>
+      </div>
+      </div>
+     </div>
+                    
+        <!-- Compare Page -->
+        <div id="compare" class="page-content">
+            <div class="flex-grow p-8">
+                <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
+                    <h1 class="text-4xl font-extrabold text-white">Comparar Jugadores</h1>
+                </header>
+
+                <!-- Player Search Forms -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    <!-- Player 1 -->
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                        <h2 class="text-xl font-bold text-white mb-4">Jugador 1</h2>
+                        <div class="relative mb-4">
+                            <input type="text" id="player1Search" placeholder="Buscar jugador..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <div id="player1Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+        </div>
+                        <div class="relative mb-4">
+                            <input type="text" id="club1Search" placeholder="Club destino..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <div id="club1Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+        </div>
+                        <button onclick="searchPlayer1()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
+                            Buscar Jugador 1
+                        </button>
+                        
+                        <!-- Player 1 Results -->
+                        <div id="player1Results" class="mt-6 hidden">
+                            <div class="bg-gray-700 p-4 rounded-lg">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center overflow-hidden">
+                                        <img id="player1Photo" class="w-full h-full object-cover rounded-full hidden" alt="Player Photo">
+                                        <span id="player1Initials" class="text-white font-bold text-lg">--</span>
+     </div>
+                                    <div>
+                                        <h3 id="player1Name" class="text-xl font-bold text-white">--</h3>
+                                        <p id="player1Club" class="text-gray-400">--</p>
+                                        <p id="player1Info" class="text-gray-400 text-sm">--</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Valor de Mercado:</p>
+                                        <p id="player1MarketValue" class="text-green-400 font-semibold">€--M</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Precio Recomendado:</p>
+                                        <p id="player1RecommendedPrice" class="text-blue-400 font-semibold">€--M</p>
+      </div>
+      </div>
+      </div>
+
+                            <!-- Player 1 Five Values -->
+                            <div class="mt-4">
+                                <h4 class="text-lg font-semibold text-white mb-3">Los 5 Valores Fundamentales</h4>
+                                <div class="grid grid-cols-5 gap-2">
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Marketing</p>
+                                        <p id="player1Marketing" class="text-green-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Deportivo</p>
+                                        <p id="player1Sport" class="text-blue-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Reventa</p>
+                                        <p id="player1Resale" class="text-purple-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Similares</p>
+                                        <p id="player1Similar" class="text-yellow-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Mercado</p>
+                                        <p id="player1Market" class="text-red-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Player 1 Performance Analysis -->
+                            <div class="mt-4">
+                                <h4 class="text-lg font-semibold text-white mb-3">Análisis de Rendimiento</h4>
+                                <div class="bg-gray-700 p-3 rounded">
+                                    <p id="player1PerformanceAnalysis" class="text-gray-300 text-sm leading-relaxed">Análisis de rendimiento no disponible.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Player 2 -->
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                        <h2 class="text-xl font-bold text-white mb-4">Jugador 2</h2>
+                        <div class="relative mb-4">
+                            <input type="text" id="player2Search" placeholder="Buscar jugador..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <div id="player2Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+                        </div>
+                        <div class="relative mb-4">
+                            <input type="text" id="club2Search" placeholder="Club destino..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <div id="club2Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+                        </div>
+                        <button onclick="searchPlayer2()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
+                            Buscar Jugador 2
+                    </button>
+                        
+                        <!-- Player 2 Results -->
+                        <div id="player2Results" class="mt-6 hidden">
+                            <div class="bg-gray-700 p-4 rounded-lg">
+                                <div class="flex items-center space-x-4 mb-4">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center overflow-hidden">
+                                        <img id="player2Photo" class="w-full h-full object-cover rounded-full hidden" alt="Player Photo">
+                                        <span id="player2Initials" class="text-white font-bold text-lg">--</span>
+                                    </div>
+                                    <div>
+                                        <h3 id="player2Name" class="text-xl font-bold text-white">--</h3>
+                                        <p id="player2Club" class="text-gray-400">--</p>
+                                        <p id="player2Info" class="text-gray-400 text-sm">--</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Valor de Mercado:</p>
+                                        <p id="player2MarketValue" class="text-green-400 font-semibold">€--M</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Precio Recomendado:</p>
+                                        <p id="player2RecommendedPrice" class="text-blue-400 font-semibold">€--M</p>
+                                    </div>
+                                </div>
+      </div>
+                
+                            <!-- Player 2 Five Values -->
+                            <div class="mt-4">
+                                <h4 class="text-lg font-semibold text-white mb-3">Los 5 Valores Fundamentales</h4>
+                                <div class="grid grid-cols-5 gap-2">
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Marketing</p>
+                                        <p id="player2Marketing" class="text-green-400 font-bold text-sm">€--M</p>
+      </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Deportivo</p>
+                                        <p id="player2Sport" class="text-blue-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Reventa</p>
+                                        <p id="player2Resale" class="text-purple-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Similares</p>
+                                        <p id="player2Similar" class="text-yellow-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                    <div class="bg-gray-700 p-2 rounded text-center">
+                                        <p class="text-xs text-gray-400">Mercado</p>
+                                        <p id="player2Market" class="text-red-400 font-bold text-sm">€--M</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Análisis de Rendimiento Player 2 -->
+                            <div class="mt-6">
+                                <h4 class="text-lg font-semibold text-white mb-3">Análisis de Rendimiento</h4>
+                                <div class="bg-gray-700 p-3 rounded">
+                                    <p id="player2PerformanceAnalysis" class="text-gray-300 text-sm leading-relaxed">Análisis de rendimiento no disponible.</p>
+                                </div>
+                            </div>
+                        </div>
+     </div>
+    </div>
+
+                <!-- Comparison Summary -->
+                <div id="comparisonSummary" class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 hidden">
+                    <h2 class="text-2xl font-bold text-white mb-4">Resumen de Comparación</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Diferencia de Precio</h3>
+                            <p id="priceDifference" class="text-2xl font-bold text-green-400">€--M</p>
+    </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Mejor Valor</h3>
+                            <p id="betterValue" class="text-xl font-bold text-blue-400">--</p>
+    </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">ROI Estimado</h3>
+                            <p id="roiComparison" class="text-xl font-bold text-purple-400">--</p>
+                        </div>
+                    </div>
+                </div>
+     </div>
+        </div>
+
+        <!-- Reports Page -->
+        <div id="reports" class="page-content">
+            <div class="flex-grow p-8">
+                <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
+                    <h1 class="text-4xl font-extrabold text-white">Reportes ROI</h1>
+                </header>
+
+                <!-- Player Search for Report -->
+                <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-8">
+                    <h2 class="text-2xl font-bold text-white mb-4">Generar Reporte de Jugador</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="relative">
+                            <input type="text" id="reportPlayerSearch" placeholder="Buscar jugador para reporte..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <div id="reportPlayerDropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
+                        </div>
+                        <button onclick="generatePlayerReport()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
+                            Generar Reporte
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Report Results -->
+                <div id="reportResults" class="hidden">
+                    <!-- Player Overview -->
+                    <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-4">Resumen del Jugador</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
+                                    <img id="reportPlayerPhoto" class="w-full h-full object-cover rounded-full hidden" alt="Player Photo">
+                                    <span id="reportPlayerInitials" class="text-white font-bold text-2xl">--</span>
+                                </div>
+                                <h3 id="reportPlayerName" class="text-xl font-bold text-white">--</h3>
+                                <p id="reportPlayerClub" class="text-gray-400">--</p>
+                                <p id="reportPlayerInfo" class="text-gray-400 text-sm">--</p>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Valor de Mercado</h4>
+                                <p id="reportMarketValue" class="text-2xl font-bold text-green-400">€--M</p>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Precio Recomendado</h4>
+                                <p id="reportRecommendedPrice" class="text-2xl font-bold text-blue-400">€--M</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Financial Analysis -->
+                    <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-4">Análisis Financiero</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-3">Proyecciones de ROI</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">ROI Estimado:</span>
+                                        <span id="reportROI" class="text-green-400 font-semibold">--%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Nivel de Confianza:</span>
+                                        <span id="reportConfidence" class="text-blue-400 font-semibold">--%</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Valor Futuro:</span>
+                                        <span id="reportFutureValue" class="text-purple-400 font-semibold">€--M</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-3">Análisis de Mercado</h3>
+                                <div class="space-y-3">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Tendencia de Valor:</span>
+                                        <span id="reportValueTrend" class="text-yellow-400 font-semibold">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Posición en Mercado:</span>
+                                        <span id="reportMarketPosition" class="text-orange-400 font-semibold">--</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-400">Fecha del Reporte:</span>
+                                        <span id="reportDate" class="text-gray-300 font-semibold">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Performance Metrics -->
+                    <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                        <h2 class="text-2xl font-bold text-white mb-4">Métricas de Rendimiento</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Factor de Edad</h4>
+                                <p id="reportAgeFactor" class="text-xl font-bold text-green-400">--</p>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Factor de Posición</h4>
+                                <p id="reportPositionFactor" class="text-xl font-bold text-blue-400">--</p>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Factor de Liga</h4>
+                                <p id="reportLeagueFactor" class="text-xl font-bold text-purple-400">--</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Five Values Breakdown -->
+                <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                        <h2 class="text-2xl font-bold text-white mb-4">Desglose de los 5 Valores Fundamentales</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor de Marketing</h4>
+                                <p id="reportMarketingValue" class="text-lg font-bold text-green-400">€--M</p>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor Deportivo</h4>
+                                <p id="reportSportValue" class="text-lg font-bold text-blue-400">€--M</p>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor de Reventa</h4>
+                                <p id="reportResaleValue" class="text-lg font-bold text-purple-400">€--M</p>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Transferencias Similares</h4>
+                                <p id="reportSimilarValue" class="text-lg font-bold text-yellow-400">€--M</p>
+                            </div>
+                            <div class="bg-gray-700 p-4 rounded text-center">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor de Mercado</h4>
+                                <p id="reportMarketValueBreakdown" class="text-lg font-bold text-red-400">€--M</p>
+                            </div>
+        </div>
+                </section>
+                </div>
+    </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings" class="page-content">
+            <div class="flex-grow p-8">
+                <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
+                    <h1 class="text-4xl font-extrabold text-white">Configuración</h1>
+                </header>
+
+                <!-- Language Settings -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">Configuración de Idioma</h2>
+                    <div class="flex items-center space-x-4">
+                        <label class="text-gray-300">Idioma:</label>
+                        <select id="languageSelect" class="bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:outline-none focus:border-green-500">
+                            <option value="es">Español</option>
+                            <option value="en">English</option>
+                        </select>
+                        <button onclick="changeLanguage()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
+                            Cambiar Idioma
+                </button>
+        </div>
+                    <p class="text-gray-400 text-sm mt-2">Selecciona tu idioma preferido para la interfaz</p>
+                </div>
+
+                <!-- System Settings -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4">Configuración del Sistema</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Preferencias de Visualización</h3>
+                            <div class="space-y-3">
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-3" checked>
+                                    <span class="text-gray-300">Mostrar valores en millones</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-3" checked>
+                                    <span class="text-gray-300">Mostrar análisis detallado</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Configuración de Datos</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-gray-300 text-sm">Actualización automática:</label>
+                                    <select class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-1 text-white text-sm mt-1">
+                                        <option>Cada hora</option>
+                                        <option>Diariamente</option>
+                                        <option>Semanalmente</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 text-sm">Precisión de análisis:</label>
+                                    <select class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-1 text-white text-sm mt-1">
+                                        <option>Alta (recomendado)</option>
+                                        <option>Media</option>
+                                        <option>Rápida</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Settings -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
+                    <h2 class="text-2xl font-bold text-white mb-4">Configuración de Cuenta</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Información Personal</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-gray-300 text-sm">Nombre de usuario:</label>
+                                    <input type="text" id="settingsUsername" value="Panel de control" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1" readonly>
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 text-sm">Email:</label>
+                                    <input type="email" id="settingsEmail" placeholder="usuario@truesign.com" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1">
+                                </div>
+                                <div>
+                                    <label class="text-gray-300 text-sm">Rol:</label>
+                                    <input type="text" id="settingsRole" value="Usuario" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Seguridad</h3>
+                            <div class="space-y-3">
+                                <button id="changePasswordBtn" onclick="showChangePasswordModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
+                                    Cambiar Contraseña
+                                </button>
+                                <button id="logoutBtn" onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
+                                    Cerrar Sesión
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+            </div>
+
+  <script>
+        // Global variables
+        let clubsData = [];
+        
+        // Load clubs data
+        fetch('/clubs')
+            .then(response => response.json())
+            .then(data => {
+                clubsData = data;
+                console.log('Clubs loaded:', clubsData.length);
+                console.log('Primeros 10 clubes:', clubsData.slice(0, 10));
+            })
+            .catch(error => {
+                console.error('Error loading clubs:', error);
+            });
+        
+        // Landing Page Functions
+        function showLoginForm() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function hideLoginForm() {
+            document.getElementById('loginModal').classList.add('hidden');
+        }
+        
+
+        function scrollToFeatures() {
+            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showLanguageSelector() {
+            // Simple language toggle for landing page
+            const currentLang = localStorage.getItem('landingLanguage') || 'es';
+            const newLang = currentLang === 'es' ? 'en' : 'es';
+            localStorage.setItem('landingLanguage', newLang);
+            
+            if (newLang === 'en') {
+                changeLandingToEnglish();
+            } else {
+                changeLandingToSpanish();
+            }
+        }
+
+        function changeLandingToEnglish() {
+            // Hero section
+            document.querySelector('#landing h1').innerHTML = `
+                The Future of
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+                    Transfers
+                </span>
+            `;
+            document.querySelector('#landing .text-xl').textContent = 'TrueSign uses advanced artificial intelligence to analyze more than 92,000 real transfers and predict the optimal value of any player with 95% accuracy.';
+            
+            // Buttons
+            const buttons = document.querySelectorAll('#landing button');
+            buttons.forEach(button => {
+                if (button.textContent.includes('Comenzar Análisis')) {
+                    button.innerHTML = '<i class="fas fa-rocket mr-2"></i>Start Analysis';
+                } else if (button.textContent.includes('Conocer Más')) {
+                    button.innerHTML = '<i class="fas fa-info-circle mr-2"></i>Learn More';
+                } else if (button.textContent.includes('Iniciar Sesión')) {
+                    button.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Sign In';
+                }
+            });
+            
+            // Features section
+            document.querySelector('#features h2').textContent = 'Why TrueSign?';
+            const featureTitles = document.querySelectorAll('#features h3');
+            featureTitles[0].textContent = 'Real Data';
+            featureTitles[1].textContent = 'Advanced AI';
+            featureTitles[2].textContent = '95% Accuracy';
+            
+            // How it works section
+            document.querySelector('#landing section:nth-of-type(3) h2').textContent = 'How It Works';
+            const stepTitles = document.querySelectorAll('#landing section:nth-of-type(3) h3');
+            stepTitles[0].textContent = 'Enter Data';
+            stepTitles[1].textContent = 'AI Analysis';
+            stepTitles[2].textContent = 'Results';
+        }
+
+        function changeLandingToSpanish() {
+            // Hero section
+            document.querySelector('#landing h1').innerHTML = `
+                El Futuro de las
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-400">
+                    Transferencias
+                </span>
+            `;
+            document.querySelector('#landing .text-xl').textContent = 'TrueSign utiliza inteligencia artificial avanzada para analizar más de 92,000 transferencias reales y predecir el valor óptimo de cualquier jugador con 95% de precisión.';
+            
+            // Buttons
+            const buttons = document.querySelectorAll('#landing button');
+            buttons.forEach(button => {
+                if (button.textContent.includes('Start Analysis')) {
+                    button.innerHTML = '<i class="fas fa-rocket mr-2"></i>Comenzar Análisis';
+                } else if (button.textContent.includes('Learn More')) {
+                    button.innerHTML = '<i class="fas fa-info-circle mr-2"></i>Conocer Más';
+                } else if (button.textContent.includes('Sign In')) {
+                    button.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Iniciar Sesión';
+                }
+            });
+            
+            // Features section
+            document.querySelector('#features h2').textContent = '¿Por qué TrueSign?';
+            const featureTitles = document.querySelectorAll('#features h3');
+            featureTitles[0].textContent = 'Datos Reales';
+            featureTitles[1].textContent = 'IA Avanzada';
+            featureTitles[2].textContent = '95% Precisión';
+            
+            // How it works section
+            document.querySelector('#landing section:nth-of-type(3) h2').textContent = 'Cómo Funciona';
+            const stepTitles = document.querySelectorAll('#landing section:nth-of-type(3) h3');
+            stepTitles[0].textContent = 'Ingresa Datos';
+            stepTitles[1].textContent = 'Análisis IA';
+            stepTitles[2].textContent = 'Resultados';
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username && password) {
+                // Enviar credenciales al servidor para validación
+                fetch('/user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Hide landing page and show main app
+                        document.getElementById('landing').classList.add('hidden');
+                        document.getElementById('mainApp').classList.remove('hidden');
+                        
+                        // Store login state
+                        localStorage.setItem('isLoggedIn', 'true');
+                        localStorage.setItem('username', username);
+                        localStorage.setItem('userRole', data.user.role);
+                        
+                        // Update user display
+                        updateUserDisplay(username);
+                        
+                        // Hide login modal
+                        hideLoginForm();
+                        
+                        // Show success message
+                        showNotification('Login exitoso! Bienvenido ' + username, 'success');
+                    } else {
+                        // Show secure error message without revealing credentials
+                        showNotification('Usuario o contraseña incorrectos. Verifica tus credenciales e intenta nuevamente.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error de conexión. Verifica tu conexión a internet e intenta nuevamente.', 'error');
+                });
+            } else {
+                showNotification('Por favor completa todos los campos requeridos.', 'warning');
+            }
+        }
+
+        function logout() {
+            // Show landing page and hide main app
+            document.getElementById('landing').classList.remove('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            
+            // Clear login state
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('username');
+            localStorage.removeItem('userRole');
+            
+            // Reset logos to default
+            resetLogosToDefault();
+        }
+
+        function resetLogosToDefault() {
+            const logoElements = [
+                'landingLogo',
+                'loginLogo', 
+                'footerLogo',
+                'dashboardLogo'
+            ];
+            
+            logoElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.src = '/static/logo.png';
+                    element.alt = 'TrueSign Logo';
+                }
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm ${
+                type === 'success' ? 'bg-green-600 text-white' : 
+                type === 'error' ? 'bg-red-600 text-white' : 
+                'bg-blue-600 text-white'
+            }`;
+            notification.textContent = message;
+            
+            // Add to page
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function updateUserDisplay(username) {
+            // Update the user display name
+            const userDisplayName = document.getElementById('userDisplayName');
+            if (userDisplayName) {
+                userDisplayName.textContent = username;
+            }
+            
+            // Update the user avatar with first letter of username
+            const userAvatar = document.getElementById('userAvatar');
+            if (userAvatar && username) {
+                const firstLetter = username.charAt(0).toUpperCase();
+                userAvatar.src = `https://placehold.co/40x40/374151/FFFFFF?text=${firstLetter}`;
+                userAvatar.alt = `User Avatar ${username}`;
+            }
+            
+            // Update settings page with user info
+            updateSettingsUserInfo();
+            
+            // Update logos based on user
+            updateUserLogos(username);
+        }
+
+        function updateUserLogos(username) {
+            let logoPath = '/static/logo.png'; // Default logo
+            
+            // Map usernames to their respective logos
+            if (username === 'TalleresDeCordoba') {
+                logoPath = '/static/talleres.png';
+            } else if (username === 'NacionalDeUruguay') {
+                logoPath = '/static/nacional.png';
+            }
+            
+            // Update all logo elements
+            const logoElements = [
+                'landingLogo',
+                'loginLogo', 
+                'footerLogo',
+                'dashboardLogo'
+            ];
+            
+            logoElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.src = logoPath;
+                    element.alt = `${username} Logo`;
+                }
+            });
+        }
+
+        function updateSettingsUserInfo() {
+            const username = localStorage.getItem('username');
+            const userRole = localStorage.getItem('userRole');
+            
+            if (username) {
+                // Update username in settings
+                const settingsUsername = document.getElementById('settingsUsername');
+                if (settingsUsername) {
+                    settingsUsername.value = username;
+                }
+                
+                // Update role in settings
+                const settingsRole = document.getElementById('settingsRole');
+                if (settingsRole) {
+                    settingsRole.value = userRole === 'admin' ? 'Administrador' : 'Usuario';
+                }
+                
+                // Update email if available (from user data)
+                const settingsEmail = document.getElementById('settingsEmail');
+                if (settingsEmail && !settingsEmail.value) {
+                    // Set default email based on username
+                    settingsEmail.value = username.toLowerCase() + '@truesign.com';
+                }
+            }
+        }
+
+        function showChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.remove('hidden');
+        }
+
+        function hideChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.add('hidden');
+            // Clear form
+            document.getElementById('changePasswordForm').reset();
+        }
+
+        function changeLanguage() {
+            const language = document.getElementById('languageSelect').value;
+            localStorage.setItem('language', language);
+            showNotification('Idioma cambiado a ' + (language === 'es' ? 'Español' : 'English'), 'success');
+        }
+
+        function loadSettings() {
+            // Load saved settings
+            const language = localStorage.getItem('language') || 'es';
+            const languageSelect = document.getElementById('languageSelect');
+            if (languageSelect) {
+                languageSelect.value = language;
+            }
+            
+            // Update user info
+            updateSettingsUserInfo();
+        }
+
+        function handleChangePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const username = localStorage.getItem('username');
+            
+            // Validate inputs
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                showNotification('Por favor completa todos los campos', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showNotification('Las contraseñas no coinciden', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showNotification('La nueva contraseña debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            
+            // Simulate password change (in a real app, this would call the backend)
+            // For now, we'll just show a success message
+            showNotification('Contraseña cambiada exitosamente', 'success');
+            hideChangePasswordModal();
+            
+            // In a real implementation, you would call the backend:
+            /*
+            fetch('/user/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    currentPassword: currentPassword,
+                    newPassword: newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Contraseña cambiada exitosamente', 'success');
+                    hideChangePasswordModal();
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Error al cambiar contraseña', 'error');
+            });
+            */
+        }
+
+        // Check login state on page load
+        function checkLoginState() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            if (isLoggedIn === 'true') {
+                const username = localStorage.getItem('username');
+                document.getElementById('landing').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                
+                // Update user display if username exists
+                if (username) {
+                    updateUserDisplay(username);
+                }
+            } else {
+                document.getElementById('landing').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+        }
+
+        // Navigation function
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            // Find and activate the correct nav item
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(pageId)) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Search player function for different pages
+        async function searchPlayerFromPage(pageId) {
+            const playerName = document.getElementById('playerSearch2').value;
+            const clubName = document.getElementById('clubDestino').value || 'CA Independiente';
+            const roiTarget = document.getElementById('roiTarget').value;
+            const clubDestino = document.getElementById('clubDestino').value;
+            
+            if (!playerName) {
+                alert('Por favor ingresa el nombre del jugador');
+                return;
+            }
+            
+            // Show loading state
+            const resultsSection = document.getElementById('resultsSection2');
+            resultsSection.classList.remove('hidden');
+            
+            const playerInfoCard = document.getElementById('playerInfoCard2');
+            const analysisCard = document.getElementById('analysisCard2');
+            
+            playerInfoCard.innerHTML = `
+                <div class="skeleton-loading h-32 rounded-lg"></div>
+            `;
+            
+            analysisCard.innerHTML = `
+                <div class="skeleton-loading h-32 rounded-lg"></div>
+            `;
+            
+            try {
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&roi_target=${encodeURIComponent(roiTarget)}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                return;
+            }
+            
+                // Display player info
+                const playerInfo = data.player;
+                // Generar iniciales del nombre
+                const generateInitials = (name) => {
+                    if (!name) return '--';
+                    return name.split(' ').map(word => word.charAt(0)).join('').toUpperCase();
+                };
+                
+                // Formatear pie hábil
+                const formatFoot = (foot) => {
+                    if (foot === 1) return 'Diestro';
+                    if (foot === 2) return 'Zurdo';
+                    if (foot === 3) return 'Ambidiestro';
+                    return '--';
+                };
+                
+                // Formatear altura
+                const formatHeight = (height) => {
+                    if (!height || height === 1 || height === '1') return '--';
+                    if (typeof height === 'string' && height.includes('m')) {
+                        return height; // Ya está formateado como "1,95 m"
+                    }
+                    return `${height} cm`;
+                };
+                
+                playerInfoCard.innerHTML = `
+                    <div class="flex items-center space-x-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">${generateInitials(playerInfo.player_name || playerInfo.name)}</span>
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="text-2xl font-bold text-white">${playerInfo.player_name || playerInfo.name || 'N/A'}</h3>
+                            <p class="text-gray-400">${playerInfo.current_club_name || playerInfo.current_club || playerInfo.club || 'Sin club'}</p>
+                            <div class="grid grid-cols-2 gap-4 mt-2">
+                                <div>
+                                    <p class="text-gray-400 text-sm">${formatPosition(playerInfo.position)} • ${playerInfo.age || '--'} años</p>
+                                    <p class="text-gray-400 text-sm">Altura: ${formatHeight(playerInfo.height)}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-400 text-sm">Pie hábil: ${formatFoot(playerInfo.foot)}</p>
+                                    <p class="text-green-400 font-semibold">Valor: €${formatValue(playerInfo.market_value)}M</p>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    `;
+                
+                // Display analysis
+                const analysis = data.truesign_analysis;
+                console.log('Análisis recibido del backend:', analysis);
+                analysisCard.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Precio Máximo Recomendado</h3>
+                            <p class="text-3xl font-bold text-green-400">€${formatValue(analysis.precio_maximo || analysis.fair_price)}M</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Confianza</h3>
+                            <p class="text-3xl font-bold text-blue-400">${analysis.confidence || '--'}%</p>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">ROI Estimado</h3>
+                            <p class="text-3xl font-bold text-purple-400">${analysis.roi_estimate?.percentage || '--'}%</p>
+                        </div>
+                    </div>
+                `;
+                
+                // Update 5 values
+                updateFiveValuesFromPage(analysis);
+                
+                // Update similar transfers info
+                updateMLPredictionFromPage(data);
+                
+                // Update club analysis
+                updateClubAnalysis(clubName);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al buscar el jugador');
+            }
+        }
+
+        // Update 5 values for different pages
+        function updateFiveValuesFromPage(analysis) {
+            // Usar los 5 valores directamente del backend
+            const fiveValues = analysis.five_values || {};
+            
+            console.log('Debug - analysis:', analysis);
+            console.log('Debug - five_values:', fiveValues);
+            
+            console.log('🔍 NUEVO DEBUG - fiveValues before formatting:', fiveValues);
+            console.log('🔍 NUEVO DEBUG - marketing_impact value:', fiveValues.marketing_impact);
+            console.log('🔍 NUEVO DEBUG - sporting_value value:', fiveValues.sporting_value);
+            
+            const marketingValue = formatValue(fiveValues.marketing_impact || 0);
+            const sportValue = formatValue(fiveValues.sporting_value || 0);
+            const resaleValue = formatValue(fiveValues.resale_potential || 0);
+            const similarValue = formatValue(fiveValues.similar_transfers || 0);
+            const marketValue = formatValue(fiveValues.market_value || 0);
+            
+            console.log('Debug - raw values:', {
+                marketing_impact: fiveValues.marketing_impact,
+                sporting_value: fiveValues.sporting_value,
+                resale_potential: fiveValues.resale_potential,
+                similar_transfers: fiveValues.similar_transfers,
+                market_value: fiveValues.market_value
+            });
+            
+            console.log('Debug - formatted values:', {marketingValue, sportValue, resaleValue, similarValue, marketValue});
+            
+            // Verificar que los elementos existen
+            const marketingEl = document.getElementById('marketingValue2');
+            const sportEl = document.getElementById('sportValue2');
+            const resaleEl = document.getElementById('resaleValue2');
+            const similarEl = document.getElementById('similarTransfersValue2');
+            const marketEl = document.getElementById('marketValuesValue2');
+            
+            console.log('Debug - Elements found:', {
+                marketingEl: !!marketingEl,
+                sportEl: !!sportEl,
+                resaleEl: !!resaleEl,
+                similarEl: !!similarEl,
+                marketEl: !!marketEl
+            });
+            
+            if (marketingEl) marketingEl.textContent = `€${marketingValue}M`;
+            if (sportEl) sportEl.textContent = `€${sportValue}M`;
+            if (resaleEl) resaleEl.textContent = `€${resaleValue}M`;
+            if (similarEl) similarEl.textContent = `€${similarValue}M`;
+            if (marketEl) marketEl.textContent = `€${marketValue}M`;
+            
+            console.log('Debug - Elements updated directly');
+        }
+
+        // Update ML prediction info
+        function updateMLPredictionFromPage(data) {
+            console.log('updateMLPredictionFromPage - data recibido:', data);
+            
+            // Obtener datos del análisis
+            const analysis = data.truesign_analysis;
+            const performanceAnalysis = analysis.performance_analysis || {};
+            const predictedChange = parseFloat(analysis.predicted_change?.percentage) || 0;
+            const confidence = parseFloat(analysis.confidence) || 0;
+            const marketValue = parseFloat(data.market_value) || 0;
+            
+            // Usar valores del backend directamente
+            const resaleValue = parseFloat(analysis.resale_value) || 0;
+            const roiEstimate = parseFloat(analysis.roi_estimate?.percentage) || 0;
+            
+            // Usar resale_value del backend como valor futuro
+            const futureValue = resaleValue > 0 ? resaleValue : marketValue * (1 + predictedChange / 100);
+            
+            console.log('Valores calculados:', {
+                predictedChange,
+                marketValue,
+                futureValue,
+                confidence,
+                resaleValue,
+                roiEstimate
+            });
+            
+            // Formatear valores
+            const changeText = predictedChange >= 0 ? `+${predictedChange.toFixed(1)}%` : `${predictedChange.toFixed(1)}%`;
+            const futureValueText = `€${(futureValue / 1_000_000).toFixed(1)}M`;
+            const confidenceText = `${confidence.toFixed(0)}%`;
+            
+            // Actualizar elementos
+            safeUpdateElement('predictedChange', changeText);
+            console.log('Actualizando futureValue con:', futureValueText);
+            safeUpdateElement('futureValue', futureValueText);
+            safeUpdateElement('predictionConfidence', confidenceText);
+            safeUpdateElement('clubDestinoDisplay', 'Análisis general');
+            
+            console.log('Elementos actualizados:', {
+                predictedChange: changeText,
+                futureValue: futureValueText,
+                confidence: confidenceText
+            });
+            
+            // Colorear según el cambio
+            const changeElement = document.getElementById('predictedChange');
+            if (changeElement) {
+                if (predictedChange > 10) {
+                    changeElement.className = 'text-xl font-bold text-green-400';
+                } else if (predictedChange > 0) {
+                    changeElement.className = 'text-xl font-bold text-blue-400';
+                } else if (predictedChange > -10) {
+                    changeElement.className = 'text-xl font-bold text-yellow-400';
+                } else {
+                    changeElement.className = 'text-xl font-bold text-red-400';
+                }
+            }
+        }
+
+        // Search player function
+        async function searchPlayer() {
+            const playerName = document.getElementById('playerSearch').value;
+            const clubName = document.getElementById('clubSearch').value;
+            
+            if (!playerName) {
+                alert('Por favor ingresa el nombre del jugador');
+                return;
+            }
+            
+            // Show loading state
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.classList.remove('hidden');
+            
+            const playerInfoCard = document.getElementById('playerInfoCard');
+            const analysisCard = document.getElementById('analysisCard');
+            
+            playerInfoCard.innerHTML = `
+                <div class="skeleton-loading h-32 rounded-lg"></div>
+            `;
+            
+            analysisCard.innerHTML = `
+                <div class="skeleton-loading h-64 rounded-lg"></div>
+            `;
+            
+            try {
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}`);
+                const data = await response.json();
+                console.log('✅ Player data received:', data);
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Display player info
+                const playerInfo = data.player;
+                const analysis = data.truesign_analysis;
+                
+                console.log('📊 Analysis data:', analysis);
+                // Debug: Log player info to see what we have
+                console.log('👤 Player info:', playerInfo);
+                
+                playerInfoCard.innerHTML = `
+                    <div class="flex items-center space-x-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                            ${(playerInfo.player_name || playerInfo.name || '??').split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-white">${playerInfo.player_name || playerInfo.name || 'Jugador'}</h3>
+                            <p class="text-gray-400">${playerInfo.current_club_name || playerInfo.current_club || playerInfo.club || 'Club desconocido'}</p>
+                            <div class="flex items-center space-x-4 mt-2">
+                                <span class="text-sm text-gray-300">Edad: ${playerInfo.age || '--'}</span>
+                                <span class="text-sm text-gray-300">Posición: ${formatPosition(playerInfo.position)}</span>
+                                <span class="text-sm text-gray-300">Valor: €${formatValue(playerInfo.market_value || 0)}M</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Display analysis
+                analysisCard.innerHTML = `
+                    <h3 class="text-xl font-bold text-white mb-4">Análisis TrueSign</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <div class="text-3xl font-bold text-green-400 mb-2">€${formatValue(analysis.fair_price || 0)}M</div>
+                            <div class="text-gray-300">Precio Máximo Recomendado</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold text-blue-400 mb-2">${analysis.confidence || '0'}%</div>
+                            <div class="text-gray-300">Confianza</div>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <div class="text-lg font-semibold text-white mb-2">ROI Estimado</div>
+                        <div class="text-2xl font-bold text-green-400">${formatROI(analysis.roi_estimate?.percentage)}%</div>
+                        <div class="text-gray-400 text-sm">Retorno de inversión esperado</div>
+                        </div>
+                    `;
+                
+                // Update the 5 values
+                // Debug: Log the data to see what we're receiving
+                console.log('📊 Data received from backend:', data);
+                console.log('📊 Analysis data:', analysis);
+                
+                // Update the 5 fundamental values
+                updateFiveValues(analysis);
+                
+                // Update club analysis
+                updateClubAnalysis(clubName);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                playerInfoCard.innerHTML = `
+                    <div class="text-center text-red-400">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                        <p>Error al buscar el jugador: ${error.message}</p>
+                </div>
+                `;
+                analysisCard.innerHTML = '';
+            }
+        }
+
+        // Update the 5 fundamental values
+        function updateFiveValues(data) {
+            console.log('Updating 5 values with data:', data);
+            
+            // Usar los 5 valores directamente del backend
+            const fiveValues = data.five_values || {};
+            
+            console.log('Five values from backend:', fiveValues);
+            
+            // Extract raw values first to debug
+            const rawMarketing = fiveValues.marketing_value || 0;
+            const rawSport = fiveValues.sport_value || 0;
+            const rawResale = fiveValues.resale_value || 0;
+            const rawSimilar = fiveValues.similar_transfers_value || 0;
+            const rawMarket = fiveValues.different_market_values || 0;
+            
+            console.log('Raw values from backend:', {
+                marketing: rawMarketing,
+                sport: rawSport,
+                resale: rawResale,
+                similar: rawSimilar,
+                market: rawMarket
+            });
+            
+            // Format values properly
+            const marketingValue = formatValue(rawMarketing);
+            const sportValue = formatValue(rawSport);
+            const resaleValue = formatValue(rawResale);
+            const similarTransfersValue = formatValue(rawSimilar);
+            const marketValuesValue = formatValue(rawMarket);
+            
+            console.log('📈 Values found:', {
+                marketing: marketingValue,
+                sport: sportValue,
+                resale: resaleValue,
+                similar: similarTransfersValue,
+                market: marketValuesValue,
+                detailedValues: detailedValues
+            });
+            
+            document.getElementById('marketingValue').textContent = `€${marketingValue}M`;
+            document.getElementById('sportValue').textContent = `€${sportValue}M`;
+            document.getElementById('resaleValue').textContent = `€${resaleValue}M`;
+            document.getElementById('similarTransfersValue').textContent = `€${similarTransfersValue}M`;
+            document.getElementById('marketValuesValue').textContent = `€${marketValuesValue}M`;
+        }
+
+        // Format value to proper millions format with realistic limits
+        function formatValue(value) {
+            if (!value || value === 0) return '0';
+            
+            // Convert to number if it's a string
+            const numValue = typeof value === 'string' ? parseFloat(value) : value;
+            
+            // If the value is NaN or invalid, return 0
+            if (isNaN(numValue)) return '0';
+            
+            // If the value is already in millions (less than 1000), use as is
+            if (numValue < 1000) {
+                return numValue.toFixed(1);
+            }
+            
+            // If the value is in raw format (like 15000000), convert to millions
+            return (numValue / 1000000).toFixed(1);
+        }
+
+        // Format position to readable text
+        function formatPosition(position) {
+            if (!position || position === '1' || position === 1) return '--';
+            
+            const positionMap = {
+                'GK': 'Portero',
+                'CB': 'Defensor Central',
+                'LB': 'Lateral Izquierdo',
+                'RB': 'Lateral Derecho',
+                'CDM': 'Mediocampista Defensivo',
+                'CM': 'Mediocampista',
+                'CAM': 'Mediocampista Ofensivo',
+                'LW': 'Extremo Izquierdo',
+                'RW': 'Extremo Derecho',
+                'ST': 'Delantero',
+                'CF': 'Delantero Centro',
+                'LM': 'Mediocampista Izquierdo',
+                'RM': 'Mediocampista Derecho'
+            };
+            
+            return positionMap[position] || position;
+        }
+
+        // Format ROI percentage
+        function formatROI(roi) {
+            if (!roi || roi === 0) return '0.0';
+            const numValue = typeof roi === 'string' ? parseFloat(roi) : roi;
+            if (isNaN(numValue)) return '0.0';
+            return numValue.toFixed(1);
+        }
+
+        // Safe element update helper
+        function safeUpdateElement(elementId, content) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = content;
+                console.log(`Elemento ${elementId} actualizado con: ${content}`);
+            } else {
+                console.log(`Elemento ${elementId} no encontrado`);
+            }
+        }
+
+        // Update club analysis
+        function updateClubAnalysis(clubName) {
+            if (clubName) {
+                safeUpdateElement('selectedClub', clubName);
+                safeUpdateElement('clubAnalysis', `Análisis específico para ${clubName}: El jugador se adaptará al estilo de juego del club y llenará las necesidades tácticas identificadas.`);
+                safeUpdateElement('clubSpecificAnalysis', `El análisis considera el nivel del club ${clubName}, su historial de ROI y su capacidad financiera para determinar el precio óptimo.`);
+            } else {
+                safeUpdateElement('selectedClub', 'Ninguno');
+                safeUpdateElement('clubAnalysis', 'Selecciona un club de destino para ver el análisis específico de ajuste táctico y necesidad del equipo.');
+                safeUpdateElement('clubSpecificAnalysis', 'El análisis considera el nivel del club, su historial de ROI y su capacidad financiera para determinar el precio óptimo.');
+            }
+        }
+
+        // Generate report function
+        function generateReport() {
+            const playerName = document.getElementById('playerSearch').value;
+            const clubName = document.getElementById('clubSearch').value;
+            
+            if (!playerName) {
+                alert('Por favor busca un jugador primero');
+                return;
+            }
+            
+            showPage('reports');
+        }
+
+        // Generate player report function
+        async function generatePlayerReport() {
+            const playerName = document.getElementById('reportPlayerSearch').value;
+            
+            if (!playerName) {
+                alert('Por favor ingresa el nombre del jugador');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/report/${encodeURIComponent(playerName)}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Mostrar resultados
+                document.getElementById('reportResults').classList.remove('hidden');
+                
+                // Actualizar datos del jugador
+                const playerInfo = data.player_info;
+                const analysis = data.analysis;
+                const breakdown = data.detailed_breakdown;
+                
+                // Información básica
+                document.getElementById('reportPlayerName').textContent = playerInfo.player_name || '--';
+                document.getElementById('reportPlayerClub').textContent = playerInfo.club || '--';
+                document.getElementById('reportPlayerInfo').textContent = `${playerInfo.age || '--'} años, ${playerInfo.position || '--'}`;
+                
+                // Foto del jugador o iniciales
+                const photoUrl = playerInfo.photo_url;
+                const photoElement = document.getElementById('reportPlayerPhoto');
+                const initialsElement = document.getElementById('reportPlayerInitials');
+                
+                if (photoUrl && photoUrl !== '') {
+                    photoElement.src = photoUrl;
+                    photoElement.classList.remove('hidden');
+                    initialsElement.classList.add('hidden');
+                } else {
+                    const initials = (playerInfo.player_name || '').split(' ').map(n => n[0]).join('').substring(0, 2);
+                    initialsElement.textContent = initials || '--';
+                    photoElement.classList.add('hidden');
+                    initialsElement.classList.remove('hidden');
+                }
+                
+                // Valores financieros
+                const marketValue = (playerInfo.market_value || 0) / 1000000;
+                const recommendedPrice = (analysis.fair_price || 0) / 1000000;
+                const futureValue = marketValue * (1 + (analysis.predicted_change?.percentage || 0) / 100);
+                
+                document.getElementById('reportMarketValue').textContent = `€${marketValue.toFixed(1)}M`;
+                document.getElementById('reportRecommendedPrice').textContent = `€${recommendedPrice.toFixed(1)}M`;
+                document.getElementById('reportFutureValue').textContent = `€${futureValue.toFixed(1)}M`;
+                
+                // ROI y confianza
+                document.getElementById('reportROI').textContent = `${analysis.roi_estimate?.percentage || 0}%`;
+                document.getElementById('reportConfidence').textContent = `${analysis.confidence || 0}%`;
+                
+                // Análisis de mercado
+                document.getElementById('reportValueTrend').textContent = breakdown.market_value_analysis.value_trend;
+                document.getElementById('reportMarketPosition').textContent = breakdown.market_value_analysis.market_position;
+                document.getElementById('reportDate').textContent = new Date(data.report_generated).toLocaleDateString();
+                
+                // Métricas de rendimiento
+                document.getElementById('reportAgeFactor').textContent = breakdown.performance_metrics.age_factor || '--';
+                document.getElementById('reportPositionFactor').textContent = breakdown.performance_metrics.position_factor || '--';
+                document.getElementById('reportLeagueFactor').textContent = breakdown.performance_metrics.league_factor || '--';
+                
+                // Los 5 valores
+                const fiveValues = analysis.five_values || {};
+                document.getElementById('reportMarketingValue').textContent = `€${((fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportSportValue').textContent = `€${((fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportResaleValue').textContent = `€${((fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportSimilarValue').textContent = `€${((fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportMarketValueBreakdown').textContent = `€${((fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al generar el reporte');
+            }
+        }
+
+        // Compare players function
+        function comparePlayers() {
+            showPage('compare');
+        }
+
+        // Autocomplete functionality
+        let autocompleteTimeout;
+        if (document.getElementById('playerSearch')) {
+            document.getElementById('playerSearch').addEventListener('input', function(e) {
+            clearTimeout(autocompleteTimeout);
+            const query = e.target.value;
+            
+            if (query.length < 2) {
+                document.getElementById('autocompleteDropdown').classList.add('hidden');
+                return;
+            }
+            
+            autocompleteTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/autocomplete?q=${encodeURIComponent(query)}`);
+                    const suggestions = await response.json();
+                    
+        const dropdown = document.getElementById('autocompleteDropdown');
+                    if (suggestions.length > 0) {
+            dropdown.innerHTML = suggestions.map(suggestion => {
+                                // Manejar tanto strings simples como objetos
+                                if (typeof suggestion === 'string') {
+                                    return `<div class="p-3 hover:bg-gray-600 cursor-pointer text-white" onclick="selectPlayer('${suggestion}')">
+                                        ${suggestion}
+                                    </div>`;
+                                } else {
+                                    // Nuevo formato con club y nacionalidad
+                                    const displayName = suggestion.name || suggestion;
+                                    const displayText = suggestion.display || `${suggestion.name} (${suggestion.club} • ${suggestion.nationality})`;
+                                    return `<div class="p-3 hover:bg-gray-600 cursor-pointer text-white" onclick="selectPlayer('${displayName}')">
+                                        <div class="font-bold">${suggestion.name}</div>
+                                        <div class="text-sm text-gray-400">${suggestion.club} • ${suggestion.nationality}</div>
+                                    </div>`;
+                                }
+                            }).join('');
+        dropdown.classList.remove('hidden');
+            } else {
+            dropdown.classList.add('hidden');
+        }
+                } catch (error) {
+                    console.error('Autocomplete error:', error);
+                }
+            }, 300);
+        });
+        }
+
+        // Select player from autocomplete
+        function selectPlayer(playerName) {
+            const playerSearch = document.getElementById('playerSearch');
+            const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+            if (playerSearch) playerSearch.value = playerName;
+            if (autocompleteDropdown) autocompleteDropdown.classList.add('hidden');
+        }
+
+        // Hide autocomplete when clicking outside
+        document.addEventListener('click', function(e) {
+            const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+            if (autocompleteDropdown && !e.target.closest('#playerSearch') && !e.target.closest('#autocompleteDropdown')) {
+                autocompleteDropdown.classList.add('hidden');
+            }
+        });
+
+        // Club search functionality
+        let clubTimeout;
+        if (document.getElementById('clubSearch')) {
+            document.getElementById('clubSearch').addEventListener('input', function(e) {
+            clearTimeout(clubTimeout);
+            const query = e.target.value;
+            
+            if (query.length < 2) {
+                document.getElementById('clubDropdown').classList.add('hidden');
+                return;
+            }
+            
+            clubTimeout = setTimeout(async () => {
+                try {
+                    const response = await fetch(`/clubs?q=${encodeURIComponent(query)}`);
+                    const clubs = await response.json();
+                    
+                    const dropdown = document.getElementById('clubDropdown');
+                    if (clubs.length > 0) {
+                        dropdown.innerHTML = clubs.map(club => {
+                            const clubName = typeof club === 'string' ? club : club.name;
+                            const displayText = typeof club === 'string' ? club : club.display;
+                            return `
+                                <div class="p-3 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0" onclick="selectClub('${clubName}')">
+                                    <div class="font-medium">${clubName}</div>
+                                    ${typeof club !== 'string' ? `
+                                        <div class="text-sm text-gray-400">${club.country} - ${club.market_value}</div>
+                                        <div class="text-xs text-green-400 mt-1">
+                                            ${club.classification} • ${club.squad_analysis} • Potencial: ${club.transfer_potential || 'N/A'}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        }).join('');
+                        dropdown.classList.remove('hidden');
+                    } else {
+                        dropdown.classList.add('hidden');
+                    }
+                } catch (error) {
+                    console.error('Club search error:', error);
+                }
+            }, 300);
+        });
+        }
+            
+        // Select club from dropdown
+        function selectClub(clubName) {
+            const clubSearch = document.getElementById('clubSearch');
+            const clubDropdown = document.getElementById('clubDropdown');
+            if (clubSearch) clubSearch.value = clubName;
+            if (clubDropdown) clubDropdown.classList.add('hidden');
+            updateClubAnalysis(clubName);
+            loadClubInfo(clubName);
+        }
+        
+        // Load additional club information
+        async function loadClubInfo(clubName) {
+            try {
+                const response = await fetch(`/clubs/${encodeURIComponent(clubName)}`);
+                if (response.ok) {
+                    const clubInfo = await response.json();
+                    console.log('Club info loaded:', clubInfo);
+                    
+                    // Actualizar información del club en la interfaz si existe
+                    const clubInfoElement = document.getElementById('clubInfo');
+                    if (clubInfoElement) {
+                        clubInfoElement.innerHTML = `
+                            <div class="bg-gray-800 p-4 rounded-lg">
+                                <h3 class="text-lg font-semibold text-white mb-2">${clubInfo.name}</h3>
+                                <div class="text-sm text-gray-300 space-y-1">
+                                    <p><strong>País:</strong> ${clubInfo.country}</p>
+                                    <p><strong>Valor de mercado:</strong> ${clubInfo.formatted_market_value}</p>
+                                    <p><strong>Plantilla:</strong> ${clubInfo.squad} jugadores</p>
+                                    <p><strong>Clasificación:</strong> <span class="text-blue-400">${clubInfo.classification}</span></p>
+                                    <p><strong>Análisis de plantilla:</strong> <span class="text-yellow-400">${clubInfo.squad_analysis}</span></p>
+                                    <p><strong>Potencial de transferencia:</strong> <span class="text-green-400">${clubInfo.transfer_potential}</span></p>
+                                    <p><strong>Factor económico:</strong> ${clubInfo.economic_factor}x</p>
+                                    <p><strong>Factor de liga:</strong> ${clubInfo.league_factor}x</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading club info:', error);
+            }
+        }
+
+        // Hide club dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const clubDropdown = document.getElementById('clubDropdown');
+            if (clubDropdown && !e.target.closest('#clubSearch') && !e.target.closest('#clubDropdown')) {
+                clubDropdown.classList.add('hidden');
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 TrueSign initialized');
+            
+            // Initialize landing page
+            checkLoginState();
+            
+            // Load settings
+            loadSettings();
+            
+            // Setup club search
+            if (document.getElementById('clubDestino') && document.getElementById('clubDestinoDropdown')) {
+                initializeClubSearchForPage('clubDestino', 'clubDestinoDropdown');
+            }
+            
+            // Add login form submit handler
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    login();
+                });
+            }
+            
+            // Add change password form submit handler
+            const changePasswordForm = document.getElementById('changePasswordForm');
+            if (changePasswordForm) {
+                changePasswordForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleChangePassword();
+                });
+            }
+            
+            // Initialize autocomplete for search page if elements exist
+            if (document.getElementById('playerSearch2') && document.getElementById('autocompleteDropdown2')) {
+                initializeAutocompleteForPage('playerSearch2', 'autocompleteDropdown2');
+            }
+            if (document.getElementById('clubSearch2') && document.getElementById('clubDropdown2')) {
+                initializeClubSearchForPage('clubSearch2', 'clubDropdown2');
+            }
+            
+            // Initialize autocomplete for compare page if elements exist
+            initializeComparePage();
+            
+            // Initialize autocomplete for reports page if elements exist
+            if (document.getElementById('reportPlayerSearch')) {
+                initializeAutocompleteForPage('reportPlayerSearch', 'reportPlayerDropdown');
+            }
+            
+            // Load saved language preference
+            const savedLanguage = localStorage.getItem('language');
+            if (savedLanguage) {
+                document.getElementById('languageSelect').value = savedLanguage;
+                if (savedLanguage === 'en') {
+                    changeToEnglish();
+                } else {
+                    changeToSpanish();
+                }
+            }
+        });
+
+        // Initialize autocomplete for different pages
+        function initializeAutocompleteForPage(inputId, dropdownId) {
+            let autocompleteTimeout;
+            document.getElementById(inputId).addEventListener('input', function(e) {
+                clearTimeout(autocompleteTimeout);
+                const query = e.target.value;
+                
+                if (query.length < 2) {
+                    document.getElementById(dropdownId).classList.add('hidden');
+            return;
+        }
+        
+                autocompleteTimeout = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`/autocomplete?q=${encodeURIComponent(query)}`);
+                        const suggestions = await response.json();
+                        
+                        const dropdown = document.getElementById(dropdownId);
+                        if (suggestions.length > 0) {
+            dropdown.innerHTML = suggestions.map(suggestion => {
+                                // Manejar tanto strings simples como objetos
+                                if (typeof suggestion === 'string') {
+                                    return `<div class="p-3 hover:bg-gray-600 cursor-pointer text-white" onclick="selectPlayerForPage('${suggestion}', '${inputId}', '${dropdownId}')">
+                                        ${suggestion}
+                                    </div>`;
+                                } else {
+                                    const displayName = suggestion.name || suggestion;
+                                    return `<div class="p-3 hover:bg-gray-600 cursor-pointer text-white" onclick="selectPlayerForPage('${displayName}', '${inputId}', '${dropdownId}')">
+                                        <div class="font-bold">${suggestion.name}</div>
+                                        <div class="text-sm text-gray-400">${suggestion.club} • ${suggestion.nationality}</div>
+                                    </div>`;
+                                }
+                            }).join('');
+        dropdown.classList.remove('hidden');
+                        } else {
+            dropdown.classList.add('hidden');
+    }
+                    } catch (error) {
+                        console.error('Autocomplete error:', error);
+                    }
+                }, 300);
+            });
+        }
+
+        // Initialize club search for different pages
+        function initializeClubSearchForPage(inputId, dropdownId) {
+            let clubTimeout;
+            document.getElementById(inputId).addEventListener('input', function(e) {
+                clearTimeout(clubTimeout);
+                const query = e.target.value;
+                
+                if (query.length < 2) {
+                    document.getElementById(dropdownId).classList.add('hidden');
+                    return;
+                }
+                
+                clubTimeout = setTimeout(async () => {
+                    try {
+                        const response = await fetch(`/clubs?q=${encodeURIComponent(query)}`);
+                        const clubs = await response.json();
+                        
+                        const dropdown = document.getElementById(dropdownId);
+                        if (clubs.length > 0) {
+                            dropdown.innerHTML = clubs.map(club => {
+                                const clubName = typeof club === 'string' ? club : club.name;
+                                return `
+                                    <div class="p-3 hover:bg-gray-600 cursor-pointer text-white border-b border-gray-600 last:border-b-0" onclick="selectClubForPage('${clubName}', '${inputId}', '${dropdownId}')">
+                                        <div class="font-medium">${clubName}</div>
+                                        ${typeof club !== 'string' ? `<div class="text-sm text-gray-400">${club.country} - ${club.market_value}</div>` : ''}
+                                    </div>
+                                `;
+                            }).join('');
+                            dropdown.classList.remove('hidden');
+                        } else {
+                            dropdown.classList.add('hidden');
+                        }
+                    } catch (error) {
+                        console.error('Club search error:', error);
+                    }
+                }, 300);
+            });
+        }
+
+        // Select player from autocomplete for different pages
+        function selectPlayerForPage(playerName, inputId, dropdownId) {
+            document.getElementById(inputId).value = playerName;
+            document.getElementById(dropdownId).classList.add('hidden');
+        }
+
+        // Select club from dropdown for different pages
+        function selectClubForPage(clubName, inputId, dropdownId) {
+            document.getElementById(inputId).value = clubName;
+            document.getElementById(dropdownId).classList.add('hidden');
+            loadClubInfo(clubName);
+        }
+
+        // Player comparison functions
+        let player1Data = null;
+        let player2Data = null;
+
+        async function searchPlayer1() {
+            const playerName = document.getElementById('player1Search').value;
+            const clubName = document.getElementById('club1Search').value;
+            
+            if (!playerName) {
+                alert('Por favor ingresa el nombre del jugador');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                player1Data = data;
+                displayPlayer1(data);
+                updateComparison();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al buscar el jugador');
+            }
+        }
+
+        function displayPlayer1(data) {
+            const playerInfo = data.player;
+            const analysis = data.truesign_analysis;
+            
+            // Mostrar resultados
+            document.getElementById('player1Results').classList.remove('hidden');
+            
+            // Información básica
+            document.getElementById('player1Name').textContent = playerInfo.player_name || '--';
+            document.getElementById('player1Club').textContent = playerInfo.club || '--';
+            document.getElementById('player1Info').textContent = `${playerInfo.age || '--'} años, ${playerInfo.position || '--'}`;
+            
+            // Foto del jugador o iniciales
+            const photoUrl = playerInfo.photo_url;
+            const photoElement = document.getElementById('player1Photo');
+            const initialsElement = document.getElementById('player1Initials');
+            
+            if (photoUrl && photoUrl !== '') {
+                photoElement.src = photoUrl;
+                photoElement.classList.remove('hidden');
+                initialsElement.classList.add('hidden');
+            } else {
+                const initials = (playerInfo.player_name || '').split(' ').map(n => n[0]).join('').substring(0, 2);
+                initialsElement.textContent = initials || '--';
+                photoElement.classList.add('hidden');
+                initialsElement.classList.remove('hidden');
+            }
+            
+            // Valores
+            const marketValue = (playerInfo.market_value || 0) / 1000000;
+            const recommendedPrice = (analysis.fair_price || 0) / 1000000;
+            
+            document.getElementById('player1MarketValue').textContent = `€${marketValue.toFixed(1)}M`;
+            document.getElementById('player1RecommendedPrice').textContent = `€${recommendedPrice.toFixed(1)}M`;
+            
+            // Los 5 valores
+            const fiveValues = analysis.five_values || {};
+            document.getElementById('player1Marketing').textContent = `€${((fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Sport').textContent = `€${((fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Resale').textContent = `€${((fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Similar').textContent = `€${((fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Market').textContent = `€${((fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+            
+            // Análisis de rendimiento
+            const performanceText = analysis.performance_analysis?.performance_text || 'Análisis de rendimiento no disponible.';
+            document.getElementById('player1PerformanceAnalysis').textContent = performanceText;
+        }
+
+        async function searchPlayer2() {
+            const playerName = document.getElementById('player2Search').value;
+            const clubName = document.getElementById('club2Search').value;
+            
+            if (!playerName) {
+                alert('Por favor ingresa el nombre del jugador');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}`);
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+
+                player2Data = data;
+                displayPlayer2(data);
+                updateComparison();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al buscar el jugador');
+            }
+        }
+
+        function displayPlayer2(data) {
+            const playerInfo = data.player;
+            const analysis = data.truesign_analysis;
+            
+            // Mostrar resultados
+            document.getElementById('player2Results').classList.remove('hidden');
+            
+            // Información básica
+            document.getElementById('player2Name').textContent = playerInfo.player_name || '--';
+            document.getElementById('player2Club').textContent = playerInfo.club || '--';
+            document.getElementById('player2Info').textContent = `${playerInfo.age || '--'} años, ${playerInfo.position || '--'}`;
+            
+            // Foto del jugador o iniciales
+            const photoUrl = playerInfo.photo_url;
+            const photoElement = document.getElementById('player2Photo');
+            const initialsElement = document.getElementById('player2Initials');
+            
+            if (photoUrl && photoUrl !== '') {
+                photoElement.src = photoUrl;
+                photoElement.classList.remove('hidden');
+                initialsElement.classList.add('hidden');
+            } else {
+                const initials = (playerInfo.player_name || '').split(' ').map(n => n[0]).join('').substring(0, 2);
+                initialsElement.textContent = initials || '--';
+                photoElement.classList.add('hidden');
+                initialsElement.classList.remove('hidden');
+            }
+            
+            // Valores
+            const marketValue = (playerInfo.market_value || 0) / 1000000;
+            const recommendedPrice = (analysis.fair_price || 0) / 1000000;
+            
+            document.getElementById('player2MarketValue').textContent = `€${marketValue.toFixed(1)}M`;
+            document.getElementById('player2RecommendedPrice').textContent = `€${recommendedPrice.toFixed(1)}M`;
+            
+            // Los 5 valores
+            const fiveValues = analysis.five_values || {};
+            document.getElementById('player2Marketing').textContent = `€${((fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Sport').textContent = `€${((fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Resale').textContent = `€${((fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Similar').textContent = `€${((fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Market').textContent = `€${((fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+            
+            // Análisis de rendimiento
+            const performanceText = analysis.performance_analysis?.performance_text || 'Análisis de rendimiento no disponible.';
+            document.getElementById('player2PerformanceAnalysis').textContent = performanceText;
+        }
+
+        function updateComparison() {
+            if (player1Data && player2Data) {
+                // Mostrar resumen de comparación
+                document.getElementById('comparisonSummary').classList.remove('hidden');
+                
+                const player1Price = player1Data.truesign_analysis.fair_price || 0;
+                const player2Price = player2Data.truesign_analysis.fair_price || 0;
+                const difference = Math.abs(player1Price - player2Price);
+                
+                const player1Name = player1Data.player.player_name;
+                const player2Name = player2Data.player.player_name;
+                const betterValue = player1Price < player2Price ? player1Name : player2Name;
+                
+                const roi1 = player1Data.truesign_analysis.roi_estimate?.percentage || 0;
+                const roi2 = player2Data.truesign_analysis.roi_estimate?.percentage || 0;
+                const betterROI = roi1 > roi2 ? player1Name : player2Name;
+                
+                document.getElementById('priceDifference').textContent = `€${(difference / 1000000).toFixed(1)}M`;
+                document.getElementById('betterValue').textContent = betterValue;
+                document.getElementById('roiComparison').textContent = `${betterROI} (${Math.max(roi1, roi2).toFixed(1)}%)`;
+            }
+        }
+
+        // Language change function
+        function changeLanguage() {
+            const languageSelect = document.getElementById('languageSelect');
+            const selectedLanguage = languageSelect.value;
+            
+            if (selectedLanguage === 'en') {
+                // Change to English
+                changeToEnglish();
+                alert('Language changed successfully');
+            } else {
+                // Change to Spanish
+                changeToSpanish();
+                alert('Idioma cambiado exitosamente');
+            }
+            
+            // Save language preference
+            localStorage.setItem('language', selectedLanguage);
+        }
+
+        function changeToEnglish() {
+            // Navigation
+            document.querySelector('a[onclick="showPage(\'dashboard\')"]').innerHTML = '<i class="fas fa-tachometer-alt mr-3"></i> Dashboard';
+            document.querySelector('a[onclick="showPage(\'search\')"]').innerHTML = '<i class="fas fa-search mr-3"></i> Search Players';
+            document.querySelector('a[onclick="showPage(\'compare\')"]').innerHTML = '<i class="fas fa-exchange-alt mr-3"></i> Compare Players';
+            document.querySelector('a[onclick="showPage(\'reports\')"]').innerHTML = '<i class="fas fa-chart-line mr-3"></i> ROI Reports';
+            document.querySelector('a[onclick="showPage(\'settings\')"]').innerHTML = '<i class="fas fa-cog mr-3"></i> Settings';
+            
+            // Page titles
+            document.querySelector('#dashboard h1').textContent = 'TrueSign Dashboard';
+            document.querySelector('#search h1').textContent = 'Search Players';
+            document.querySelector('#compare h1').textContent = 'Compare Players';
+            document.querySelector('#reports h1').textContent = 'ROI Reports';
+            document.querySelector('#settings h1').textContent = 'Settings';
+            
+            // Dashboard page
+            const dashboardWelcome = document.querySelector('#dashboard h2');
+            if (dashboardWelcome) dashboardWelcome.textContent = 'Welcome to TrueSign!';
+            
+            const dashboardSubtitle = document.querySelector('#dashboard .text-green-100');
+            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Your world\'s most advanced transfer analysis system';
+            
+            // Dashboard stats
+            const dashboardStats = document.querySelectorAll('#dashboard .text-gray-400');
+            dashboardStats.forEach((stat, index) => {
+                switch(index) {
+                    case 0: stat.textContent = 'Players Analyzed'; break;
+                    case 1: stat.textContent = 'Transfers Analyzed'; break;
+                    case 2: stat.textContent = 'Model Accuracy'; break;
+                    case 3: stat.textContent = 'Completed Analysis'; break;
+                }
+            });
+            
+            // Dashboard section titles
+            const dashboardSectionTitles = document.querySelectorAll('#dashboard h2');
+            dashboardSectionTitles.forEach((title, index) => {
+                if (title.textContent.includes('¿Cómo Funciona TrueSign?')) {
+                    title.textContent = 'How Does TrueSign Work?';
+                } else if (title.textContent.includes('Jugadores Recientes')) {
+                    title.textContent = 'Recent Players';
+                }
+            });
+            
+            // Model explanation section
+            const modelSteps = document.querySelectorAll('#dashboard h3');
+            modelSteps.forEach((step, index) => {
+                if (step.textContent.includes('Análisis de Datos')) {
+                    step.textContent = 'Data Analysis';
+                } else if (step.textContent.includes('Los 5 Valores Fundamentales')) {
+                    step.textContent = 'The 5 Fundamental Values';
+                } else if (step.textContent.includes('IA Predictiva')) {
+                    step.textContent = 'Predictive AI';
+                } else if (step.textContent.includes('Metodología Científica')) {
+                    step.textContent = 'Scientific Methodology';
+                }
+            });
+            
+            // Model explanation content
+            const modelContent = document.querySelectorAll('#dashboard p');
+            modelContent.forEach((p, index) => {
+                if (p.textContent.includes('Analizamos más de')) {
+                    p.textContent = 'We analyze more than 92,000 real professional player transfers, including market data, sporting performance and club context.';
+                } else if (p.textContent.includes('Calculamos el valor basado en')) {
+                    p.textContent = 'We calculate value based on 5 key components: Marketing, Sporting, Resale, Similar Transfers and Market Values.';
+                } else if (p.textContent.includes('Utilizamos inteligencia artificial')) {
+                    p.textContent = 'We use advanced artificial intelligence to predict optimal price and expected ROI with 95% accuracy.';
+                }
+            });
+            
+            // Model methodology headers
+            const methodologyHeaders = document.querySelectorAll('#dashboard h4');
+            methodologyHeaders.forEach((header, index) => {
+                if (header.textContent.includes('Datos Analizados')) {
+                    header.textContent = '📊 Data Analyzed';
+                } else if (header.textContent.includes('Precisión del Modelo')) {
+                    header.textContent = '🎯 Model Accuracy';
+                } else if (header.textContent.includes('¿Por qué TrueSign es único?')) {
+                    header.textContent = 'Why is TrueSign unique?';
+                }
+            });
+            
+            // Dashboard section descriptions
+            const dashboardSectionDescriptions = document.querySelectorAll('#dashboard p');
+            dashboardSectionDescriptions.forEach((desc, index) => {
+                if (desc.textContent.includes('Busca jugadores para verlos aquí')) {
+                    desc.textContent = 'Search players to see them here';
+                }
+            });
+            
+            // Dashboard sections
+            const dashboardSections = document.querySelectorAll('#dashboard h3');
+            dashboardSections.forEach((section, index) => {
+                switch(index) {
+                    case 0: section.textContent = 'Quick Analysis'; break;
+                    case 1: section.textContent = 'Recent Statistics'; break;
+                    case 2: section.textContent = 'Top Players'; break;
+                }
+            });
+            
+            // Dashboard descriptions
+            const dashboardDescriptions = document.querySelectorAll('#dashboard .text-gray-400');
+            dashboardDescriptions.forEach((desc, index) => {
+                if (desc.textContent.includes('Busca cualquier jugador')) {
+                    desc.textContent = 'Search any player';
+                } else if (desc.textContent.includes('Últimos análisis realizados')) {
+                    desc.textContent = 'Latest analysis performed';
+                } else if (desc.textContent.includes('Jugadores con mayor valor')) {
+                    desc.textContent = 'Players with highest value';
+                }
+            });
+            
+            // Dashboard buttons
+            const dashboardButtons = document.querySelectorAll('#dashboard button');
+            dashboardButtons.forEach(button => {
+                if (button.textContent.includes('Buscar')) {
+                    button.textContent = 'Search';
+                }
+            });
+            
+            // Search page
+            document.querySelector('#playerSearch2').placeholder = 'Search player...';
+            document.querySelector('#clubSearch2').placeholder = 'Destination club...';
+            document.querySelector('button[onclick="searchPlayerFromPage(\'search\')"]').textContent = 'Search Player';
+            
+            // Compare page
+            document.querySelectorAll('#player1Search, #player2Search').forEach(input => {
+                input.placeholder = 'Search player...';
+            });
+            document.querySelectorAll('#club1Search, #club2Search').forEach(input => {
+                input.placeholder = 'Destination club...';
+            });
+            document.querySelector('button[onclick="searchPlayer1()"]').textContent = 'Search Player 1';
+            document.querySelector('button[onclick="searchPlayer2()"]').textContent = 'Search Player 2';
+            
+            // Compare page labels
+            const compareLabels = document.querySelectorAll('#compare h2');
+            if (compareLabels[0]) compareLabels[0].textContent = 'Player 1';
+            if (compareLabels[1]) compareLabels[1].textContent = 'Player 2';
+            
+            // Compare page summary
+            const summaryElements = document.querySelectorAll('#comparisonSummary h3');
+            if (summaryElements[0]) summaryElements[0].textContent = 'Price Difference';
+            if (summaryElements[1]) summaryElements[1].textContent = 'Better Value';
+            if (summaryElements[2]) summaryElements[2].textContent = 'Estimated ROI';
+            
+            // Reports page
+            document.querySelector('#reports h2').textContent = 'Detailed Historical Analysis';
+            const reportsText = document.querySelector('#reports .text-gray-400');
+            if (reportsText) reportsText.textContent = 'Search a player to see detailed analysis of how the price was determined';
+            
+            // Settings page
+            document.querySelector('#settings h2').textContent = 'Language Settings';
+            document.querySelector('button[onclick="changeLanguage()"]').textContent = 'Change Language';
+            
+            // Settings sections
+            const settingsSections = document.querySelectorAll('#settings h2');
+            if (settingsSections[1]) settingsSections[1].textContent = 'System Settings';
+            if (settingsSections[2]) settingsSections[2].textContent = 'Account Settings';
+            
+            // Settings subsections
+            const settingsSubsections = document.querySelectorAll('#settings h3');
+            settingsSubsections.forEach((h3, index) => {
+                switch(index) {
+                    case 0: h3.textContent = 'Display Preferences'; break;
+                    case 1: h3.textContent = 'Data Configuration'; break;
+                    case 2: h3.textContent = 'Personal Information'; break;
+                    case 3: h3.textContent = 'Security'; break;
+                }
+            });
+            
+            // Settings labels and options
+            const settingsLabels = document.querySelectorAll('#settings .text-gray-300');
+            settingsLabels.forEach((label, index) => {
+                switch(index) {
+                    case 0: label.textContent = 'Show values in millions'; break;
+                    case 1: label.textContent = 'Show detailed analysis'; break;
+                    case 2: label.textContent = 'Dark mode (always active)'; break;
+                    case 3: label.textContent = 'Automatic update:'; break;
+                    case 4: label.textContent = 'Analysis precision:'; break;
+                    case 5: label.textContent = 'Username:'; break;
+                    case 6: label.textContent = 'Email:'; break;
+                }
+            });
+            
+            // Settings buttons
+            const settingsButtons = document.querySelectorAll('#settings button');
+            settingsButtons.forEach((button, index) => {
+                if (button.textContent.includes('Cambiar Contraseña')) {
+                    button.textContent = 'Change Password';
+                } else if (button.textContent.includes('Cerrar Sesión')) {
+                    button.textContent = 'Log Out';
+                }
+            });
+            
+            // Settings select options
+            const selectOptions = document.querySelectorAll('#settings select option');
+            selectOptions.forEach((option, index) => {
+                switch(option.textContent) {
+                    case 'Cada hora': option.textContent = 'Every hour'; break;
+                    case 'Diariamente': option.textContent = 'Daily'; break;
+                    case 'Semanalmente': option.textContent = 'Weekly'; break;
+                    case 'Alta (recomendado)': option.textContent = 'High (recommended)'; break;
+                    case 'Media': option.textContent = 'Medium'; break;
+                    case 'Rápida': option.textContent = 'Fast'; break;
+                }
+            });
+            
+            // Settings descriptions
+            const settingsDescriptions = document.querySelectorAll('#settings .text-gray-400');
+            settingsDescriptions.forEach((desc, index) => {
+                switch(index) {
+                    case 0: desc.textContent = 'Select your preferred language for the interface'; break;
+                    case 1: desc.textContent = 'Panel de control'; break; // Keep username as is
+                }
+            });
+        }
+
+        function changeToSpanish() {
+            // Navigation
+            document.querySelector('a[onclick="showPage(\'dashboard\')"]').innerHTML = '<i class="fas fa-tachometer-alt mr-3"></i> Dashboard';
+            document.querySelector('a[onclick="showPage(\'search\')"]').innerHTML = '<i class="fas fa-search mr-3"></i> Buscar Jugadores';
+            document.querySelector('a[onclick="showPage(\'compare\')"]').innerHTML = '<i class="fas fa-exchange-alt mr-3"></i> Comparar Jugadores';
+            document.querySelector('a[onclick="showPage(\'reports\')"]').innerHTML = '<i class="fas fa-chart-line mr-3"></i> Reportes ROI';
+            document.querySelector('a[onclick="showPage(\'settings\')"]').innerHTML = '<i class="fas fa-cog mr-3"></i> Configuración';
+            
+            // Page titles
+            document.querySelector('#dashboard h1').textContent = 'Dashboard TrueSign';
+            document.querySelector('#search h1').textContent = 'Buscar Jugadores';
+            document.querySelector('#compare h1').textContent = 'Comparar Jugadores';
+            document.querySelector('#reports h1').textContent = 'Reportes ROI';
+            document.querySelector('#settings h1').textContent = 'Configuración';
+            
+            // Dashboard page
+            const dashboardWelcome = document.querySelector('#dashboard h2');
+            if (dashboardWelcome) dashboardWelcome.textContent = '¡Bienvenido a TrueSign!';
+            
+            const dashboardSubtitle = document.querySelector('#dashboard .text-green-100');
+            if (dashboardSubtitle) dashboardSubtitle.textContent = 'Tu sistema de análisis de transferencias más avanzado del mundo';
+            
+            // Dashboard stats
+            const dashboardStats = document.querySelectorAll('#dashboard .text-gray-400');
+            dashboardStats.forEach((stat, index) => {
+                switch(index) {
+                    case 0: stat.textContent = 'Jugadores Analizados'; break;
+                    case 1: stat.textContent = 'Transferencias Analizadas'; break;
+                    case 2: stat.textContent = 'Clubes Disponibles'; break;
+                    case 3: stat.textContent = 'Análisis Completados'; break;
+                }
+            });
+            
+            // Dashboard sections
+            const dashboardSections = document.querySelectorAll('#dashboard h3');
+            dashboardSections.forEach((section, index) => {
+                switch(index) {
+                    case 0: section.textContent = 'Análisis Rápido'; break;
+                    case 1: section.textContent = 'Estadísticas Recientes'; break;
+                    case 2: section.textContent = 'Top Jugadores'; break;
+                }
+            });
+            
+            // Dashboard descriptions
+            const dashboardDescriptions = document.querySelectorAll('#dashboard .text-gray-400');
+            dashboardDescriptions.forEach((desc, index) => {
+                if (desc.textContent.includes('Search any player')) {
+                    desc.textContent = 'Busca cualquier jugador';
+                } else if (desc.textContent.includes('Latest analysis')) {
+                    desc.textContent = 'Últimos análisis realizados';
+                } else if (desc.textContent.includes('Players with highest')) {
+                    desc.textContent = 'Jugadores con mayor valor';
+                }
+            });
+            
+            // Dashboard buttons
+            const dashboardButtons = document.querySelectorAll('#dashboard button');
+            dashboardButtons.forEach(button => {
+                if (button.textContent.includes('Search')) {
+                    button.textContent = 'Buscar';
+                }
+            });
+            
+            // Search page
+            document.querySelector('#playerSearch2').placeholder = 'Buscar jugador...';
+            document.querySelector('#clubSearch2').placeholder = 'Club destino...';
+            document.querySelector('button[onclick="searchPlayerFromPage(\'search\')"]').textContent = 'Buscar Jugador';
+            
+            // Compare page
+            document.querySelectorAll('#player1Search, #player2Search').forEach(input => {
+                input.placeholder = 'Buscar jugador...';
+            });
+            document.querySelectorAll('#club1Search, #club2Search').forEach(input => {
+                input.placeholder = 'Club destino...';
+            });
+            document.querySelector('button[onclick="searchPlayer1()"]').textContent = 'Buscar Jugador 1';
+            document.querySelector('button[onclick="searchPlayer2()"]').textContent = 'Buscar Jugador 2';
+            
+            // Compare page labels
+            const compareLabels = document.querySelectorAll('#compare h2');
+            if (compareLabels[0]) compareLabels[0].textContent = 'Jugador 1';
+            if (compareLabels[1]) compareLabels[1].textContent = 'Jugador 2';
+            
+            // Compare page summary
+            const summaryElements = document.querySelectorAll('#comparisonSummary h3');
+            if (summaryElements[0]) summaryElements[0].textContent = 'Diferencia de Precio';
+            if (summaryElements[1]) summaryElements[1].textContent = 'Mejor Valor';
+            if (summaryElements[2]) summaryElements[2].textContent = 'ROI Estimado';
+            
+            // Reports page
+            document.querySelector('#reports h2').textContent = 'Análisis Histórico Detallado';
+            const reportsText = document.querySelector('#reports .text-gray-400');
+            if (reportsText) reportsText.textContent = 'Busca un jugador para ver el análisis detallado de cómo se llegó al precio';
+            
+            // Settings page
+            document.querySelector('#settings h2').textContent = 'Configuración de Idioma';
+            document.querySelector('button[onclick="changeLanguage()"]').textContent = 'Cambiar Idioma';
+            
+            // Settings sections
+            const settingsSections = document.querySelectorAll('#settings h2');
+            if (settingsSections[1]) settingsSections[1].textContent = 'Configuración del Sistema';
+            if (settingsSections[2]) settingsSections[2].textContent = 'Configuración de Cuenta';
+            
+            // Settings subsections
+            const settingsSubsections = document.querySelectorAll('#settings h3');
+            settingsSubsections.forEach((h3, index) => {
+                switch(index) {
+                    case 0: h3.textContent = 'Preferencias de Visualización'; break;
+                    case 1: h3.textContent = 'Configuración de Datos'; break;
+                    case 2: h3.textContent = 'Información Personal'; break;
+                    case 3: h3.textContent = 'Seguridad'; break;
+                }
+            });
+            
+            // Settings labels and options
+            const settingsLabels = document.querySelectorAll('#settings .text-gray-300');
+            settingsLabels.forEach((label, index) => {
+                switch(index) {
+                    case 0: label.textContent = 'Mostrar valores en millones'; break;
+                    case 1: label.textContent = 'Mostrar análisis detallado'; break;
+                    case 3: label.textContent = 'Actualización automática:'; break;
+                    case 4: label.textContent = 'Precisión de análisis:'; break;
+                    case 5: label.textContent = 'Nombre de usuario:'; break;
+                    case 6: label.textContent = 'Email:'; break;
+                }
+            });
+            
+            // Settings buttons
+            const settingsButtons = document.querySelectorAll('#settings button');
+            settingsButtons.forEach((button, index) => {
+                if (button.textContent.includes('Change Password')) {
+                    button.textContent = 'Cambiar Contraseña';
+                } else if (button.textContent.includes('Log Out')) {
+                    button.textContent = 'Cerrar Sesión';
+                }
+            });
+            
+            // Settings select options
+            const selectOptions = document.querySelectorAll('#settings select option');
+            selectOptions.forEach((option, index) => {
+                switch(option.textContent) {
+                    case 'Every hour': option.textContent = 'Cada hora'; break;
+                    case 'Daily': option.textContent = 'Diariamente'; break;
+                    case 'Weekly': option.textContent = 'Semanalmente'; break;
+                    case 'High (recommended)': option.textContent = 'Alta (recomendado)'; break;
+                    case 'Medium': option.textContent = 'Media'; break;
+                    case 'Fast': option.textContent = 'Rápida'; break;
+                }
+            });
+            
+            // Settings descriptions
+            const settingsDescriptions = document.querySelectorAll('#settings .text-gray-400');
+            settingsDescriptions.forEach((desc, index) => {
+                switch(index) {
+                    case 0: desc.textContent = 'Selecciona tu idioma preferido para la interfaz'; break;
+                    case 1: desc.textContent = 'Panel de control'; break; // Keep username as is
+                }
+            });
+        }
+
+        // Initialize autocomplete for compare page
+        function initializeComparePage() {
+            if (document.getElementById('player1Search')) {
+                initializeAutocompleteForPage('player1Search', 'player1Dropdown');
+                initializeClubSearchForPage('club1Search', 'club1Dropdown');
+            }
+            if (document.getElementById('player2Search')) {
+                initializeAutocompleteForPage('player2Search', 'player2Dropdown');
+                initializeClubSearchForPage('club2Search', 'club2Dropdown');
+            }
+        }
+
+        // Translation helper functions
+        function getCurrentLanguage() {
+            return localStorage.getItem('language') || 'es';
+        }
+
+        function translateDynamicTexts() {
+            const currentLang = getCurrentLanguage();
+            
+            if (currentLang === 'en') {
+                // Translate all text elements that contain Spanish text
+                const allElements = document.querySelectorAll('*');
+                allElements.forEach(element => {
+                    if (element.children.length === 0) { // Only leaf nodes
+                        const text = element.textContent;
+                        
+                        // Market Value
+                        if (text.includes('Valor de Mercado')) {
+                            element.textContent = text.replace('Valor de Mercado', 'Market Value');
+                        }
+                        
+                        // Recommended Price
+                        if (text.includes('Precio Recomendado')) {
+                            element.textContent = text.replace('Precio Recomendado', 'Recommended Price');
+                        }
+                        
+                        // Maximum Recommended Price
+                        if (text.includes('Precio Máximo Recomendado')) {
+                            element.textContent = text.replace('Precio Máximo Recomendado', 'Maximum Recommended Price');
+                        }
+                        
+                        // Five Fundamental Values
+                        if (text.includes('Los 5 Valores Fundamentales')) {
+                            element.textContent = text.replace('Los 5 Valores Fundamentales', 'The 5 Fundamental Values');
+                        }
+                        
+                        // Confidence
+                        if (text.includes('Confianza')) {
+                            element.textContent = text.replace('Confianza', 'Confidence');
+                        }
+                        
+                        // Estimated ROI
+                        if (text.includes('ROI Estimado')) {
+                            element.textContent = text.replace('ROI Estimado', 'Estimated ROI');
+                        }
+                        
+                        // Marketing Value
+                        if (text.includes('Valor Marketing')) {
+                            element.textContent = text.replace('Valor Marketing', 'Marketing Value');
+                        }
+                        
+                        // Sporting Value
+                        if (text.includes('Valor Deportivo')) {
+                            element.textContent = text.replace('Valor Deportivo', 'Sporting Value');
+                        }
+                        
+                        // Resale Value
+                        if (text.includes('Valor Reventa')) {
+                            element.textContent = text.replace('Valor Reventa', 'Resale Value');
+                        }
+                        
+                        // Similar Transfers
+                        if (text.includes('Transferencias Similares')) {
+                            element.textContent = text.replace('Transferencias Similares', 'Similar Transfers');
+                        }
+                        
+                        // Market Values
+                        if (text.includes('Valores de Mercado')) {
+                            element.textContent = text.replace('Valores de Mercado', 'Market Values');
+                        }
+                        
+                        // Age
+                        if (text.includes('años')) {
+                            element.textContent = text.replace('años', 'years old');
+                        }
+                        
+                        // Height
+                        if (text.includes('Altura:')) {
+                            element.textContent = text.replace('Altura:', 'Height:');
+                        }
+                        
+                        // Dominant foot
+                        if (text.includes('Pie hábil:')) {
+                            element.textContent = text.replace('Pie hábil:', 'Dominant foot:');
+                        }
+                        
+                        // Right-footed
+                        if (text.includes('Diestro')) {
+                            element.textContent = text.replace('Diestro', 'Right-footed');
+                        }
+                        
+                        // Left-footed
+                        if (text.includes('Zurdo')) {
+                            element.textContent = text.replace('Zurdo', 'Left-footed');
+                        }
+                        
+                        // Ambidextrous
+                        if (text.includes('Ambidiestro')) {
+                            element.textContent = text.replace('Ambidiestro', 'Ambidextrous');
+                        }
+                    }
+                });
+            } else {
+                // Translate back to Spanish
+                const allElements = document.querySelectorAll('*');
+                allElements.forEach(element => {
+                    if (element.children.length === 0) { // Only leaf nodes
+                        const text = element.textContent;
+                        
+                        // Market Value
+                        if (text.includes('Market Value')) {
+                            element.textContent = text.replace('Market Value', 'Valor de Mercado');
+                        }
+                        
+                        // Recommended Price
+                        if (text.includes('Recommended Price')) {
+                            element.textContent = text.replace('Recommended Price', 'Precio Recomendado');
+                        }
+                        
+                        // Maximum Recommended Price
+                        if (text.includes('Maximum Recommended Price')) {
+                            element.textContent = text.replace('Maximum Recommended Price', 'Precio Máximo Recomendado');
+                        }
+                        
+                        // Five Fundamental Values
+                        if (text.includes('The 5 Fundamental Values')) {
+                            element.textContent = text.replace('The 5 Fundamental Values', 'Los 5 Valores Fundamentales');
+                        }
+                        
+                        // Confidence
+                        if (text.includes('Confidence')) {
+                            element.textContent = text.replace('Confidence', 'Confianza');
+                        }
+                        
+                        // Estimated ROI
+                        if (text.includes('Estimated ROI')) {
+                            element.textContent = text.replace('Estimated ROI', 'ROI Estimado');
+                        }
+                        
+                        // Marketing Value
+                        if (text.includes('Marketing Value')) {
+                            element.textContent = text.replace('Marketing Value', 'Valor Marketing');
+                        }
+                        
+                        // Sporting Value
+                        if (text.includes('Sporting Value')) {
+                            element.textContent = text.replace('Sporting Value', 'Valor Deportivo');
+                        }
+                        
+                        // Resale Value
+                        if (text.includes('Resale Value')) {
+                            element.textContent = text.replace('Resale Value', 'Valor Reventa');
+                        }
+                        
+                        // Similar Transfers
+                        if (text.includes('Similar Transfers')) {
+                            element.textContent = text.replace('Similar Transfers', 'Transferencias Similares');
+                        }
+                        
+                        // Market Values
+                        if (text.includes('Market Values')) {
+                            element.textContent = text.replace('Market Values', 'Valores de Mercado');
+                        }
+                        
+                        // Age
+                        if (text.includes('years old')) {
+                            element.textContent = text.replace('years old', 'años');
+                        }
+                        
+                        // Height
+                        if (text.includes('Height:')) {
+                            element.textContent = text.replace('Height:', 'Altura:');
+                        }
+                        
+                        // Dominant foot
+                        if (text.includes('Dominant foot:')) {
+                            element.textContent = text.replace('Dominant foot:', 'Pie hábil:');
+                        }
+                        
+                        // Right-footed
+                        if (text.includes('Right-footed')) {
+                            element.textContent = text.replace('Right-footed', 'Diestro');
+                        }
+                        
+                        // Left-footed
+                        if (text.includes('Left-footed')) {
+                            element.textContent = text.replace('Left-footed', 'Zurdo');
+                        }
+                        
+                        // Ambidextrous
+                        if (text.includes('Ambidextrous')) {
+                            element.textContent = text.replace('Ambidextrous', 'Ambidiestro');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Enhanced search functions with translation
+        async function searchPlayerFromPageWithTranslation(pageId) {
+            await searchPlayerFromPage(pageId);
+            translateDynamicTexts();
+        }
+
+        async function searchPlayer1WithTranslation() {
+            await searchPlayer1();
+            translateDynamicTexts();
+        }
+
+        async function searchPlayer2WithTranslation() {
+            await searchPlayer2();
+            translateDynamicTexts();
+        }
+
+        // Override the original search functions to include translation
+        const originalSearchPlayer1 = searchPlayer1;
+        const originalSearchPlayer2 = searchPlayer2;
+        const originalSearchPlayerFromPage = searchPlayerFromPage;
+
+        searchPlayer1 = async function() {
+            await originalSearchPlayer1();
+            translateDynamicTexts();
+        };
+
+        searchPlayer2 = async function() {
+            await originalSearchPlayer2();
+            translateDynamicTexts();
+        };
+
+        searchPlayerFromPage = async function(pageId) {
+            await originalSearchPlayerFromPage(pageId);
+            translateDynamicTexts();
+        };
+    </script>
+ </body>
+</html>

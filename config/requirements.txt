@@ -1,0 +1,41 @@
+# TrueSign - Requirements COMPATIBLES para modelos .pkl entrenados
+# IMPORTANTE: Estas versiones EXACTAS son requeridas para cargar modelos pre-entrenados
+# NO actualizar sin re-entrenar todos los modelos
+
+# Web Framework (versiones estables)
+Flask==2.3.3
+Werkzeug==2.3.7
+Jinja2==3.1.2
+MarkupSafe==2.1.3
+itsdangerous==2.1.2
+click==8.1.7
+blinker==1.6.2
+
+# Data Processing (VERSIONES MODERNAS 2025)
+pandas==2.2.3
+numpy==2.0.2
+scipy==1.14.1
+
+# Machine Learning (VERSIONES MODERNAS 2025 - Para NUEVOS modelos)
+scikit-learn==1.5.2
+lightgbm==4.5.0
+xgboost==2.1.3
+
+# Visualización y Progreso
+tqdm==4.67.1
+matplotlib==3.9.3
+seaborn==0.13.2
+
+# Web Scraping (versiones estables)
+requests==2.31.0
+beautifulsoup4==4.12.2
+cloudscraper==1.2.71
+lxml==4.9.3
+html5lib==1.1
+
+# Utilities
+urllib3==2.0.7
+fake-useragent==1.4.0
+
+# Dependencias adicionales para macOS
+# brew install libomp  # Requerido para LightGBM en macOS

@@ -1,1 +1,1 @@
-web: gunicorn truesign_perfect_app:app
+config/Procfile

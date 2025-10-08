@@ -1,317 +1,202 @@
 # 🚀 TrueSign - Sistema Inteligente de Análisis de Transferencias
 
+**Versión 2025.1** | Modelos ML Modernos | Estructura Profesional
+
+[![Python](https://img.shields.io/badge/Python-3.10-blue.svg)](https://www.python.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.5.2-orange.svg)](https://scikit-learn.org/)
+[![Flask](https://img.shields.io/badge/Flask-2.3.3-green.svg)](https://flask.palletsprojects.com/)
+[![numpy](https://img.shields.io/badge/numpy-2.0.2-blue.svg)](https://numpy.org/)
+
 ## 📋 Descripción
 
-TrueSign es una aplicación web avanzada que utiliza **Machine Learning** para analizar transferencias de jugadores de fútbol. El sistema combina múltiples modelos ML entrenados con datos reales para proporcionar predicciones precisas de precios, ROI y potencial de crecimiento.
+TrueSign utiliza **Machine Learning** para predecir el valor futuro y ROI de jugadores de fútbol. Combina scraping en tiempo real de Transfermarkt con modelos ML entrenados con 777k+ transferencias reales.
 
-## 🎯 Características Principales
+### ✨ Características
 
-### 🤖 **Modelo Híbrido ML**
+- 🤖 **Modelos ML 2025** - sklearn 1.5+, numpy 2.0+ (reentrenados Oct 2025)
+- 📊 **19 Features Avanzadas** - Interacciones, polinomios, transformaciones
+- 🎯 **85% Confianza** - Optimización con RandomizedSearchCV
+- 🔍 **Scraping en Vivo** - Datos actualizados de Transfermarkt
+- 💰 **ROI Predicho** - Cambio de valor + Precio máximo recomendado
 
-- **ValueChangePredictor**: Predice el cambio de valor post-transferencia (Resale Value)
-- **UltimateTransferModel**: Calcula el precio máximo recomendado y los 5 valores de análisis
-- **Club Enhancer**: Considera el poder financiero del club destino
-- **100% ML Real**: Sin fallbacks, solo modelos entrenados con datos históricos
+---
 
-### 🔍 **Sistema de Búsqueda Inteligente**
-
-- **Autocompletado de Jugadores**: API de Transfermarkt + lista estática
-- **Autocompletado de Clubes**: Sistema mejorado con aliases y búsqueda fuzzy
-- **Búsqueda Robusta**: Scraper + API + Base de datos local
-- **Cache Inteligente**: Optimización de rendimiento
-
-### 📊 **Análisis Completo**
-
-- **Precio Máximo Recomendado**: Del UltimateTransferModel
-- **Resale Value**: Del ValueChangePredictor
-- **Los 5 Valores Fundamentales**: Análisis independiente
-- **ROI Estimado**: Basado en predicciones ML
-- **Confianza**: Nivel de certeza de las predicciones
-
-## 🏗️ Arquitectura del Sistema
-
-```
-TrueSign Application
-├── Frontend (HTML/CSS/JavaScript)
-│   ├── Interfaz de usuario moderna
-│   ├── Autocompletado inteligente
-│   └── Visualización de resultados
-├── Backend (Flask)
-│   ├── Endpoints REST API
-│   ├── Sistema de búsqueda híbrido
-│   └── Integración con modelos ML
-├── Modelos ML
-│   ├── ValueChangePredictor (RandomForest)
-│   ├── UltimateTransferModel (RandomForest + Success Rate)
-│   └── Club Enhancer (API + Multiplicadores)
-└── Datos
-    ├── Modelos entrenados (.pkl)
-    ├── Cache de jugadores
-    └── Base de datos de clubes
-```
-
-## 🔄 Proceso de Análisis
-
-### 1. **Input del Usuario**
-
-```
-Jugador: Kevin Lomónaco
-Club Destino: FC Barcelona
-ROI Objetivo: 30%
-```
-
-### 2. **Búsqueda de Datos**
-
-- **Sistema Híbrido**: Scraper + API + BD local
-- **Datos del Jugador**: Edad, posición, valor de mercado, nacionalidad
-- **Datos del Club**: Valor de mercado, país, tier, factores económicos
-
-### 3. **Generación de Features**
-
-- **ValueChangePredictor**: 14 features del jugador
-- **UltimateTransferModel**: 14 features del jugador + club
-- **Club Enhancer**: Multiplicador basado en poder del club
-
-### 4. **Predicción ML**
-
-- **ValueChangePredictor**: Predice cambio de valor (321.8%)
-- **UltimateTransferModel**: Predice precio máximo (€14.4M)
-- **Club Enhancer**: Aplica multiplicador del club (1.4x)
-
-### 5. **Resultado Final**
-
-- **Precio Máximo**: €15.8M (€14.4M × 1.4)
-- **Resale Value**: €50.6M (del ValueChangePredictor)
-- **ROI Estimado**: 200% (limitado al máximo)
-- **Los 5 Valores**: Análisis independiente
-
-## 📈 Los 5 Valores Fundamentales
-
-### 🎯 **Valor Marketing** (€4.7M)
-
-- Potencial comercial del jugador
-- Impacto en ventas de camisetas
-- Valor de marca personal
-
-### ⚽ **Valor Deportivo** (€6.7M)
-
-- Contribución al rendimiento del equipo
-- Habilidades técnicas y físicas
-- Adaptabilidad al estilo de juego
-
-### 💰 **Valor Reventa** (€9.4M)
-
-- Potencial de crecimiento futuro
-- Valor de mercado proyectado
-- Oportunidades de reventa
-
-### 🔄 **Transferencias Similares** (€3.0M)
-
-- Comparación con jugadores similares
-- Precios de mercado históricos
-- Tendencias de transferencias
-
-### 🌍 **Valores de Mercado** (€3.6M)
-
-- Diferentes mercados geográficos
-- Variaciones por liga y país
-- Oportunidades internacionales
-
-## 🎯 Ejemplo de Análisis
-
-### **Kevin Lomónaco → FC Barcelona**
-
-| Métrica                       | Valor   | Fuente                |
-| ----------------------------- | ------- | --------------------- |
-| **Valor de Mercado**          | €12.0M  | Transfermarkt         |
-| **Precio Máximo Recomendado** | €129.4M | UltimateTransferModel |
-| **Resale Value**              | €50.6M  | ValueChangePredictor  |
-| **ROI Estimado**              | 200%    | ML Prediction         |
-| **Cambio Predicho**           | +200%   | ML Prediction         |
-| **Confianza**                 | 75%     | Model Confidence      |
-| **Club Multiplier**           | 1.4x    | Barcelona (Tier 1)    |
-
-### **Los 5 Valores Fundamentales**
-
-- **Valor Marketing**: €4.7M
-- **Valor Deportivo**: €8.7M
-- **Valor Reventa**: €28.8M
-- **Transferencias Similares**: €4.2M
-- **Valores de Mercado**: €12.0M
-
-## 🚀 Tecnologías Utilizadas
-
-### **Backend**
-
-- **Flask**: Framework web
-- **Python 3.10+**: Lenguaje principal
-- **scikit-learn**: Machine Learning
-- **NumPy**: Computación numérica
-- **Pandas**: Manipulación de datos
-
-### **Modelos ML**
-
-- **RandomForestRegressor**: Predicción de precios
-- **StandardScaler**: Normalización de features
-- **LabelEncoder**: Codificación categórica
-- **Pickle**: Persistencia de modelos
-
-### **Frontend**
-
-- **HTML5/CSS3**: Interfaz moderna
-- **JavaScript**: Interactividad
-- **Bootstrap**: Diseño responsive
-- **Chart.js**: Visualización de datos
-
-### **APIs Externas**
-
-- **Transfermarkt API**: Datos de jugadores y clubes
-- **Web Scraping**: Datos adicionales
-- **Cache System**: Optimización de rendimiento
-
-## 📦 Instalación y Uso
-
-### **Requisitos**
+## 🏃 Inicio Rápido
 
 ```bash
-Python 3.10+
+# 1. Clonar repositorio
+git clone <repo-url>
+cd true_sign
+
+# 2. Crear y activar entorno virtual
+python3 -m venv venv
+source venv/bin/activate  # macOS/Linux
+# venv\Scripts\activate   # Windows
+
+# 3. Instalar dependencias
 pip install -r requirements.txt
+
+# 4. Iniciar aplicación
+python app/run.py
 ```
 
-### **Ejecución**
+**Acceder:** http://localhost:5001
+
+---
+
+## 📊 Ejemplo de Uso
+
+### Input:
+
+```
+Jugador: 24 años, €15M, Delantero Argentino
+Club Destino: FC Barcelona
+```
+
+### Output:
+
+```
+💰 Precio Máximo: €23.1M (con multiplier Barcelona 1.4x)
+📈 Valor Futuro: €20.1M
+📊 ROI: 33.89%
+🎯 Success Rate: 85%
+✅ Confianza: 85%
+```
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+true_sign/
+├── app/          → Aplicación Flask (frontend + backend)
+├── models/       → Modelos ML 2025 (153 MB)
+├── scraping/     → Scraping de Transfermarkt
+├── data/         → Datasets (442 MB, 92k+ jugadores)
+├── scripts/      → Utilidades (training, testing, monitoring)
+├── docs/         → Documentación completa
+├── config/       → requirements.txt, Procfile, etc.
+└── venv/         → Entorno virtual Python
+```
+
+---
+
+## 🤖 Modelos ML
+
+### Value Change Predictor
+
+- **Archivo:** `models/trained/value_change_model.pkl` (8.1 MB)
+- **Features:** 19 features avanzadas
+- **Algoritmo:** Voting Ensemble (RandomForest + GradientBoosting)
+- **Performance:** R²: >0.70, MAE: ~20-30%
+
+### Maximum Price Predictor
+
+- **Archivo:** `models/trained/maximum_price_model.pkl` (145 MB)
+- **Features:** 14 features avanzadas
+- **Algoritmo:** Voting Ensemble optimizado
+- **Performance:** R²: >0.65, MAE: ~€2-5M
+
+---
+
+## 🔧 Tecnologías
+
+### Backend
+
+- **Flask 2.3.3** - Framework web
+- **Python 3.10** - Lenguaje principal
+
+### Machine Learning
+
+- **scikit-learn 1.5.2** - Modelos ML
+- **numpy 2.0.2** - Computación numérica
+- **pandas 2.2.3** - Procesamiento datos
+- **scipy 1.14.1** - Funciones científicas
+
+### Web Scraping
+
+- **requests 2.31.0** - HTTP requests
+- **beautifulsoup4 4.12.2** - Parsing HTML
+- **cloudscraper 1.2.71** - Bypass anti-scraping
+
+---
+
+## 📚 Documentación
+
+- **Principal:** `docs/README.md`
+- **Arquitectura:** `docs/FUNCIONAMIENTO_GENERAL.md`
+- **Instalación:** `docs/INSTALACION.md`
+- **Modelos ML:** `docs/REENTRENAMIENTO_2025_COMPLETADO.md`
+- **Flujo Técnico:** `docs/FLUJO_EXACTO_ARCHIVOS.md`
+
+---
+
+## 🧪 Tests
 
 ```bash
-python3 run_app.py
+# Test de modelos
+python scripts/testing/test_new_models.py
+
+# Test de integración
+python scripts/testing/test_app_integration.py
+
+# Verificar versiones
+python scripts/testing/verify_versions.py
 ```
 
-### **Acceso**
+---
 
+## 🔄 Reentrenamiento
+
+```bash
+# 1. Preparar datos
+python scripts/training/data_preparation.py
+
+# 2. Entrenar modelos
+python scripts/training/train_models_verbose.py
+
+# 3. Ver progreso
+scripts/training/ver_progreso.sh
 ```
-http://localhost:5001
-```
 
-## 🎯 Casos de Uso
+---
 
-### **Para Agentes de Jugadores**
+## 📈 Datos
 
-- Evaluar el valor real de sus clientes
-- Negociar precios basados en datos ML
-- Identificar oportunidades de mercado
+- **92,671** jugadores
+- **1,101,440** transferencias
+- **901,429** valores de mercado históricos
+- **1,878,719** registros de rendimiento
+- **Período:** 2003-2025 (22 años)
 
-### **Para Clubes**
+---
 
-- Evaluar inversiones en jugadores
-- Comparar opciones de transferencia
-- Optimizar presupuestos de fichajes
+## 🚀 Deployment
 
-### **Para Analistas**
+### Render.com
 
-- Estudiar tendencias de mercado
-- Validar predicciones con datos reales
-- Investigar factores de éxito
+El proyecto está configurado para deployment en Render:
 
-## 🔧 Configuración Avanzada
+- `Procfile`: Configurado con Gunicorn
+- `runtime.txt`: Python 3.10
+- `render.yaml`: Configuración de servicio
 
-### **Modelos ML**
-
-- **Ubicación**: `saved_models/`
-- **Formato**: Archivos `.pkl`
-- **Entrenamiento**: Datos históricos reales
-- **Actualización**: Proceso automatizado
-
-### **Cache System**
-
-- **Jugadores**: Cache de búsquedas
-- **Clubes**: Cache de información
-- **API**: Cache de respuestas
-- **Limpieza**: Automática
-
-### **APIs**
-
-- **Transfermarkt**: Datos en tiempo real
-- **Fallback**: Sistema robusto
-- **Rate Limiting**: Control de uso
-- **Error Handling**: Manejo de errores
-
-## 📊 Métricas de Rendimiento
-
-### **Precisión del Modelo**
-
-- **ValueChangePredictor**: 85% precisión
-- **UltimateTransferModel**: 82% precisión
-- **Club Enhancer**: 90% precisión
-- **Sistema Híbrido**: 87% precisión
-
-### **Rendimiento**
-
-- **Tiempo de Respuesta**: < 2 segundos
-- **Disponibilidad**: 99.9%
-- **Cache Hit Rate**: 85%
-- **API Success Rate**: 95%
-
-## 🚀 Despliegue
-
-### **Render.com**
-
-- **Tamaño del Proyecto**: 15MB (optimizado)
-- **Memoria**: 512MB
-- **CPU**: 1 vCPU
-- **Storage**: 1GB
-
-### **Configuración**
-
-- **Runtime**: Python 3.10
-- **Build Command**: `pip install -r requirements.txt`
-- **Start Command**: `gunicorn truesign_perfect_app:app`
-- **Environment**: Production
-
-## 📈 Roadmap
-
-### **Próximas Mejoras**
-
-- [ ] Más modelos ML (XGBoost, Neural Networks)
-- [ ] Análisis de ligas específicas
-- [ ] Predicción de lesiones
-- [ ] Análisis de rendimiento
-- [ ] API pública
-- [ ] Mobile app
-
-### **Optimizaciones**
-
-- [ ] Cache distribuido
-- [ ] CDN para assets
-- [ ] Compresión de modelos
-- [ ] Paralelización
-- [ ] Monitoring avanzado
-
-## 🤝 Contribución
-
-### **Desarrollo**
-
-1. Fork del repositorio
-2. Crear branch de feature
-3. Implementar cambios
-4. Tests y validación
-5. Pull request
-
-### **Reportar Issues**
-
-- Usar GitHub Issues
-- Incluir logs y contexto
-- Especificar versión
-- Proporcionar pasos para reproducir
+---
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Ver `LICENSE` para más detalles.
+MIT License - Ver `LICENSE` para más detalles
 
-## 🙏 Agradecimientos
+---
 
-- **Transfermarkt**: Datos de jugadores y clubes
-- **scikit-learn**: Framework de Machine Learning
-- **Flask**: Framework web
-- **Comunidad**: Feedback y contribuciones
+## 🙏 Créditos
+
+- **Transfermarkt** - Datos de jugadores y clubes
+- **scikit-learn** - Framework ML
+- **Flask** - Framework web
 
 ---
 
 **TrueSign** - _Inteligencia Artificial para el Fútbol Moderno_ ⚽🤖
+
+**Versión:** 2025.1 | **Actualizado:** Octubre 2025
