@@ -44,5 +44,3 @@ Thumbs.db
 
 # Cache
 *.cache# Archivos grandes excluidos de Git
-data/extracted/player_performances/player_performances.csv
-models/trained/maximum_price_model.pkl
