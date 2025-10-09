@@ -2141,14 +2141,18 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino, roi_
             print(f"      Precio para ROI {roi_target}%: €{precio_para_roi_objetivo:,.0f}")
             print(f"      Diferencia: €{abs(diferencia):,.0f} ({abs(diferencia_porcentual):.1f}%)")
             
-            if precio_para_roi_objetivo < precio_maximo_final:
-                print(f"      ✅ Recomendación: Negocia entre €{precio_para_roi_objetivo:,.0f} - €{precio_maximo_final:,.0f}")
-                recomendacion = f"Para lograr {roi_target}% ROI, negocia máximo €{precio_para_roi_objetivo/1000000:.1f}M"
-            else:
-                print(f"      ⚠️ El ROI predicho ({roi_percentage:.1f}%) es menor que tu objetivo ({roi_target}%)")
-                recomendacion = f"El jugador no alcanza el {roi_target}% ROI objetivo (predicho: {roi_percentage:.1f}%)"
-            
             cumple_objetivo = roi_percentage >= roi_target
+            
+            if cumple_objetivo:
+                # El jugador SUPERA el objetivo - puedes pagar más
+                print(f"      ✅ El jugador SUPERA el objetivo de ROI ({roi_percentage:.1f}% > {roi_target}%)")
+                print(f"      💡 Podrías pagar hasta €{precio_para_roi_objetivo:,.0f} y aún lograr {roi_target}% ROI")
+                recomendacion = f"Excelente inversión: ROI predicho {roi_percentage:.1f}% supera objetivo {roi_target}%. Puedes pagar hasta €{precio_para_roi_objetivo/1000000:.1f}M"
+            else:
+                # El jugador NO alcanza el objetivo - necesitas pagar menos
+                print(f"      ⚠️ El jugador NO alcanza el objetivo ({roi_percentage:.1f}% < {roi_target}%)")
+                print(f"      💡 Para lograr {roi_target}% ROI, paga máximo €{precio_para_roi_objetivo:,.0f}")
+                recomendacion = f"Para lograr {roi_target}% ROI, negocia máximo €{precio_para_roi_objetivo/1000000:.1f}M (predicho: {roi_percentage:.1f}%)"
             
         else:
             precio_para_roi_objetivo = precio_maximo_final
