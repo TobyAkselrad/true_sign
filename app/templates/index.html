@@ -874,6 +874,11 @@
                                         <span class="text-gray-400">Nivel de Confianza:</span>
                                         <span id="reportConfidence" class="text-blue-400 font-semibold">--%</span>
                                     </div>
+                                    
+                                    <!-- NUEVOS CAMPOS DE ROI OBJETIVO -->
+                                    <div id="roiBadge" class="mt-4"></div>
+                                    <div id="priceComparison" class="mt-4"></div>
+                                    <div id="roiRecommendation" class="mt-2 text-sm text-gray-300"></div>
                                     <div class="flex justify-between">
                                         <span class="text-gray-400">Valor Futuro:</span>
                                         <span id="reportFutureValue" class="text-purple-400 font-semibold">€--M</span>
@@ -1560,8 +1565,31 @@
                 // Display analysis
                 const analysis = data.truesign_analysis;
                 console.log('Análisis recibido del backend:', analysis);
+                
+                // Calcular ROI objetivo (usar la variable roiTarget ya declarada arriba)
+                const roiTargetValue = parseFloat(roiTarget) || 30;
+                const roiPredicho = analysis.roi_estimate?.percentage || 0;
+                const precioMaximo = analysis.precio_maximo || analysis.fair_price || 0;
+                const valorFuturo = analysis.resale_value || 0;
+                const precioParaROI = valorFuturo > 0 ? valorFuturo / (1 + roiTargetValue / 100) : 0;
+                const cumpleObjetivo = roiPredicho >= roiTargetValue;
+                
+                console.log('🎯 ROI Objetivo Calculado (searchPlayerFromPage):', {
+                    roiTargetValue,
+                    roiPredicho,
+                    precioMaximo,
+                    valorFuturo,
+                    precioParaROI,
+                    cumpleObjetivo
+                });
+                
+                // Construir badge de ROI
+                const roiBadge = cumpleObjetivo 
+                    ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">✅ Cumple objetivo de ROI (${roiTargetValue}%)</span>`
+                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">⚠️ No alcanza objetivo de ROI (${roiTargetValue}%)</span>`;
+                
                 analysisCard.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div class="text-center">
                             <h3 class="text-lg font-semibold text-gray-300 mb-2">Precio Máximo Recomendado</h3>
                             <p class="text-3xl font-bold text-green-400">€${formatValue(analysis.precio_maximo || analysis.fair_price)}M</p>
@@ -1573,6 +1601,35 @@
                         <div class="text-center">
                             <h3 class="text-lg font-semibold text-gray-300 mb-2">ROI Estimado</h3>
                             <p class="text-3xl font-bold text-purple-400">${analysis.roi_estimate?.percentage || '--'}%</p>
+                        </div>
+                    </div>
+                    
+                    <!-- ROI Objetivo Analysis -->
+                    <div class="border-t border-gray-700 pt-4 mt-4">
+                        <h3 class="text-xl font-bold text-white mb-4">📊 Análisis de ROI Objetivo</h3>
+                        
+                        <!-- Badge de cumplimiento -->
+                        <div class="mb-4">
+                            ${roiBadge}
+                        </div>
+                        
+                        <!-- Comparación de precios -->
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-700 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-300 mb-2">Precio ML</h4>
+                                <p class="text-2xl font-bold text-blue-400">€${formatValue(precioMaximo)}M</p>
+                                <p class="text-xs text-gray-400">ROI: ${roiPredicho.toFixed(1)}%</p>
+                            </div>
+                            <div class="bg-purple-900 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-300 mb-2">Para ROI ${roiTargetValue}%</h4>
+                                <p class="text-2xl font-bold text-purple-400">€${formatValue(precioParaROI)}M</p>
+                                <p class="text-xs text-gray-400">Máximo a pagar</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Recomendación -->
+                        <div class="text-center bg-gray-700 p-3 rounded-lg">
+                            <p class="text-sm text-gray-300">💡 Para lograr ${roiTargetValue}% ROI, negocia máximo €${formatValue(precioParaROI)}M</p>
                         </div>
                     </div>
                 `;
@@ -1778,7 +1835,7 @@
                     </div>
                     <div class="mt-6">
                         <div class="text-lg font-semibold text-white mb-2">ROI Estimado</div>
-                        <div class="text-2xl font-bold text-green-400">${formatROI(analysis.roi_estimate?.percentage)}%</div>
+                        <div class="text-2xl font-bold text-green-400">${formatROI(analysis.roi_percentage)}%</div>
                         <div class="text-gray-400 text-sm">Retorno de inversión esperado</div>
                         </div>
                     `;
@@ -1996,9 +2053,76 @@
                 document.getElementById('reportRecommendedPrice').textContent = `€${recommendedPrice.toFixed(1)}M`;
                 document.getElementById('reportFutureValue').textContent = `€${futureValue.toFixed(1)}M`;
                 
-                // ROI y confianza
-                document.getElementById('reportROI').textContent = `${analysis.roi_estimate?.percentage || 0}%`;
-                document.getElementById('reportConfidence').textContent = `${analysis.confidence || 0}%`;
+                // ROI y confianza - usar truesign_analysis
+                const truesignAnalysis = data.truesign_analysis;
+                const roiPercentage = truesignAnalysis?.roi_estimate?.percentage || 0;
+                const confidence = truesignAnalysis?.confidence || 0;
+                const fairPrice = truesignAnalysis?.fair_price || 0;
+                const resaleValue = truesignAnalysis?.resale_value || 0;
+                
+                document.getElementById('reportROI').textContent = `${roiPercentage}%`;
+                document.getElementById('reportConfidence').textContent = `${confidence}%`;
+                
+                // ===== NUEVOS CAMPOS DE ROI OBJETIVO =====
+                // Mostrar análisis de ROI objetivo usando campos disponibles
+                const roiTarget = parseFloat(document.getElementById('roiTarget').value) || 30;
+                const roiPredicho = roiPercentage;
+                const precioMaximo = fairPrice;
+                const valorFuturo = resaleValue;
+                
+                // Siempre calcular ROI objetivo en el frontend (más simple y confiable)
+                const precioParaROI = valorFuturo / (1 + roiTarget / 100);
+                const cumpleObjetivo = roiPredicho >= roiTarget;
+                
+                console.log('🎯 ROI Objetivo Calculado:', {
+                    roiTarget,
+                    roiPredicho,
+                    precioMaximo,
+                    valorFuturo,
+                    precioParaROI,
+                    cumpleObjetivo
+                });
+                
+                // Mostrar badge de cumplimiento
+                const roiBadge = document.getElementById('roiBadge');
+                if (roiBadge) {
+                    if (cumpleObjetivo) {
+                        roiBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">✅ Cumple objetivo de ROI (${roiTarget}%)</span>`;
+                    } else {
+                        roiBadge.innerHTML = `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">⚠️ No alcanza objetivo de ROI (${roiTarget}%)</span>`;
+                    }
+                }
+                
+                // Mostrar comparación de precios
+                const priceComparison = document.getElementById('priceComparison');
+                if (priceComparison) {
+                    const mlPrice = precioMaximo / 1000000;
+                    const objectivePrice = precioParaROI / 1000000;
+                    
+                    priceComparison.innerHTML = `
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-700 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-300 mb-2">Precio ML</h4>
+                                <p class="text-2xl font-bold text-blue-400">€${mlPrice.toFixed(1)}M</p>
+                                <p class="text-xs text-gray-400">ROI: ${roiPredicho.toFixed(1)}%</p>
+                            </div>
+                            <div class="bg-purple-900 p-4 rounded-lg">
+                                <h4 class="text-sm font-medium text-gray-300 mb-2">Para ROI ${roiTarget}%</h4>
+                                <p class="text-2xl font-bold text-purple-400">€${objectivePrice.toFixed(1)}M</p>
+                                <p class="text-xs text-gray-400">Máximo a pagar</p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-sm text-gray-300">💡 Para lograr ${roiTarget}% ROI, negocia máximo €${objectivePrice.toFixed(1)}M</p>
+                        </div>
+                    `;
+                }
+                
+                // Mostrar recomendación
+                const roiRecommendation = document.getElementById('roiRecommendation');
+                if (roiRecommendation) {
+                    roiRecommendation.textContent = `Para lograr ${roiTarget}% ROI, negocia máximo €${(precioParaROI/1000000).toFixed(1)}M`;
+                }
                 
                 // Análisis de mercado
                 document.getElementById('reportValueTrend').textContent = breakdown.market_value_analysis.value_trend;

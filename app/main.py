@@ -327,7 +327,7 @@ def generate_ml_performance_analysis(player_data, club_name):
         age = player_data.get('age', 25)
         position = str(player_data.get('position', '')).lower()
         nationality = str(player_data.get('nationality', '')).lower()
-        market_value = player_data.get('market_value', 0)
+        market_value = player_data.get('market_value', 0) or 0
         
         print(f"Analizando jugador: {age} anos, {position}, {nationality}, {market_value:,.0f}")
         
@@ -1880,7 +1880,8 @@ def calcular_precio_perfecto_definitivo(nombre_jugador, club_destino, jugador_in
         print(f"ESTADÍSTICAS UTILIZADAS:")
         print(f"  Goles últimos 2 años: {transfermarkt_stats.get('goles_ultimos_2_anos', 0)}")
         print(f"  Asistencias últimos 2 años: {transfermarkt_stats.get('asistencias_ultimos_2_anos', 0)}")
-        print(f"  Rendimiento últimos 6 meses: {transfermarkt_stats.get('rendimiento_ultimos_6_meses', 0):.2f}")
+        rendimiento = transfermarkt_stats.get('rendimiento_ultimos_6_meses', 0) or 0
+        print(f"  Rendimiento últimos 6 meses: {rendimiento:.2f}")
         print(f"  Valor máximo histórico: €{transfermarkt_stats.get('valor_maximo_historico', 0)/1000000:.1f}M")
         print(f"  Lesiones últimos 2 años: {transfermarkt_stats.get('lesiones_ultimos_2_anos', 0)}")
         
@@ -1961,8 +1962,8 @@ def calcular_precio_maximo(jugador_info, club_destino):
 
 # Función eliminada - usando directamente hybrid_roi_model_real
 
-def calcular_precio_maximo_hibrido(jugador_info, club_destino):
-    """Calcular precio máximo usando el modelo híbrido ROI"""
+def calcular_precio_maximo_hibrido(jugador_info, club_destino, roi_target=30.0):
+    """Calcular precio máximo usando el modelo híbrido ROI con objetivo de ROI"""
     try:
         print("\n" + "╔" + "="*68 + "╗")
         print("║" + " "*10 + "🎯 BACKEND - calcular_precio_maximo_hibrido" + " "*14 + "║")
@@ -1972,7 +1973,9 @@ def calcular_precio_maximo_hibrido(jugador_info, club_destino):
         print(f"   - Jugador: {jugador_info.get('player_name', 'N/A')}")
         print(f"   - Club destino: {club_destino}")
         print(f"   - Tipo club_destino: {type(club_destino)}")
-        print(f"   - Market value: €{jugador_info.get('market_value', 0):,.0f}")
+        market_value = jugador_info.get('market_value', 0) or 0
+        print(f"   - Market value: €{market_value:,.0f}")
+        print(f"   - ROI objetivo: {roi_target}%")
         
         # Obtener modelo híbrido REAL (siempre inicializado)
         print("\n🔍 Obteniendo modelo híbrido REAL...")
@@ -2011,7 +2014,7 @@ def calcular_precio_maximo_hibrido(jugador_info, club_destino):
         print(f"   🔑 Keys: {list(hybrid_result.keys()) if isinstance(hybrid_result, dict) else 'N/A'}")
         
         # Convertir resultado híbrido al formato esperado por la aplicación
-        return format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino)
+        return format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino, roi_target)
         
     except Exception as e:
         print(f"❌ Error en análisis híbrido: {e}")
@@ -2019,20 +2022,25 @@ def calcular_precio_maximo_hibrido(jugador_info, club_destino):
         traceback.print_exc()
         raise Exception(f"❌ ERROR EN MODELOS REALES: {e}")
 
-def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
-    """Formatear resultado del modelo híbrido para la aplicación"""
+def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino, roi_target=30.0):
+    """Formatear resultado del modelo híbrido para la aplicación con ROI objetivo"""
     try:
         print("\n" + "="*70)
         print("   📦 FORMATEANDO RESULTADO PARA FRONTEND")
         print("="*70)
         
         print(f"\n📥 Resultado recibido del Hybrid Model:")
-        print(f"   - maximum_price: €{hybrid_result.get('maximum_price', 0):,.0f}")
-        print(f"   - predicted_future_value: €{hybrid_result.get('predicted_future_value', 0):,.0f}")
-        print(f"   - roi_percentage: {hybrid_result.get('roi_percentage', 0):.2f}%")
-        print(f"   - confidence: {hybrid_result.get('confidence', 0):.0f}%")
+        max_price = hybrid_result.get('maximum_price', 0) or 0
+        pred_value = hybrid_result.get('predicted_future_value', 0) or 0
+        print(f"   - maximum_price: €{max_price:,.0f}")
+        print(f"   - predicted_future_value: €{pred_value:,.0f}")
+        roi_perc = hybrid_result.get('roi_percentage', 0) or 0
+        print(f"   - roi_percentage: {roi_perc:.2f}%")
+        confidence_val = hybrid_result.get('confidence', 0) or 0
+        print(f"   - confidence: {confidence_val:.0f}%")
         print(f"   - club_multiplier: {hybrid_result.get('club_multiplier', 1.0)}x")
         print(f"   - model_used: {hybrid_result.get('model_used', 'N/A')}")
+        print(f"   - roi_target: {roi_target}%")
         
         # Extraer datos del resultado híbrido
         final_price = hybrid_result.get('maximum_price', 0)
@@ -2106,6 +2114,47 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
         print(f"   - Inflación: {inflation_adjustment}x")
         print(f"   = Final: €{precio_maximo_final:,.0f}")
         
+        # ============================================================
+        # NUEVA FUNCIONALIDAD: CALCULAR PRECIO PARA ROI OBJETIVO
+        # ============================================================
+        print(f"\n🎯 CALCULANDO PRECIO AJUSTADO POR ROI OBJETIVO...")
+        print(f"   📊 ROI objetivo del usuario: {roi_target}%")
+        print(f"   📊 ROI predicho por ML: {roi_percentage:.2f}%")
+        
+        # Calcular precio máximo para lograr el ROI objetivo
+        # Fórmula: precio_para_roi = valor_futuro / (1 + roi_target/100)
+        if resale_value > 0 and roi_target > 0:
+            precio_para_roi_objetivo = resale_value / (1 + roi_target / 100.0)
+            
+            print(f"\n   💡 Cálculo de precio para ROI objetivo:")
+            print(f"      Valor futuro predicho: €{resale_value:,.0f}")
+            print(f"      ROI objetivo: {roi_target}%")
+            print(f"      Precio máximo a pagar: €{precio_para_roi_objetivo:,.0f}")
+            print(f"      → Si pagas €{precio_para_roi_objetivo:,.0f}, tu ROI será {roi_target}%")
+            
+            # Comparación con precio ML
+            diferencia = precio_maximo_final - precio_para_roi_objetivo
+            diferencia_porcentual = (diferencia / precio_maximo_final * 100) if precio_maximo_final > 0 else 0
+            
+            print(f"\n   📊 Comparación:")
+            print(f"      Precio ML (sin ROI objetivo): €{precio_maximo_final:,.0f}")
+            print(f"      Precio para ROI {roi_target}%: €{precio_para_roi_objetivo:,.0f}")
+            print(f"      Diferencia: €{abs(diferencia):,.0f} ({abs(diferencia_porcentual):.1f}%)")
+            
+            if precio_para_roi_objetivo < precio_maximo_final:
+                print(f"      ✅ Recomendación: Negocia entre €{precio_para_roi_objetivo:,.0f} - €{precio_maximo_final:,.0f}")
+                recomendacion = f"Para lograr {roi_target}% ROI, negocia máximo €{precio_para_roi_objetivo/1000000:.1f}M"
+            else:
+                print(f"      ⚠️ El ROI predicho ({roi_percentage:.1f}%) es menor que tu objetivo ({roi_target}%)")
+                recomendacion = f"El jugador no alcanza el {roi_target}% ROI objetivo (predicho: {roi_percentage:.1f}%)"
+            
+            cumple_objetivo = roi_percentage >= roi_target
+            
+        else:
+            precio_para_roi_objetivo = precio_maximo_final
+            recomendacion = "No se pudo calcular precio para ROI objetivo"
+            cumple_objetivo = False
+        
         print(f"\n✅ Análisis híbrido completado: €{precio_maximo_final:,.0f} (ROI: {roi_percentage:.1f}%)")
         
         # Redondear valores para visualización limpia
@@ -2128,7 +2177,23 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
             'model_used': hybrid_result.get('model_used', 'Hybrid ROI Model'),
             'resale_value': resale_value_rounded,
             'value_change_confidence': hybrid_result.get('value_change_confidence', confidence),
-            'ultimate_confidence': hybrid_result.get('ultimate_confidence', confidence)
+            'ultimate_confidence': hybrid_result.get('ultimate_confidence', confidence),
+            
+            # ===== NUEVOS CAMPOS PARA ROI OBJETIVO =====
+            'roi_target': float(roi_target),
+            'precio_para_roi_objetivo': float(round(precio_para_roi_objetivo, 0)),
+            'cumple_roi_objetivo': 1 if cumple_objetivo else 0,
+            'roi_analysis': {
+                'roi_predicho': float(roi_percentage_rounded),
+                'roi_objetivo': float(roi_target),
+                'cumple_objetivo': 1 if cumple_objetivo else 0,  # Convertir a int explícitamente
+                'precio_ml': float(precio_maximo_rounded),
+                'precio_para_objetivo': float(round(precio_para_roi_objetivo, 0)),
+                'diferencia': float(round(abs(precio_maximo_final - precio_para_roi_objetivo), 0)),
+                'diferencia_porcentual': float(round(abs(diferencia_porcentual), 2)) if 'diferencia_porcentual' in locals() else 0.0,
+                'recomendacion': str(recomendacion),  # Asegurar que sea string
+                'valor_futuro': float(resale_value_rounded)
+            }
         }
         
         print(f"\n📤 OUTPUT FINAL para frontend (VALORES REDONDEADOS):")
@@ -2140,6 +2205,11 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino):
         print(f"   💎 cinco_valores (sin decimales):")
         for key, value in result['cinco_valores'].items():
             print(f"      - {key}: €{value:,.0f}")
+        print(f"\n   🎯 ROI OBJETIVO - NUEVOS CAMPOS:")
+        print(f"      - ROI objetivo: {result['roi_target']}%")
+        print(f"      - Precio para ROI objetivo: €{result['precio_para_roi_objetivo']:,.0f}")
+        print(f"      - Cumple objetivo: {'✅ SÍ' if result['cumple_roi_objetivo'] else '❌ NO'}")
+        print(f"      - Recomendación: {result['roi_analysis']['recomendacion']}")
         print("="*70 + "\n")
         
         return result
@@ -2647,103 +2717,131 @@ def clubs():
         
         print(f"🔍 Buscando clubes: '{query}' (Cache → Fallback → API)")
         
-        # 2. FALLBACK MEJORADO (primero, más confiable que API)
+        # 2. FALLBACK MEJORADO - Obtener resultados locales
+        fallback_results = []
         try:
             print(f"   📊 Fallback mejorado...")
             from scraping.enhanced_clubs_fallback import EnhancedClubsFallback
             enhanced_fallback = EnhancedClubsFallback()
-            results = enhanced_fallback.search_clubs(query, 20)
-            
-            if results and len(results) > 0:
-                # Guardar en cache
-                from datetime import datetime
-                cache['autocomplete_clubs'][cache_key] = {
-                    'results': results,
-                    'time': datetime.now().timestamp()
-                }
-                print(f"   ✅ Fallback: {len(results)} clubes")
-                return jsonify(results)
+            fallback_results = enhanced_fallback.search_clubs(query, 20)
+            print(f"   ✅ Fallback: {len(fallback_results)} clubes")
         except Exception as e:
             print(f"   ⚠️ Fallback error: {e}")
         
-        # 3. API TRANSFERMARKT - Solo como último recurso
+        # 3. API TRANSFERMARKT - Obtener resultados de la API
         import requests
         
         url = f"https://transfermarkt-api.fly.dev/clubs/search/{query}?page_number=1"
         headers = {'accept': 'application/json'}
         
-        print(f"   🌐 API Transfermarkt (último recurso)...")
-        response = requests.get(url, headers=headers, timeout=5)
+        print(f"   🌐 API Transfermarkt...")
+        api_clubs = []
+        try:
+            response = requests.get(url, headers=headers, timeout=5)
+            
+            if response.status_code == 200:
+                data = response.json()
+                results = data.get('results', [])
+                print(f"   📊 API: {len(results)} clubes")
+                
+                # Procesar y filtrar resultados
+                for club in results:
+                    club_name = club.get('name', '')
+                    country = club.get('country', '')
+                    market_value = club.get('marketValue', 0)
+                    
+                    # Filtrar equipos no relevantes
+                    if _should_filter_club(club_name, country):
+                        continue
+                    
+                    # Formatear valor de mercado (mejorado)
+                    if market_value >= 1000000000:  # >= 1B
+                        market_value_str = f"€{market_value/1000000000:.1f}B"
+                    elif market_value >= 1000000:  # >= 1M
+                        market_value_str = f"€{market_value/1000000:.0f}M"
+                    elif market_value >= 1000:  # >= 1K
+                        market_value_str = f"€{market_value/1000:.0f}K"
+                    else:
+                        market_value_str = f"€{market_value:,.0f}"
+                    
+                    # Calcular factores adicionales
+                    economic_factor = _calculate_club_economic_factor(market_value)
+                    league_factor = _get_league_factor(country)
+                    club_classification = _classify_club(market_value, country)
+                    
+                    api_clubs.append({
+                        'name': club_name,
+                        'country': country,
+                        'market_value': market_value_str,
+                        'market_value_raw': market_value,
+                        'display': f"{club_name} ({country}) - {market_value_str}",
+                        'id': club.get('id', ''),
+                        'url': club.get('url', ''),
+                        'squad': club.get('squad', 0),
+                        'economic_factor': economic_factor,
+                        'league_factor': league_factor,
+                        'classification': club_classification,
+                        'squad_analysis': _analyze_squad_needs(club.get('squad', 0)),
+                        'transfer_potential': _calculate_transfer_potential(market_value, club.get('squad', 0), country)
+                    })
+        except Exception as e:
+            print(f"   ⚠️ API error: {e}")
         
-        if response.status_code == 200:
-            data = response.json()
-            results = data.get('results', [])
-            print(f"📊 Resultados de API: {len(results)} clubes")
+        # 4. COMBINAR RESULTADOS - Fallback + API, evitar duplicados
+        combined_results = []
+        seen_clubs = set()
+        
+        # Primero agregar resultados de fallback (priorizados)
+        for club in fallback_results:
+            club_key = club['name'].lower()
+            if club_key not in seen_clubs:
+                seen_clubs.add(club_key)
+                combined_results.append(club)
+        
+        # Luego agregar resultados de API (solo si no están en fallback)
+        for club in api_clubs:
+            club_key = club['name'].lower()
+            if club_key not in seen_clubs:
+                seen_clubs.add(club_key)
+                combined_results.append(club)
+        
+        # Ordenar por valor de mercado (descendente)
+        def get_numeric_market_value(club):
+            """Extraer valor numérico del market value para ordenar"""
+            # Intentar primero market_value_raw (número)
+            raw_value = club.get('market_value_raw')
+            if isinstance(raw_value, (int, float)) and raw_value > 0:
+                return raw_value
             
-            # Procesar y filtrar resultados
-            clubs_list = []
-            for club in results:
-                club_name = club.get('name', '')
-                country = club.get('country', '')
-                market_value = club.get('marketValue', 0)
-                
-                # Filtrar equipos no relevantes
-                if _should_filter_club(club_name, country):
-                    continue
-                
-                # Formatear valor de mercado (mejorado)
-                if market_value >= 1000000000:  # >= 1B
-                    market_value_str = f"€{market_value/1000000000:.1f}B"
-                elif market_value >= 1000000:  # >= 1M
-                    market_value_str = f"€{market_value/1000000:.0f}M"
-                elif market_value >= 1000:  # >= 1K
-                    market_value_str = f"€{market_value/1000:.0f}K"
-                else:
-                    market_value_str = f"€{market_value:,.0f}"
-                
-                # Calcular factores adicionales
-                economic_factor = _calculate_club_economic_factor(market_value)
-                league_factor = _get_league_factor(country)
-                club_classification = _classify_club(market_value, country)
-                
-                clubs_list.append({
-                    'name': club_name,
-                    'country': country,
-                    'market_value': market_value_str,
-                    'market_value_raw': market_value,
-                    'display': f"{club_name} ({country}) - {market_value_str}",
-                    'id': club.get('id', ''),
-                    'url': club.get('url', ''),
-                    'squad': club.get('squad', 0),
-                    'economic_factor': economic_factor,
-                    'league_factor': league_factor,
-                    'classification': club_classification,
-                    'squad_analysis': _analyze_squad_needs(club.get('squad', 0)),
-                    'transfer_potential': _calculate_transfer_potential(market_value, club.get('squad', 0), country)
-                })
-            
-            # Ordenar por valor de mercado (descendente)
+            # Si no, intentar parsear market_value (string)
+            mv_str = club.get('market_value', '€0')
             try:
-                clubs_list.sort(key=lambda x: int(x['market_value'].replace('€', '').replace('M', '000000').replace('K', '000').replace('.', '')), reverse=True)
+                # Convertir "€39M" a 39000000
+                if 'B' in mv_str:
+                    return float(mv_str.replace('€', '').replace('B', '')) * 1000000000
+                elif 'M' in mv_str:
+                    return float(mv_str.replace('€', '').replace('M', '')) * 1000000
+                elif 'K' in mv_str:
+                    return float(mv_str.replace('€', '').replace('K', '')) * 1000
+                else:
+                    return float(mv_str.replace('€', '').replace(',', ''))
             except:
-                # Si hay error en el ordenamiento, mantener orden original
-                pass
-            
-            # Guardar en cache
-            from datetime import datetime
-            cache['autocomplete_clubs'][cache_key] = {
-                'results': clubs_list[:20],
-                'time': datetime.now().timestamp()
-            }
-            
-            print(f"   ✅ API: {len(clubs_list)} clubes")
-            return jsonify(clubs_list[:20])  # Limitar a 20 resultados
-            
-        else:
-            print(f"⚠️ Error en API Transfermarkt: {response.status_code}")
-            print(f"   Response: {response.text[:200]}")
-            # Usar fallback en lugar de lista vacía
-            return _get_clubs_fallback(query)
+                return 0
+        
+        combined_results.sort(key=get_numeric_market_value, reverse=True)
+        
+        # Limitar a 20 resultados
+        final_results = combined_results[:20]
+        
+        # Guardar en cache
+        from datetime import datetime
+        cache['autocomplete_clubs'][cache_key] = {
+            'results': final_results,
+            'time': datetime.now().timestamp()
+        }
+        
+        print(f"   ✅ Total: {len(final_results)} clubes (Fallback: {len(fallback_results)}, API: {len(api_clubs)})")
+        return jsonify(final_results)
             
     except Exception as e:
         print(f"❌ Error obteniendo clubes: {e}")
@@ -3096,6 +3194,31 @@ def test():
     """Endpoint de prueba"""
     return jsonify({"status": "ok", "message": "Test endpoint working"})
 
+@app.route('/test-search')
+def test_search():
+    """Endpoint de prueba para búsqueda"""
+    try:
+        return jsonify({
+            'player': {
+                'name': 'Lionel Messi',
+                'age': 36,
+                'position': 'Forward',
+                'market_value': 50000000
+            },
+            'truesign_analysis': {
+                'fair_price': 45000000,
+                'roi_estimate': {'percentage': 25.0},
+                'confidence': 85,
+                'resale_value': 60000000,
+                'roi_target': 30.0,
+                'precio_para_roi_objetivo': 46153846,
+                'cumple_roi_objetivo': 0
+            },
+            'market_value': 50000000
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/clubs/autocomplete')
 def clubs_autocomplete():
     """Autocompletado de clubes usando API de Transfermarkt"""
@@ -3370,7 +3493,7 @@ def search_player():
         
         # Calcular precio maximo usando el modelo híbrido ML que considera el club de destino
         # print(f"=== USANDO MODELO HÍBRIDO ML CON CLUB DE DESTINO ===")
-        analisis = calcular_precio_maximo_hibrido(jugador_info, club_name)
+        analisis = calcular_precio_maximo_hibrido(jugador_info, club_name, roi_target)
         
         # Si el modelo híbrido falla, usar el modelo original como fallback
         if analisis is None:
@@ -3531,6 +3654,7 @@ def search_player():
         
         
         
+        # Devolver estructura original que funcionaba
         return jsonify({
             'player': player_data,
             'truesign_analysis': truesign_analysis,

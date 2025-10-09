@@ -27,7 +27,7 @@
       "contract_until": null,
       "photo_url": "https://img.a.transfermarkt.technology/portrait/header/661136-1574071986.jpg?lm=1"
     },
-    "timestamp": "2025-10-07T17:58:09.857838"
+    "timestamp": "2025-10-09T14:36:48.173750"
   },
   "franco mastantuono": {
     "data": {
@@ -73,5 +73,185 @@
       "photo_url": "https://img.a.transfermarkt.technology/portrait/header/576026-1678216970.jpg?lm=1"
     },
     "timestamp": "2025-10-08T22:20:41.203057"
+  },
+  "cristiano ronaldo": {
+    "data": {
+      "name": "CristianoRonaldo",
+      "current_club": "Al-Nassr",
+      "market_value": 12000000,
+      "age": 40,
+      "position": "Forward",
+      "height": "1,88 m",
+      "foot": "Left",
+      "nationality": "Saudi Arabia",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/8198-1748102259.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T14:42:15.624799"
+  },
+  "kylian mbappe": {
+    "data": {
+      "name": "KylianMbappé",
+      "current_club": "Real Madrid",
+      "market_value": 180000000,
+      "age": 26,
+      "position": "Forward",
+      "height": "1,78 m",
+      "foot": "Left",
+      "nationality": "France",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/342229-1682683695.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T14:47:31.462955"
+  },
+  "lionel messi": {
+    "data": {
+      "name": "LionelMessi",
+      "current_club": "Miami",
+      "market_value": 18000000,
+      "age": 38,
+      "position": "Winger",
+      "height": "1,70 m",
+      "foot": "Right",
+      "nationality": "United States",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/28003-1740766555.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T14:50:11.778865"
+  },
+  "gaston martirena": {
+    "data": {
+      "name": "GastónMartirena",
+      "current_club": "Racing Club",
+      "market_value": 6000000,
+      "age": 25,
+      "position": "Defender",
+      "height": "1,74 m",
+      "foot": "Right",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/744324-1724348740.png?lm=1"
+    },
+    "timestamp": "2025-10-09T14:57:18.041070"
+  },
+  "matias pardo": {
+    "data": {
+      "name": "MatíasPardo",
+      "current_club": "Patronato",
+      "market_value": 100000,
+      "age": 30,
+      "position": "Winger",
+      "height": "1,69 m",
+      "foot": "Right",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/537093-1636335478.JPG?lm=1"
+    },
+    "timestamp": "2025-10-09T14:58:30.329725"
+  },
+  "declan rice": {
+    "data": {
+      "name": "DeclanRice",
+      "current_club": "Arsenal",
+      "market_value": 120000000,
+      "age": 26,
+      "position": "Midfielder",
+      "height": "1,88 m",
+      "foot": "Right",
+      "nationality": "England",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/357662-1687962936.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T15:03:41.255322"
+  },
+  "gabriel palmero": {
+    "data": {
+      "name": "GabrielPalmeros",
+      "current_club": null,
+      "market_value": null,
+      "age": null,
+      "position": "Defender",
+      "height": "1,78 m",
+      "foot": null,
+      "nationality": "Mexico",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/default.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T15:04:16.924649"
+  },
+  "ximon aranguren": {
+    "data": {
+      "name": "XimonAranguren",
+      "current_club": "Without Club",
+      "market_value": null,
+      "age": 28,
+      "position": "Forward",
+      "height": "1,81 m",
+      "foot": "Left",
+      "nationality": "Ximon Aranguren Bergara\nDate of birth",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/default.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T15:08:26.652730"
+  },
+  "rodrigo de paul": {
+    "data": {
+      "name": "RodrigoDe Paul",
+      "current_club": "Miami",
+      "market_value": 20000000,
+      "age": 31,
+      "position": "Midfielder",
+      "height": "1,80 m",
+      "foot": "Right",
+      "nationality": "United States",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/255901-1757574178.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T15:10:26.219753"
+  },
+  "marcos acuna": {
+    "data": {
+      "name": "MarcosAcuña",
+      "current_club": "River Plate",
+      "market_value": 2000000,
+      "age": 33,
+      "position": "Defender",
+      "height": "1,72 m",
+      "foot": "Left",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/60410-1668181014.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T15:14:34.362961"
+  },
+  "paredes": {
+    "data": {
+      "name": "LeandroParedes",
+      "current_club": "Boca Juniors",
+      "market_value": 5000000,
+      "age": 31,
+      "position": "Midfielder",
+      "height": "1,80 m",
+      "foot": "Right",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/166237-1692881087.jpg?lm=1"
+    },
+    "timestamp": "2025-10-09T15:17:11.641938"
+  },
+  "gabriel arias": {
+    "data": {
+      "name": "GabrielArias",
+      "current_club": "Racing Club",
+      "market_value": 400000,
+      "age": 38,
+      "position": "Goalkeeper",
+      "height": "1,89 m",
+      "foot": "Right",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/54330-1724348686.png?lm=1"
+    },
+    "timestamp": "2025-10-09T15:21:19.867157"
   }
 }

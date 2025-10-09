@@ -4,6 +4,7 @@ Sistema mejorado de fallback para clubes con más funcionalidades
 """
 
 import json
+import os
 import re
 from typing import Dict, List, Optional
 
@@ -15,6 +16,31 @@ class EnhancedClubsFallback:
         self.search_cache = {}
     
     def _load_enhanced_clubs_database(self) -> Dict:
+        """Cargar base de datos de clubes (intenta JSON primero, luego hardcoded)"""
+        # Intentar cargar desde clubs_database.json
+        json_path = os.path.join(os.path.dirname(__file__), '..', 'clubs_database.json')
+        if os.path.exists(json_path):
+            try:
+                print("📂 Cargando clubes desde clubs_database.json...")
+                with open(json_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    clubs = data.get('clubs', {})
+                    
+                # Convertir al formato esperado (usar 'name' como key)
+                formatted_clubs = {}
+                for club_id, club_data in clubs.items():
+                    name = club_data['name']
+                    formatted_clubs[name] = club_data
+                
+                print(f"✅ {len(formatted_clubs)} clubes cargados desde JSON")
+                return formatted_clubs
+            except Exception as e:
+                print(f"⚠️ Error cargando JSON: {e}, usando clubes hardcoded")
+        
+        # Fallback a clubes hardcoded
+        return self._get_hardcoded_clubs()
+    
+    def _get_hardcoded_clubs(self) -> Dict:
         """Cargar base de datos mejorada de clubes"""
         return {
             # CLUBES ELITE (€1B+)
@@ -242,8 +268,9 @@ class EnhancedClubsFallback:
                 club_info['search_score'] = score
                 results.append(club_info)
         
-        # Ordenar por score
-        results.sort(key=lambda x: x['search_score'], reverse=True)
+        # Ordenar por score (principal) y market_value (secundario)
+        # Primero por score, luego por valor de mercado
+        results.sort(key=lambda x: (x['search_score'], x.get('market_value', 0)), reverse=True)
         
         # Guardar en cache
         self.search_cache[query_lower] = results
@@ -251,47 +278,42 @@ class EnhancedClubsFallback:
         return results[:limit]
     
     def _calculate_search_score(self, club_data: Dict, query: str) -> float:
-        """Calcular score de búsqueda"""
+        """Calcular score de búsqueda mejorado"""
         score = 0.0
+        name_lower = club_data['name'].lower()
         
-        # Búsqueda exacta en nombre
-        if query in club_data['name'].lower():
-            score += 100
+        # 1. Coincidencia exacta del nombre (máxima prioridad)
+        if query == name_lower:
+            score += 1000
         
-        # Búsqueda en aliases
+        # 2. Coincidencia al inicio del nombre
+        elif name_lower.startswith(query):
+            score += 500
+        
+        # 3. Coincidencia al inicio de cualquier palabra
+        elif any(word.startswith(query) for word in name_lower.split()):
+            score += 300
+        
+        # 4. Coincidencia en aliases (muy importante)
         for alias in club_data.get('aliases', []):
-            if query in alias.lower():
-                score += 80
+            alias_lower = alias.lower()
+            if query == alias_lower:
+                score += 800
+            elif alias_lower.startswith(query):
+                score += 400
+            elif query in alias_lower:
+                score += 200
         
-        # Búsqueda parcial en nombre
-        if query in club_data['name'].lower():
-            score += 60
+        # 5. Coincidencia en cualquier parte del nombre
+        if query in name_lower:
+            score += 150
         
-        # Búsqueda en país
-        if query in club_data['country'].lower():
-            score += 40
-        
-        # Búsqueda en liga
-        if query in club_data.get('league', '').lower():
-            score += 30
-        
-        # Búsqueda fuzzy (caracteres similares)
-        if self._fuzzy_match(query, club_data['name'].lower()):
-            score += 20
+        # Bonus por valor de mercado (solo si hay coincidencia real)
+        if score >= 100:
+            market_value_millions = club_data.get('market_value', 0) / 1000000
+            score += market_value_millions * 0.1
         
         return score
-    
-    def _fuzzy_match(self, query: str, text: str) -> bool:
-        """Búsqueda fuzzy simple"""
-        if len(query) < 3:
-            return False
-        
-        # Verificar si la mayoría de caracteres están presentes
-        query_chars = set(query)
-        text_chars = set(text)
-        common_chars = query_chars.intersection(text_chars)
-        
-        return len(common_chars) >= len(query_chars) * 0.7
     
     def _format_club_info(self, club_data: Dict) -> Dict:
         """Formatear información del club"""
