@@ -2785,7 +2785,8 @@ def _get_clubs_basic_fallback(query):
             "RB Leipzig", "Monaco", "Lyon", "Marseille", "Tottenham",
             "River Plate", "Boca Juniors", "Independiente", "Racing Club",
             "San Lorenzo", "Estudiantes", "Newell's Old Boys", "Rosario Central",
-            "Talleres", "Belgrano", "Instituto", "Colón", "Unión", "Defensa y Justicia"
+            "CA Talleres", "Belgrano", "Instituto", "Colón", "Unión", "Defensa y Justicia",
+            "Club Nacional", "Peñarol"
         ]
         
         # Crear lista de clubes con información completa
@@ -2855,12 +2856,16 @@ def _get_club_market_value(club_name):
         'Estudiantes': 35000000,
         'Newell\'s Old Boys': 30000000,
         'Rosario Central': 35000000,
-        'Talleres': 25000000,
+        'Talleres de Córdoba': 38950000,  # €38.95M (valor real Transfermarkt)
+        'CA Talleres': 38950000,  # Alias
         'Belgrano': 20000000,
         'Instituto': 15000000,
         'Colón': 20000000,
         'Unión': 18000000,
-        'Defensa y Justicia': 22000000
+        'Defensa y Justicia': 22000000,
+        'Nacional': 19600000,  # €19.6M (valor real Transfermarkt)
+        'Club Nacional': 19600000,  # Alias
+        'Peñarol': 35000000
     }
     return club_values.get(club_name, 50000000)  # Valor por defecto
 
@@ -2898,12 +2903,16 @@ def _get_club_country(club_name):
         'Estudiantes': 'Argentina',
         'Newell\'s Old Boys': 'Argentina',
         'Rosario Central': 'Argentina',
-        'Talleres': 'Argentina',
+        'Talleres de Córdoba': 'Argentina',
+        'CA Talleres': 'Argentina',  # Alias
         'Belgrano': 'Argentina',
         'Instituto': 'Argentina',
         'Colón': 'Argentina',
         'Unión': 'Argentina',
-        'Defensa y Justicia': 'Argentina'
+        'Defensa y Justicia': 'Argentina',
+        'Nacional': 'Uruguay',
+        'Club Nacional': 'Uruguay',  # Alias
+        'Peñarol': 'Uruguay'
     }
     return club_countries.get(club_name, 'Unknown')
 
@@ -3167,7 +3176,8 @@ def clubs_autocomplete():
             "RB Leipzig", "Monaco", "Lyon", "Marseille", "Tottenham",
             "River Plate", "Boca Juniors", "Independiente", "Racing Club",
             "San Lorenzo", "Estudiantes", "Newell's Old Boys", "Rosario Central",
-            "Talleres", "Belgrano", "Instituto", "Colón", "Unión", "Defensa y Justicia"
+            "CA Talleres", "Belgrano", "Instituto", "Colón", "Unión", "Defensa y Justicia",
+            "Club Nacional", "Peñarol"
         ]
         
         query_lower = query.lower()
