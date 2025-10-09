@@ -1,0 +1,2578 @@
+{
+  "metadata": {
+    "generated_at": "2025-10-09T13:54:07.493695",
+    "competitions": [
+      "ARG1",
+      "ARG2",
+      "URU1",
+      "URU2",
+      "CLPD",
+      "BRC",
+      "MEX1",
+      "MEX2"
+    ],
+    "total_clubs": 136,
+    "stats": {
+      "total_competitions": 8,
+      "total_clubs_found": 127,
+      "total_profiles_fetched": 136,
+      "errors": 9
+    },
+    "updated_at": "2025-10-09T14:09:36.654446"
+  },
+  "clubs": {
+    "209": {
+      "name": "CA River Plate",
+      "official_name": "Club Atlético River Plate",
+      "country": "Argentina",
+      "market_value": 86250000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1901,
+      "stadium": "Mâs Monumental",
+      "capacity": 85018,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/209.png",
+      "url": "/club-atletico-river-plate/startseite/verein/209",
+      "aliases": [
+        "River Plate",
+        "CA River Plate",
+        "River"
+      ]
+    },
+    "189": {
+      "name": "CA Boca Juniors",
+      "official_name": "Club Atlético Boca Juniors",
+      "country": "Argentina",
+      "market_value": 83550000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1905,
+      "stadium": "Alberto J. Armando",
+      "capacity": 54000,
+      "squad_size": 34,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/189.png",
+      "url": "/club-atletico-boca-juniors/startseite/verein/189",
+      "aliases": [
+        "CA Boca Juniors",
+        "Boca Juniors",
+        "Boca"
+      ]
+    },
+    "1444": {
+      "name": "Racing Club",
+      "official_name": "Racing Club Asociación Civil de Avellaneda",
+      "country": "Argentina",
+      "market_value": 77230000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1903,
+      "stadium": "Presidente Perón",
+      "capacity": 55000,
+      "squad_size": 33,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1444.png",
+      "url": "/racing-club/startseite/verein/1444",
+      "aliases": [
+        "Racing Club",
+        "Racing"
+      ]
+    },
+    "1234": {
+      "name": "CA Independiente",
+      "official_name": "Club Atlético Independiente de Avellaneda",
+      "country": "Argentina",
+      "market_value": 56950000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1905,
+      "stadium": "Libertadores de América-Ricardo Enrique Bochini",
+      "capacity": 48069,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1234.png",
+      "url": "/club-atletico-independiente/startseite/verein/1234",
+      "aliases": [
+        "Independiente",
+        "CA Independiente"
+      ]
+    },
+    "1029": {
+      "name": "CA Vélez Sarsfield",
+      "official_name": "Club Atlético Vélez Sársfield",
+      "country": "Argentina",
+      "market_value": 55030000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1910,
+      "stadium": "José Amalfitani",
+      "capacity": 49747,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1029.png",
+      "url": "/club-atletico-velez-sarsfield/startseite/verein/1029",
+      "aliases": [
+        "Vélez Sarsfield",
+        "CA Vélez Sarsfield"
+      ]
+    },
+    "288": {
+      "name": "Club Estudiantes de La Plata",
+      "official_name": "Club Estudiantes de La Plata",
+      "country": "Argentina",
+      "market_value": 46580000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1905,
+      "stadium": "Jorge Luis Hirschi",
+      "capacity": 32530,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/288.png",
+      "url": "/club-estudiantes-de-la-plata/startseite/verein/288",
+      "aliases": [
+        "Estudiantes de La Plata",
+        "Club Estudiantes de La Plata"
+      ]
+    },
+    "1418": {
+      "name": "CA Rosario Central",
+      "official_name": "Club Atlético Rosario Central",
+      "country": "Argentina",
+      "market_value": 39400000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1889,
+      "stadium": "Gigante de Arroyito",
+      "capacity": 46755,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1418.png",
+      "url": "/club-atletico-rosario-central/startseite/verein/1418",
+      "aliases": [
+        "CA Rosario Central",
+        "Rosario Central"
+      ]
+    },
+    "3938": {
+      "name": "CA Talleres",
+      "official_name": "Club Atlético Talleres",
+      "country": "Argentina",
+      "market_value": 38950000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1913,
+      "stadium": "Mario Alberto Kempes",
+      "capacity": 57000,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/3938.png",
+      "url": "/club-atletico-talleres/startseite/verein/3938",
+      "aliases": [
+        "CA Talleres",
+        "Talleres"
+      ]
+    },
+    "1030": {
+      "name": "AA Argentinos Juniors",
+      "official_name": "Asociación Atlética Argentinos Juniors",
+      "country": "Argentina",
+      "market_value": 37380000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1904,
+      "stadium": "Diego Armando Maradona",
+      "capacity": 22063,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1030.png",
+      "url": "/argentinos-juniors/startseite/verein/1030",
+      "aliases": [
+        "AA Argentinos Juniors"
+      ]
+    },
+    "1775": {
+      "name": "CA San Lorenzo de Almagro",
+      "official_name": "Club Atlético San Lorenzo de Almagro",
+      "country": "Argentina",
+      "market_value": 35080000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1908,
+      "stadium": "Pedro Bidegain",
+      "capacity": 47964,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1775.png",
+      "url": "/club-atletico-san-lorenzo-de-almagro/startseite/verein/1775",
+      "aliases": [
+        "San Lorenzo de Almagro",
+        "CA San Lorenzo de Almagro"
+      ]
+    },
+    "333": {
+      "name": "CA Lanús",
+      "official_name": "Club Atlético Lanús",
+      "country": "Argentina",
+      "market_value": 32930000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1915,
+      "stadium": "Ciudad de Lanús - Néstor Díaz Pérez",
+      "capacity": 46619,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/333.png",
+      "url": "/club-atletico-lanus/startseite/verein/333",
+      "aliases": [
+        "CA Lanús",
+        "Lanús"
+      ]
+    },
+    "2417": {
+      "name": "Club Atlético Belgrano",
+      "official_name": "Club Atlético Belgrano",
+      "country": "Argentina",
+      "market_value": 31450000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1905,
+      "stadium": "Julio César Villagra",
+      "capacity": 38550,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2417.png",
+      "url": "/ca-belgrano/startseite/verein/2417",
+      "aliases": [
+        "Club Atlético Belgrano",
+        "Atlético Belgrano"
+      ]
+    },
+    "12574": {
+      "name": "CD Godoy Cruz Antonio Tomba",
+      "official_name": "Club Deportivo Godoy Cruz Antonio Tomba",
+      "country": "Argentina",
+      "market_value": 30430000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1921,
+      "stadium": "Feliciano Gambarte",
+      "capacity": 23000,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12574.png",
+      "url": "/club-deportivo-godoy-cruz-antonio-tomba/startseite/verein/12574",
+      "aliases": [
+        "Godoy Cruz Antonio Tomba",
+        "CD Godoy Cruz Antonio Tomba"
+      ]
+    },
+    "2063": {
+      "name": "CA Huracán",
+      "official_name": "Club Atlético Huracán",
+      "country": "Argentina",
+      "market_value": 29800000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1908,
+      "stadium": "Tomás Adolfo Ducó",
+      "capacity": 43482,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2063.png",
+      "url": "/club-atletico-huracan/startseite/verein/2063",
+      "aliases": [
+        "Huracán",
+        "CA Huracán"
+      ]
+    },
+    "11831": {
+      "name": "Club Atlético Tigre",
+      "official_name": "Club Atlético Tigre",
+      "country": "Argentina",
+      "market_value": 28150000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1902,
+      "stadium": "José Dellagiovanna",
+      "capacity": 26282,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/11831.png",
+      "url": "/club-atletico-tigre/startseite/verein/11831",
+      "aliases": [
+        "Club Atlético Tigre",
+        "Atlético Tigre"
+      ]
+    },
+    "2402": {
+      "name": "Defensa y Justicia",
+      "official_name": "Club Social y Deportivo Defensa y Justicia",
+      "country": "Argentina",
+      "market_value": 28080000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1935,
+      "stadium": "Norberto Tomaghello",
+      "capacity": 18750,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2402.png",
+      "url": "/defensa-y-justicia/startseite/verein/2402",
+      "aliases": [
+        "Defensa y Justicia"
+      ]
+    },
+    "928": {
+      "name": "Club Atlético Platense",
+      "official_name": "Club Atlético Platense",
+      "country": "Argentina",
+      "market_value": 27430000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1905,
+      "stadium": "Ciudad de Vicente López",
+      "capacity": 28530,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/928.png",
+      "url": "/club-atletico-platense/startseite/verein/928",
+      "aliases": [
+        "Club Atlético Platense",
+        "Atlético Platense"
+      ]
+    },
+    "1829": {
+      "name": "Instituto ACC",
+      "official_name": "Instituto Atlético Central Córdoba",
+      "country": "Argentina",
+      "market_value": 26400000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1918,
+      "stadium": "Juan Domingo Perón",
+      "capacity": 25000,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1829.png",
+      "url": "/instituto-ac-cordoba/startseite/verein/1829",
+      "aliases": [
+        "Instituto ACC"
+      ]
+    },
+    "7097": {
+      "name": "CA Unión (Santa Fe)",
+      "official_name": "Club Atlético Unión",
+      "country": "Argentina",
+      "market_value": 25500000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1905,
+      "stadium": "15 de Abril",
+      "capacity": 27358,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/7097.png",
+      "url": "/club-atletico-union/startseite/verein/7097",
+      "aliases": [
+        "Unión (Santa Fe)",
+        "CA Unión (Santa Fe)"
+      ]
+    },
+    "12179": {
+      "name": "CS Independiente Rivadavia",
+      "official_name": "Club Sportivo Independiente Rivadavia",
+      "country": "Argentina",
+      "market_value": 23950000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1913,
+      "stadium": "Bautista Gargantini",
+      "capacity": 24000,
+      "squad_size": 33,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12179.png",
+      "url": "/independiente-rivadavia/startseite/verein/12179",
+      "aliases": [
+        "CS Independiente Rivadavia"
+      ]
+    },
+    "25184": {
+      "name": "CA Barracas Central",
+      "official_name": "Club Atlético Barracas Central",
+      "country": "Argentina",
+      "market_value": 21300000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1904,
+      "stadium": "Claudio Chiqui Tapia",
+      "capacity": 18000,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/25184.png",
+      "url": "/club-atletico-barracas-central/startseite/verein/25184",
+      "aliases": [
+        "CA Barracas Central",
+        "Barracas Central"
+      ]
+    },
+    "1286": {
+      "name": "CA Newell's Old Boys",
+      "official_name": "Club Atlético Newell’s Old Boys",
+      "country": "Argentina",
+      "market_value": 18700000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1903,
+      "stadium": "Marcelo Bielsa",
+      "capacity": 49000,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1286.png",
+      "url": "/club-atletico-newells-old-boys/startseite/verein/1286",
+      "aliases": [
+        "Newell's Old Boys",
+        "CA Newell's Old Boys"
+      ]
+    },
+    "31284": {
+      "name": "CA Central Córdoba (SdE)",
+      "official_name": "Club Atlético Central Córdoba",
+      "country": "Argentina",
+      "market_value": 17480000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1919,
+      "stadium": "Único Madre de Ciudades",
+      "capacity": 30000,
+      "squad_size": 33,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/31284.png",
+      "url": "/club-atletico-central-cordoba-sde-/startseite/verein/31284",
+      "aliases": [
+        "Central Córdoba (SdE)",
+        "CA Central Córdoba (SdE)"
+      ]
+    },
+    "830": {
+      "name": "CA Banfield",
+      "official_name": "Club Atlético Banfield",
+      "country": "Argentina",
+      "market_value": 17300000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1896,
+      "stadium": "Florencio Sola",
+      "capacity": 34901,
+      "squad_size": 33,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/830.png",
+      "url": "/club-atletico-banfield/startseite/verein/830",
+      "aliases": [
+        "CA Banfield",
+        "Banfield"
+      ]
+    },
+    "1106": {
+      "name": "Club de Gimnasia y Esgrima La Plata",
+      "official_name": "Club de Gimnasia y Esgrima La Plata",
+      "country": "Argentina",
+      "market_value": 16880000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1887,
+      "stadium": "Juan Carmelo Zerillo",
+      "capacity": 30973,
+      "squad_size": 33,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1106.png",
+      "url": "/club-de-gimnasia-y-esgrima-la-plata/startseite/verein/1106",
+      "aliases": [
+        "de Gimnasia y Esgrima La Plata",
+        "Club de Gimnasia y Esgrima La Plata"
+      ]
+    },
+    "14554": {
+      "name": "Club Atlético Tucumán",
+      "official_name": "Club Atlético Tucumán",
+      "country": "Argentina",
+      "market_value": 15980000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1902,
+      "stadium": "Monumental José Fierro",
+      "capacity": 35200,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14554.png",
+      "url": "/club-atletico-tucuman/startseite/verein/14554",
+      "aliases": [
+        "Atlético Tucumán",
+        "Club Atlético Tucumán"
+      ]
+    },
+    "12454": {
+      "name": "CA Sarmiento (Junin)",
+      "official_name": "Club Atlético Sarmiento",
+      "country": "Argentina",
+      "market_value": 12630000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1911,
+      "stadium": "Eva Perón",
+      "capacity": 23156,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12454.png",
+      "url": "/club-atletico-sarmiento-junin-/startseite/verein/12454",
+      "aliases": [
+        "Sarmiento (Junin)",
+        "CA Sarmiento (Junin)"
+      ]
+    },
+    "12301": {
+      "name": "CA Aldosivi",
+      "official_name": "Club Atlético Aldosivi",
+      "country": "Argentina",
+      "market_value": 10890000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1913,
+      "stadium": "José María Minella",
+      "capacity": 35180,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12301.png",
+      "url": "/club-atletico-aldosivi/startseite/verein/12301",
+      "aliases": [
+        "CA Aldosivi",
+        "Aldosivi"
+      ]
+    },
+    "10511": {
+      "name": "CA San Martín (San Juan)",
+      "official_name": "Club Atlético San Martín de San Juan",
+      "country": "Argentina",
+      "market_value": 10130000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1907,
+      "stadium": "Ingeniero Hilario Sánchez",
+      "capacity": 25500,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10511.png",
+      "url": "/club-atletico-san-martin-sj-/startseite/verein/10511",
+      "aliases": [
+        "CA San Martín (San Juan)",
+        "San Martín (San Juan)"
+      ]
+    },
+    "19775": {
+      "name": "Club Deportivo Riestra",
+      "official_name": "Asociación de Fomento Deportivo Riestra Barrio Colón",
+      "country": "Argentina",
+      "market_value": 7860000,
+      "league": "Torneo Clausura",
+      "league_id": "ARGC",
+      "tier": 1,
+      "founded": 1931,
+      "stadium": "Guillermo Laza",
+      "capacity": 10000,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/19775.png",
+      "url": "/cd-riestra/startseite/verein/19775",
+      "aliases": [
+        "Club Deportivo Riestra",
+        "Deportivo Riestra"
+      ]
+    },
+    "12709": {
+      "name": "Club Atlético San Martín (Tucumán)",
+      "official_name": "Club Atlético San Martín de Tucumán",
+      "country": "Argentina",
+      "market_value": 5470000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1909,
+      "stadium": "La Ciudadela",
+      "capacity": 28500,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12709.png",
+      "url": "/ca-san-martin-tucuman-/startseite/verein/12709",
+      "aliases": [
+        "Atlético San Martín (Tucumán)",
+        "Club Atlético San Martín (Tucumán)"
+      ]
+    },
+    "14687": {
+      "name": "Gimnasia y Esgrima de Mendoza",
+      "official_name": "Club Atlético Gimnasia y Esgrima de Mendoza",
+      "country": "Argentina",
+      "market_value": 4990000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1908,
+      "stadium": "Víctor Antonio Legrotaglie",
+      "capacity": 14000,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14687.png",
+      "url": "/gimnasia-y-esgrima-de-mendoza/startseite/verein/14687",
+      "aliases": [
+        "Gimnasia y Esgrima de Mendoza"
+      ]
+    },
+    "2154": {
+      "name": "CA Chacarita Juniors",
+      "official_name": "Club Atlético Chacarita Juniors",
+      "country": "Argentina",
+      "market_value": 4420000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1906,
+      "stadium": "Chacarita Juniors",
+      "capacity": 26000,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2154.png",
+      "url": "/ca-chacarita-juniors/startseite/verein/2154",
+      "aliases": [
+        "CA Chacarita Juniors",
+        "Chacarita Juniors"
+      ]
+    },
+    "1070": {
+      "name": "CA Colón",
+      "official_name": "Club Atlético Colón",
+      "country": "Argentina",
+      "market_value": 4420000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1905,
+      "stadium": "Brigadier General Estanislao López",
+      "capacity": 40000,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1070.png",
+      "url": "/club-atletico-colon/startseite/verein/1070",
+      "aliases": [
+        "CA Colón",
+        "Colón"
+      ]
+    },
+    "4557": {
+      "name": "Club Ferro Carril Oeste",
+      "official_name": "Club Ferro Carril Oeste",
+      "country": "Argentina",
+      "market_value": 4179999,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1904,
+      "stadium": "Arquitecto Ricardo Etcheverri",
+      "capacity": 8472,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/4557.png",
+      "url": "/club-ferro-carril-oeste/startseite/verein/4557",
+      "aliases": [
+        "Ferro Carril Oeste",
+        "Club Ferro Carril Oeste"
+      ]
+    },
+    "14602": {
+      "name": "AA Estudiantes (Río Cuarto)",
+      "official_name": "Asociación Atlética Estudiantes",
+      "country": "Argentina",
+      "market_value": 3970000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1912,
+      "stadium": "Antonio Candini",
+      "capacity": 12000,
+      "squad_size": 34,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14602.png",
+      "url": "/aa-estudiantes-de-rio-cuarto/startseite/verein/14602",
+      "aliases": [
+        "AA Estudiantes (Río Cuarto)"
+      ]
+    },
+    "19634": {
+      "name": "CA San Miguel",
+      "official_name": "Club Atlético San Miguel",
+      "country": "Argentina",
+      "market_value": 3850000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1922,
+      "stadium": "Malvinas Argentinas",
+      "capacity": 7176,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/19634.png",
+      "url": "/ca-san-miguel/startseite/verein/19634",
+      "aliases": [
+        "CA San Miguel",
+        "San Miguel"
+      ]
+    },
+    "8057": {
+      "name": "CA Atlanta",
+      "official_name": "Club Atlético Atlanta",
+      "country": "Argentina",
+      "market_value": 3710000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1904,
+      "stadium": "León Kolbowski",
+      "capacity": 18000,
+      "squad_size": 23,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/8057.png",
+      "url": "/club-atletico-atlanta/startseite/verein/8057",
+      "aliases": [
+        "Atlanta",
+        "CA Atlanta"
+      ]
+    },
+    "1826": {
+      "name": "Quilmes AC",
+      "official_name": "Quilmes Atlético Club",
+      "country": "Argentina",
+      "market_value": 3390000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1887,
+      "stadium": "Centenario Ciudad de Quilmes",
+      "capacity": 30200,
+      "squad_size": 24,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1826.png",
+      "url": "/quilmes-atletico-club/startseite/verein/1826",
+      "aliases": [
+        "Quilmes AC",
+        "Quilmes"
+      ]
+    },
+    "19806": {
+      "name": "CA Patronato",
+      "official_name": "Club Atlético Patronato de la Juventud Católica",
+      "country": "Argentina",
+      "market_value": 3350000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1914,
+      "stadium": "Presbítero Bartolomé Grella",
+      "capacity": 22000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/19806.png",
+      "url": "/club-atletico-patronato/startseite/verein/19806",
+      "aliases": [
+        "Patronato",
+        "CA Patronato"
+      ]
+    },
+    "1771": {
+      "name": "CSD Tristan Suarez",
+      "official_name": "Club Social y Deportivo Tristan Suarez",
+      "country": "Argentina",
+      "market_value": 3290000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1929,
+      "stadium": "20 de Octubre",
+      "capacity": 7500,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1771.png",
+      "url": "/csd-tristan-suarez/startseite/verein/1771",
+      "aliases": [
+        "CSD Tristan Suarez"
+      ]
+    },
+    "14977": {
+      "name": "Club Almagro",
+      "official_name": "Club Almagro",
+      "country": "Argentina",
+      "market_value": 3260000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1911,
+      "stadium": "Tres de Febrero",
+      "capacity": 18000,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14977.png",
+      "url": "/club-almagro/startseite/verein/14977",
+      "aliases": [
+        "Almagro",
+        "Club Almagro"
+      ]
+    },
+    "14318": {
+      "name": "CS Deportivo Madryn",
+      "official_name": "Club Social y Deportivo Madryn",
+      "country": "Argentina",
+      "market_value": 3250000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1924,
+      "stadium": "Abel Sastre",
+      "capacity": 25000,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14318.png",
+      "url": "/csd-madryn/startseite/verein/14318",
+      "aliases": [
+        "CS Deportivo Madryn"
+      ]
+    },
+    "14312": {
+      "name": "CA Estudiantes",
+      "official_name": "Club Atlético Estudiantes",
+      "country": "Argentina",
+      "market_value": 3250000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1898,
+      "stadium": "Ciudad de Caseros",
+      "capacity": 16740,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14312.png",
+      "url": "/ca-estudiantes-buenos-aires-/startseite/verein/14312",
+      "aliases": [
+        "Estudiantes",
+        "CA Estudiantes"
+      ]
+    },
+    "10885": {
+      "name": "Club Atlético Gimnasia y Esgrima (Jujuy)",
+      "official_name": "Club Atlético Gimnasia y Esgrima",
+      "country": "Argentina",
+      "market_value": 2930000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1931,
+      "stadium": "23 de Agosto",
+      "capacity": 24000,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10885.png",
+      "url": "/gimnasia-y-esgrima-de-jujuy/startseite/verein/10885",
+      "aliases": [
+        "Club Atlético Gimnasia y Esgrima (Jujuy)",
+        "Atlético Gimnasia y Esgrima (Jujuy)"
+      ]
+    },
+    "14542": {
+      "name": "CA Temperley",
+      "official_name": "Club Atlético Temperley",
+      "country": "Argentina",
+      "market_value": 2890000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1912,
+      "stadium": "Alfredo Martín Beranger",
+      "capacity": 24000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14542.png",
+      "url": "/club-atletico-temperley/startseite/verein/14542",
+      "aliases": [
+        "CA Temperley",
+        "Temperley"
+      ]
+    },
+    "10534": {
+      "name": "CA Nueva Chicago",
+      "official_name": "Club Atlético Nueva Chicago",
+      "country": "Argentina",
+      "market_value": 2840000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1911,
+      "stadium": "Nueva Chicago",
+      "capacity": 28000,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10534.png",
+      "url": "/nueva-chicago/startseite/verein/10534",
+      "aliases": [
+        "Nueva Chicago",
+        "CA Nueva Chicago"
+      ]
+    },
+    "30038": {
+      "name": "CA Mitre",
+      "official_name": "Club Atlético Mitre",
+      "country": "Argentina",
+      "market_value": 2800000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1907,
+      "stadium": "Doctores José y Antonio Castiglione",
+      "capacity": 21000,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/30038.png",
+      "url": "/club-atletico-mitre/startseite/verein/30038",
+      "aliases": [
+        "Mitre",
+        "CA Mitre"
+      ]
+    },
+    "10403": {
+      "name": "CA Racing (Córdoba)",
+      "official_name": "Club Atlético Racing",
+      "country": "Argentina",
+      "market_value": 2710000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1924,
+      "stadium": "Miguel Sancho",
+      "capacity": 18000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10403.png",
+      "url": "/atletico-racing-cordoba/startseite/verein/10403",
+      "aliases": [
+        "CA Racing (Córdoba)",
+        "Racing (Córdoba)"
+      ]
+    },
+    "19523": {
+      "name": "Club Deportivo Maipú",
+      "official_name": "Club Deportivo Maipú",
+      "country": "Argentina",
+      "market_value": 2680000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1927,
+      "stadium": "Omar Higinio Sperdutti",
+      "capacity": 8000,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/19523.png",
+      "url": "/cd-maipu-mendoza-/startseite/verein/19523",
+      "aliases": [
+        "Club Deportivo Maipú",
+        "Deportivo Maipú"
+      ]
+    },
+    "4673": {
+      "name": "Arsenal FC",
+      "official_name": "Arsenal Fútbol Club",
+      "country": "Argentina",
+      "market_value": 2640000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1957,
+      "stadium": "Julio Humberto Grondona",
+      "capacity": 16300,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/4673.png",
+      "url": "/arsenal-futbol-club/startseite/verein/4673",
+      "aliases": [
+        "Arsenal FC",
+        "Arsenal"
+      ]
+    },
+    "12100": {
+      "name": "CA All Boys",
+      "official_name": "Club Atlético All Boys",
+      "country": "Argentina",
+      "market_value": 2600000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1913,
+      "stadium": "Islas Malvinas",
+      "capacity": 21500,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12100.png",
+      "url": "/ca-all-boys-buenos-aires/startseite/verein/12100",
+      "aliases": [
+        "CA All Boys",
+        "All Boys"
+      ]
+    },
+    "6062": {
+      "name": "CA Defensores de Belgrano",
+      "official_name": "Club Atlético Defensores de Belgrano",
+      "country": "Argentina",
+      "market_value": 2470000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1906,
+      "stadium": "Juan Pasquale",
+      "capacity": 10000,
+      "squad_size": 25,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/6062.png",
+      "url": "/defensores-de-belgrano/startseite/verein/6062",
+      "aliases": [
+        "CA Defensores de Belgrano",
+        "Defensores de Belgrano"
+      ]
+    },
+    "38545": {
+      "name": "CA Agropecuario",
+      "official_name": "Club Agropecuario Argentino",
+      "country": "Argentina",
+      "market_value": 2440000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 2011,
+      "stadium": "Ofelia Rosenzuaig",
+      "capacity": 8000,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/38545.png",
+      "url": "/argentino-agropecuario/startseite/verein/38545",
+      "aliases": [
+        "Agropecuario",
+        "CA Agropecuario"
+      ]
+    },
+    "12681": {
+      "name": "CA Chaco For Ever",
+      "official_name": "Club Atlético Chaco For Ever",
+      "country": "Argentina",
+      "market_value": 2400000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1913,
+      "stadium": "Juan Alberto García",
+      "capacity": 25000,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12681.png",
+      "url": "/chaco-for-ever/startseite/verein/12681",
+      "aliases": [
+        "Chaco For Ever",
+        "CA Chaco For Ever"
+      ]
+    },
+    "14688": {
+      "name": "Club de Gimnasia y Tiro",
+      "official_name": "Club de Gimnasia y Tiro",
+      "country": "Argentina",
+      "market_value": 2350000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1902,
+      "stadium": "El Gigante del Norte",
+      "capacity": 24300,
+      "squad_size": 24,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14688.png",
+      "url": "/gimnasia-y-tiro-salta-/startseite/verein/14688",
+      "aliases": [
+        "de Gimnasia y Tiro",
+        "Club de Gimnasia y Tiro"
+      ]
+    },
+    "12563": {
+      "name": "CA Alvarado",
+      "official_name": "Club Atlético Alvarado",
+      "country": "Argentina",
+      "market_value": 2310000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1928,
+      "stadium": "José María Minella",
+      "capacity": 35180,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12563.png",
+      "url": "/ca-alvarado/startseite/verein/12563",
+      "aliases": [
+        "Alvarado",
+        "CA Alvarado"
+      ]
+    },
+    "13651": {
+      "name": "CA San Telmo",
+      "official_name": "Club Atletico San Telmo",
+      "country": "Argentina",
+      "market_value": 2200000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1904,
+      "stadium": "Dr. Osvaldo Baletto",
+      "capacity": 10500,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/13651.png",
+      "url": "/ca-san-telmo/startseite/verein/13651",
+      "aliases": [
+        "CA San Telmo",
+        "San Telmo"
+      ]
+    },
+    "5208": {
+      "name": "CA Los Andes",
+      "official_name": "Club Atlético Los Andes",
+      "country": "Argentina",
+      "market_value": 2180000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1917,
+      "stadium": "Eduardo Gallardón",
+      "capacity": 39863,
+      "squad_size": 34,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/5208.png",
+      "url": "/ca-los-andes/startseite/verein/5208",
+      "aliases": [
+        "Los Andes",
+        "CA Los Andes"
+      ]
+    },
+    "12672": {
+      "name": "Club Almirante Brown",
+      "official_name": "Club Almirante Brown",
+      "country": "Argentina",
+      "market_value": 1950000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1922,
+      "stadium": "Fragata Presidente Sarmiento",
+      "capacity": 27610,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12672.png",
+      "url": "/club-almirante-brown/startseite/verein/12672",
+      "aliases": [
+        "Almirante Brown",
+        "Club Almirante Brown"
+      ]
+    },
+    "13339": {
+      "name": "CA Colegiales",
+      "official_name": "Club Atlético Colegiales",
+      "country": "Argentina",
+      "market_value": 1700000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1900,
+      "stadium": "Libertarios Unidos",
+      "capacity": 6000,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/13339.png",
+      "url": "/club-atletico-colegiales/startseite/verein/13339",
+      "aliases": [
+        "CA Colegiales",
+        "Colegiales"
+      ]
+    },
+    "24749": {
+      "name": "CA Defensores Unidos (Zarate)",
+      "official_name": "Club Atlético Defensores Unidos",
+      "country": "Argentina",
+      "market_value": 1590000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1914,
+      "stadium": "Mario Losinno",
+      "capacity": 7000,
+      "squad_size": 33,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/24749.png",
+      "url": "/defensores-unidos-zarate-/startseite/verein/24749",
+      "aliases": [
+        "Defensores Unidos (Zarate)",
+        "CA Defensores Unidos (Zarate)"
+      ]
+    },
+    "58188": {
+      "name": "CA Güemes",
+      "official_name": "Club Atlético Güemes",
+      "country": "Argentina",
+      "market_value": 1410000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1932,
+      "stadium": "Arturo Miranda",
+      "capacity": 12000,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/58188.png",
+      "url": "/club-atletico-guemes/startseite/verein/58188",
+      "aliases": [
+        "Güemes",
+        "CA Güemes"
+      ]
+    },
+    "14519": {
+      "name": "CA Talleres (Remedios de Escalada)",
+      "official_name": "Club Atlético Talleres",
+      "country": "Argentina",
+      "market_value": 1030000,
+      "league": "Primera Nacional",
+      "league_id": "ARG2",
+      "tier": 2,
+      "founded": 1906,
+      "stadium": "Pablo Comelli",
+      "capacity": 16000,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14519.png",
+      "url": "/ca-talleres-remedios-de-escalada-/startseite/verein/14519",
+      "aliases": [
+        "CA Talleres (Remedios de Escalada)",
+        "Talleres (Remedios de Escalada)"
+      ]
+    },
+    "861": {
+      "name": "CA Peñarol",
+      "official_name": "Club Atlético Peñarol",
+      "country": "Uruguay",
+      "market_value": 38580000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1891,
+      "stadium": "Campeón del Siglo",
+      "capacity": 40700,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/861.png",
+      "url": "/ca-penarol/startseite/verein/861",
+      "aliases": [
+        "CA Peñarol",
+        "Peñarol"
+      ]
+    },
+    "10663": {
+      "name": "Liverpool FC Montevideo",
+      "official_name": "Liverpool Fútbol Club",
+      "country": "Uruguay",
+      "market_value": 16079999,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1915,
+      "stadium": "Estadio Belvedere",
+      "capacity": 6589,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10663.png",
+      "url": "/liverpool-fc-montevideo/startseite/verein/10663",
+      "aliases": [
+        "Liverpool FC Montevideo"
+      ]
+    },
+    "18074": {
+      "name": "CA Boston River",
+      "official_name": "Club Atlético Boston River",
+      "country": "Uruguay",
+      "market_value": 11540000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1939,
+      "stadium": "Estadio Campeones Olímpicos de Florida",
+      "capacity": 5124,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/18074.png",
+      "url": "/ca-boston-river/startseite/verein/18074",
+      "aliases": [
+        "CA Boston River",
+        "Boston River"
+      ]
+    },
+    "2619": {
+      "name": "Defensor Sporting Club",
+      "official_name": "Defensor Sporting Club",
+      "country": "Uruguay",
+      "market_value": 9950000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1913,
+      "stadium": "Estadio Luis Franzini",
+      "capacity": 9357,
+      "squad_size": 25,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2619.png",
+      "url": "/defensor-sc/startseite/verein/2619",
+      "aliases": [
+        "Defensor Sporting Club"
+      ]
+    },
+    "17428": {
+      "name": "CA Juventud",
+      "official_name": "Club Atlético Juventud de Las Piedras",
+      "country": "Uruguay",
+      "market_value": 8450000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1935,
+      "stadium": "Estadio Juventud Parque Artigas",
+      "capacity": 6148,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/17428.png",
+      "url": "/juventud-de-las-piedras/startseite/verein/17428",
+      "aliases": [
+        "Juventud",
+        "CA Juventud"
+      ]
+    },
+    "14758": {
+      "name": "Racing Club de Montevideo",
+      "official_name": "Racing Club de Montevideo",
+      "country": "Uruguay",
+      "market_value": 7910000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1919,
+      "stadium": "Estadio Osvaldo Roberto",
+      "capacity": 4500,
+      "squad_size": 33,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14758.png",
+      "url": "/racing-club-de-montevideo/startseite/verein/14758",
+      "aliases": [
+        "Racing Club de Montevideo"
+      ]
+    },
+    "1306": {
+      "name": "Danubio FC",
+      "official_name": "Danubio Fútbol Club",
+      "country": "Uruguay",
+      "market_value": 7530000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1932,
+      "stadium": "Estadio Jardines del Hipódromo María Mincheff de Lazaroff",
+      "capacity": 11118,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1306.png",
+      "url": "/danubio-fc/startseite/verein/1306",
+      "aliases": [
+        "Danubio FC",
+        "Danubio"
+      ]
+    },
+    "37535": {
+      "name": "Montevideo City Torque",
+      "official_name": "Montevideo City Torque",
+      "country": "Uruguay",
+      "market_value": 7330000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 2007,
+      "stadium": "Estadio Centenario",
+      "capacity": 60235,
+      "squad_size": 22,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/37535.png",
+      "url": "/montevideo-city-torque/startseite/verein/37535",
+      "aliases": [
+        "Montevideo City Torque"
+      ]
+    },
+    "20189": {
+      "name": "Cerro Largo FC",
+      "official_name": "Cerro Largo Fútbol Club",
+      "country": "Uruguay",
+      "market_value": 7200000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 2002,
+      "stadium": "Estadio Arquitecto Antonio Eleuterio Ubilla",
+      "capacity": 9000,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/20189.png",
+      "url": "/cerro-largo-fc/startseite/verein/20189",
+      "aliases": [
+        "Cerro Largo",
+        "Cerro Largo FC"
+      ]
+    },
+    "2419": {
+      "name": "CA River Plate Montevideo",
+      "official_name": "Club Atlético River Plate",
+      "country": "Uruguay",
+      "market_value": 6410000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1932,
+      "stadium": "Estadio Saroldi",
+      "capacity": 5165,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2419.png",
+      "url": "/atletico-river-plate-montevideo/startseite/verein/2419",
+      "aliases": [
+        "CA River Plate Montevideo",
+        "River Plate Montevideo"
+      ]
+    },
+    "14806": {
+      "name": "CA Cerro",
+      "official_name": "Club Atlético Cerro",
+      "country": "Uruguay",
+      "market_value": 5910000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1922,
+      "stadium": "Estadio Luis Tróccoli",
+      "capacity": 18000,
+      "squad_size": 36,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14806.png",
+      "url": "/ca-cerro/startseite/verein/14806",
+      "aliases": [
+        "CA Cerro",
+        "Cerro"
+      ]
+    },
+    "2403": {
+      "name": "Montevideo Wanderers",
+      "official_name": "Montevideo Wanderers Fútbol Club",
+      "country": "Uruguay",
+      "market_value": 5800000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1902,
+      "stadium": "Estadio Parque Alfredo Victor Viera",
+      "capacity": 10500,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2403.png",
+      "url": "/montevideo-wanderers/startseite/verein/2403",
+      "aliases": [
+        "Montevideo Wanderers"
+      ]
+    },
+    "17595": {
+      "name": "CA Progreso",
+      "official_name": "Club Atlético Progreso",
+      "country": "Uruguay",
+      "market_value": 4860000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1917,
+      "stadium": "Parque Abraham Paladino",
+      "capacity": 5696,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/17595.png",
+      "url": "/ca-progreso/startseite/verein/17595",
+      "aliases": [
+        "CA Progreso",
+        "Progreso"
+      ]
+    },
+    "7477": {
+      "name": "Miramar Misiones",
+      "official_name": "Club Sportivo Miramar Misiones",
+      "country": "Uruguay",
+      "market_value": 4380000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URUC",
+      "tier": 1,
+      "founded": 1906,
+      "stadium": "Parque Palermo",
+      "capacity": 4072,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/7477.png",
+      "url": "/miramar-misiones/startseite/verein/7477",
+      "aliases": [
+        "Miramar Misiones"
+      ]
+    },
+    "42149": {
+      "name": "Albion FC",
+      "official_name": "Albion Football Club SAD",
+      "country": "Uruguay",
+      "market_value": 4640000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1891,
+      "stadium": "Estadio Saroldi",
+      "capacity": 5165,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/42149.png",
+      "url": "/albion-fc/startseite/verein/42149",
+      "aliases": [
+        "Albion",
+        "Albion FC"
+      ]
+    },
+    "18075": {
+      "name": "Club Deportivo Maldonado",
+      "official_name": "Club Deportivo Maldonado",
+      "country": "Uruguay",
+      "market_value": 4160000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1928,
+      "stadium": "Estadio Domingo Burgueño Miguel",
+      "capacity": 30152,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/18075.png",
+      "url": "/cd-maldonado/startseite/verein/18075",
+      "aliases": [
+        "Club Deportivo Maldonado",
+        "Deportivo Maldonado"
+      ]
+    },
+    "10632": {
+      "name": "CA Rentistas",
+      "official_name": "Club Atlético Rentistas",
+      "country": "Uruguay",
+      "market_value": 4059999,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1933,
+      "stadium": "Complejo Rentistas",
+      "capacity": 4600,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10632.png",
+      "url": "/ca-rentistas/startseite/verein/10632",
+      "aliases": [
+        "CA Rentistas",
+        "Rentistas"
+      ]
+    },
+    "17494": {
+      "name": "Tacuarembó FC",
+      "official_name": "Tacuarembó Futbol Club",
+      "country": "Uruguay",
+      "market_value": 3900000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1998,
+      "stadium": "Estadio Ingeniero Raúl Goyenola",
+      "capacity": 9000,
+      "squad_size": 32,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/17494.png",
+      "url": "/tacuarembo-futbol-club/startseite/verein/17494",
+      "aliases": [
+        "Tacuarembó FC",
+        "Tacuarembó"
+      ]
+    },
+    "10960": {
+      "name": "Central Español FC",
+      "official_name": "Central Español Fútbol Club",
+      "country": "Uruguay",
+      "market_value": 3460000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1905,
+      "stadium": "Parque Palermo",
+      "capacity": 6500,
+      "squad_size": 37,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10960.png",
+      "url": "/central-espanol/startseite/verein/10960",
+      "aliases": [
+        "Central Español FC",
+        "Central Español"
+      ]
+    },
+    "18122": {
+      "name": "CA Atenas de San Carlos",
+      "official_name": "Club Atlético Atenas de San Carlos",
+      "country": "Uruguay",
+      "market_value": 3260000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1928,
+      "stadium": "Estadio Ateniense",
+      "capacity": 1478,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/18122.png",
+      "url": "/club-atletico-atenas-de-san-carlos/startseite/verein/18122",
+      "aliases": [
+        "CA Atenas de San Carlos",
+        "Atenas de San Carlos"
+      ]
+    },
+    "20762": {
+      "name": "La Luz FC",
+      "official_name": "La Luz Fútbol Club",
+      "country": "Uruguay",
+      "market_value": 2960000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1929,
+      "stadium": "Estadio Municipal Parque Liebig's",
+      "capacity": 5200,
+      "squad_size": 39,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/20762.png",
+      "url": "/la-luz-tacuru-futbol-club/startseite/verein/20762",
+      "aliases": [
+        "La Luz",
+        "La Luz FC"
+      ]
+    },
+    "18077": {
+      "name": "CS Cerrito",
+      "official_name": "Club Sportivo Cerrito",
+      "country": "Uruguay",
+      "market_value": 2840000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1929,
+      "stadium": "Estadio Parque Maracaná",
+      "capacity": 3364,
+      "squad_size": 39,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/18077.png",
+      "url": "/cs-cerrito/startseite/verein/18077",
+      "aliases": [
+        "CS Cerrito"
+      ]
+    },
+    "14598": {
+      "name": "Rampla Juniors FC",
+      "official_name": "Rampla Juniors Fútbol Club",
+      "country": "Uruguay",
+      "market_value": 2580000,
+      "league": "Segunda División - Fase Regular",
+      "league_id": "URU2",
+      "tier": 2,
+      "founded": 1914,
+      "stadium": "Estadio Olímpico (Montevideo)",
+      "capacity": 9500,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14598.png",
+      "url": "/rampla-juniors-fc/startseite/verein/14598",
+      "aliases": [
+        "Rampla Juniors",
+        "Rampla Juniors FC"
+      ]
+    },
+    "1037": {
+      "name": "Club Universidad de Chile",
+      "official_name": "Club de Fútbol Profesional Universidad de Chile",
+      "country": "Chile",
+      "market_value": 24650000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1927,
+      "stadium": "Nacional Julio Martínez Prádanos",
+      "capacity": 46190,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1037.png",
+      "url": "/club-universidad-de-chile/startseite/verein/1037",
+      "aliases": [
+        "Club Universidad de Chile",
+        "Universidad de Chile"
+      ]
+    },
+    "2433": {
+      "name": "CSD Colo-Colo",
+      "official_name": "Corporación Club Social y Deportivo Colo-Colo",
+      "country": "Chile",
+      "market_value": 22130000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1925,
+      "stadium": "Monumental David Arellano",
+      "capacity": 43667,
+      "squad_size": 25,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2433.png",
+      "url": "/csd-colo-colo/startseite/verein/2433",
+      "aliases": [
+        "CSD Colo-Colo"
+      ]
+    },
+    "11470": {
+      "name": "CD O'Higgins",
+      "official_name": "Club Deportivo O'Higgins S.A.D.P.",
+      "country": "Chile",
+      "market_value": 11560000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1955,
+      "stadium": "El Teniente",
+      "capacity": 14450,
+      "squad_size": 23,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/11470.png",
+      "url": "/cd-ohiggins/startseite/verein/11470",
+      "aliases": [
+        "CD O'Higgins",
+        "O'Higgins"
+      ]
+    },
+    "7020": {
+      "name": "CD Everton",
+      "official_name": "Corporación Deportiva Everton de Viña del Mar",
+      "country": "Chile",
+      "market_value": 11480000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1909,
+      "stadium": "Sausalito",
+      "capacity": 19200,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/7020.png",
+      "url": "/cd-everton/startseite/verein/7020",
+      "aliases": [
+        "Everton",
+        "CD Everton"
+      ]
+    },
+    "3277": {
+      "name": "CD Universidad Católica",
+      "official_name": "Club Deportivo Universidad Católica",
+      "country": "Chile",
+      "market_value": 11350000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1937,
+      "stadium": "Claro Arena - San Carlos de Apoquindo",
+      "capacity": 20249,
+      "squad_size": 23,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/3277.png",
+      "url": "/cd-universidad-catolica/startseite/verein/3277",
+      "aliases": [
+        "Universidad Católica",
+        "CD Universidad Católica"
+      ]
+    },
+    "6368": {
+      "name": "Huachipato FC",
+      "official_name": "Club Deportivo Huachipato",
+      "country": "Chile",
+      "market_value": 11300000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1947,
+      "stadium": "Huachipato-CAP Acero",
+      "capacity": 10032,
+      "squad_size": 35,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/6368.png",
+      "url": "/huachipato-fc/startseite/verein/6368",
+      "aliases": [
+        "Huachipato FC",
+        "Huachipato"
+      ]
+    },
+    "4321": {
+      "name": "Unión Española",
+      "official_name": "Unión Española S.A.D.P.",
+      "country": "Chile",
+      "market_value": 11080000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1897,
+      "stadium": "Santa Laura - Universidad SEK",
+      "capacity": 19887,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/4321.png",
+      "url": "/union-espanola/startseite/verein/4321",
+      "aliases": [
+        "Unión Española"
+      ]
+    },
+    "6363": {
+      "name": "Audax Italiano",
+      "official_name": "Audax Club Sportivo Italiano",
+      "country": "Chile",
+      "market_value": 10550000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1910,
+      "stadium": "Bicentenario de La Florida",
+      "capacity": 11367,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/6363.png",
+      "url": "/audax-italiano/startseite/verein/6363",
+      "aliases": [
+        "Audax Italiano"
+      ]
+    },
+    "11004": {
+      "name": "Coquimbo Unido",
+      "official_name": "Club de Deportes Coquimbo Unido S.A.D.P.",
+      "country": "Chile",
+      "market_value": 10380000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1957,
+      "stadium": "Francisco Sánchez Rumoroso",
+      "capacity": 17750,
+      "squad_size": 25,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/11004.png",
+      "url": "/coquimbo-unido/startseite/verein/11004",
+      "aliases": [
+        "Coquimbo Unido"
+      ]
+    },
+    "6536": {
+      "name": "CD Palestino",
+      "official_name": "Club Deportivo Palestino S.A.",
+      "country": "Chile",
+      "market_value": 9230000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1920,
+      "stadium": "Municipal de La Cisterna",
+      "capacity": 8000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/6536.png",
+      "url": "/cd-palestino/startseite/verein/6536",
+      "aliases": [
+        "CD Palestino",
+        "Palestino"
+      ]
+    },
+    "5747": {
+      "name": "Deportes La Serena",
+      "official_name": "Club de Deportes La Serena",
+      "country": "Chile",
+      "market_value": 8750000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1955,
+      "stadium": "La Portada",
+      "capacity": 17134,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/5747.png",
+      "url": "/deportes-la-serena/startseite/verein/5747",
+      "aliases": [
+        "Deportes La Serena"
+      ]
+    },
+    "20514": {
+      "name": "Unión La Calera",
+      "official_name": "Unión La Calera",
+      "country": "",
+      "market_value": 7710000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1954,
+      "stadium": "Nicolás Chahuán Nazar",
+      "capacity": 9200,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/20514.png",
+      "url": "/union-la-calera/startseite/verein/20514",
+      "aliases": [
+        "Unión La Calera"
+      ]
+    },
+    "18076": {
+      "name": "Club Deportes Iquique",
+      "official_name": "Club Deportes Iquique S.A.D.P.",
+      "country": "Chile",
+      "market_value": 7010000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1978,
+      "stadium": "Tierra de Campeones",
+      "capacity": 13171,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/18076.png",
+      "url": "/club-deportes-iquique/startseite/verein/18076",
+      "aliases": [
+        "Deportes Iquique",
+        "Club Deportes Iquique"
+      ]
+    },
+    "26697": {
+      "name": "Deportes Limache",
+      "official_name": "Club de Deportes Limache S.A.D.P.",
+      "country": "Chile",
+      "market_value": 6910000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 2012,
+      "stadium": "Lucio Fariña Fernández",
+      "capacity": 7265,
+      "squad_size": 25,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/26697.png",
+      "url": "/club-de-deportes-limache/startseite/verein/26697",
+      "aliases": [
+        "Deportes Limache"
+      ]
+    },
+    "14723": {
+      "name": "CD Ñublense",
+      "official_name": "Club Deportivo Ñublense",
+      "country": "Chile",
+      "market_value": 6630000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1916,
+      "stadium": "Nelson Oyarzún",
+      "capacity": 11319,
+      "squad_size": 22,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/14723.png",
+      "url": "/cd-nublense/startseite/verein/14723",
+      "aliases": [
+        "CD Ñublense",
+        "Ñublense"
+      ]
+    },
+    "17482": {
+      "name": "CD Cobresal",
+      "official_name": "Club Deportes Cobresal",
+      "country": "Chile",
+      "market_value": 6580000,
+      "league": "Liga de Primera",
+      "league_id": "CLPD",
+      "tier": 1,
+      "founded": 1979,
+      "stadium": "El Cobre",
+      "capacity": 11240,
+      "squad_size": 24,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/17482.png",
+      "url": "/cd-cobresal/startseite/verein/17482",
+      "aliases": [
+        "Cobresal",
+        "CD Cobresal"
+      ]
+    },
+    "13362": {
+      "name": "CD Tapatío",
+      "official_name": "Club Deportivo Tapatío",
+      "country": "Mexico",
+      "market_value": 5950000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 2017,
+      "stadium": "Estadio Akron",
+      "capacity": 49580,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/13362.png",
+      "url": "/cd-tapatio/startseite/verein/13362",
+      "aliases": [
+        "CD Tapatío",
+        "Tapatío"
+      ]
+    },
+    "5623": {
+      "name": "Club Atlético Morelia",
+      "official_name": "Club Atlético Morelia, S. A. de C. V.",
+      "country": "Mexico",
+      "market_value": 8900000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1924,
+      "stadium": "Estadio Generalísimo José María Morelos y Pavón",
+      "capacity": 38869,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/5623.png",
+      "url": "/club-atletico-morelia/startseite/verein/5623",
+      "aliases": [
+        "Atlético Morelia",
+        "Club Atlético Morelia"
+      ]
+    },
+    "18662": {
+      "name": "Venados FC Yucatán",
+      "official_name": "Venados F.C. Yucatán",
+      "country": "Mexico",
+      "market_value": 6380000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1987,
+      "stadium": "Estadio Carlos Iturralde Rivero",
+      "capacity": 15087,
+      "squad_size": 24,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/18662.png",
+      "url": "/venados-fc-yucatan/startseite/verein/18662",
+      "aliases": [
+        "Venados FC Yucatán"
+      ]
+    },
+    "23505": {
+      "name": "CD Leones Negros de la UdeG",
+      "official_name": "Club Universidad de Guadalajara",
+      "country": "Mexico",
+      "market_value": 6950000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1969,
+      "stadium": "Estadio Jalisco",
+      "capacity": 56713,
+      "squad_size": 23,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/23505.png",
+      "url": "/cd-leones-negros-de-la-udeg/startseite/verein/23505",
+      "aliases": [
+        "CD Leones Negros de la UdeG",
+        "Leones Negros de la UdeG"
+      ]
+    },
+    "10091": {
+      "name": "Dorados de Sinaloa",
+      "official_name": "Club Social y Deportivo Dorados de Sinaloa",
+      "country": "Mexico",
+      "market_value": 4830000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 2003,
+      "stadium": "Estadio Dorados",
+      "capacity": 20108,
+      "squad_size": 30,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/10091.png",
+      "url": "/dorados-de-sinaloa/startseite/verein/10091",
+      "aliases": [
+        "Dorados de Sinaloa"
+      ]
+    },
+    "6709": {
+      "name": "CF Atlante",
+      "official_name": "Club de Futbol Atlante Potros de Hierro de Quintana Roo S. A. de C. V.",
+      "country": "Mexico",
+      "market_value": 6350000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1916,
+      "stadium": "Estadio Agustín Coruco Díaz",
+      "capacity": 16000,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/6709.png",
+      "url": "/cf-atlante/startseite/verein/6709",
+      "aliases": [
+        "CF Atlante",
+        "Atlante"
+      ]
+    },
+    "33203": {
+      "name": "Celaya FC",
+      "official_name": "Celaya Fútbol Club A.C.",
+      "country": "Mexico",
+      "market_value": 0,
+      "league": "",
+      "league_id": "",
+      "tier": 2,
+      "founded": 1900,
+      "stadium": "Estadio Miguel Alemán Valdez",
+      "capacity": 25500,
+      "squad_size": 8,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/33203.png",
+      "url": "/celaya-fc/startseite/verein/33203",
+      "aliases": [
+        "Celaya FC",
+        "Celaya"
+      ]
+    },
+    "12728": {
+      "name": "Tampico Madero",
+      "official_name": "Tampico Madero Fútbol Club",
+      "country": "Mexico",
+      "market_value": 8080000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1982,
+      "stadium": "Estadio Tamaulipas",
+      "capacity": 30000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/12728.png",
+      "url": "/tampico-madero/startseite/verein/12728",
+      "aliases": [
+        "Tampico Madero"
+      ]
+    },
+    "44772": {
+      "name": "Mineros de Zacatecas",
+      "official_name": "Club Deportivo Mineros de Zacatecas",
+      "country": "Mexico",
+      "market_value": 7100000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 2014,
+      "stadium": "Estadio Carlos Vega Villalba",
+      "capacity": 13820,
+      "squad_size": 22,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/44772.png",
+      "url": "/mineros-de-zacatecas/startseite/verein/44772",
+      "aliases": [
+        "Mineros de Zacatecas"
+      ]
+    },
+    "83082": {
+      "name": "Cancún FC",
+      "official_name": "Cancún FC",
+      "country": "",
+      "market_value": 4600000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1900,
+      "stadium": "Estadio Olímpico Andrés Quintana Roo",
+      "capacity": 20000,
+      "squad_size": 24,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/83082.png",
+      "url": "/cancun-fc/startseite/verein/83082",
+      "aliases": [
+        "Cancún FC",
+        "Cancún"
+      ]
+    },
+    "100124": {
+      "name": "Atlético La Paz",
+      "official_name": "Club Atlético La Paz",
+      "country": "Mexico",
+      "market_value": 7480000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 2022,
+      "stadium": "Estadio Guaycura",
+      "capacity": 5209,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/100124.png",
+      "url": "/atletico-la-paz/startseite/verein/100124",
+      "aliases": [
+        "Atlético La Paz"
+      ]
+    },
+    "42781": {
+      "name": "Tlaxcala FC",
+      "official_name": "Tlaxcala Fútbol Club",
+      "country": "Mexico",
+      "market_value": 3230000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 2014,
+      "stadium": "Estadio Tlahuicole",
+      "capacity": 15000,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/42781.png",
+      "url": "/tlaxcala-fc/startseite/verein/42781",
+      "aliases": [
+        "Tlaxcala",
+        "Tlaxcala FC"
+      ]
+    },
+    "13354": {
+      "name": "Correcaminos de la UAT",
+      "official_name": "Club Correcaminos de la Universidad Autónoma de Tamaulipas",
+      "country": "Mexico",
+      "market_value": 4300000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1979,
+      "stadium": "Estadio Marte Rodolfo Gómez Segura",
+      "capacity": 18000,
+      "squad_size": 22,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/13354.png",
+      "url": "/correcaminos-de-la-uat/startseite/verein/13354",
+      "aliases": [
+        "Correcaminos de la UAT"
+      ]
+    },
+    "30111": {
+      "name": "Alebrijes de Oaxaca",
+      "official_name": "Club de Fútbol Alebrijes de Oaxaca",
+      "country": "Mexico",
+      "market_value": 3450000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1900,
+      "stadium": "Estadio Tecnológico de Oaxaca",
+      "capacity": 17200,
+      "squad_size": 23,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/30111.png",
+      "url": "/alebrijes-de-oaxaca/startseite/verein/30111",
+      "aliases": [
+        "Alebrijes de Oaxaca"
+      ]
+    },
+    "64345": {
+      "name": "Tepatitlán FC",
+      "official_name": "Club Deportivo Tepatitlán de Morelos",
+      "country": "",
+      "market_value": 5660000,
+      "league": "Liga de Expansión MX Clausura",
+      "league_id": "MEX2",
+      "tier": 2,
+      "founded": 1900,
+      "stadium": "Estadio Gregorio Tepa Gómez",
+      "capacity": 12500,
+      "squad_size": 28,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/64345.png",
+      "url": "/tepatitlan-fc/startseite/verein/64345",
+      "aliases": [
+        "Tepatitlán FC",
+        "Tepatitlán"
+      ]
+    },
+    "866": {
+      "name": "Club Nacional",
+      "official_name": "Club Nacional de Football",
+      "country": "Uruguay",
+      "market_value": 19600000,
+      "league": "Liga AUF Clausura",
+      "league_id": "URU1",
+      "tier": 1,
+      "founded": 1899,
+      "stadium": "Gran Parque Central",
+      "capacity": 34000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/866.png",
+      "url": "/club-nacional/startseite/verein/866",
+      "aliases": [
+        "Club Nacional",
+        "Nacional",
+        "Nacional de Uruguay",
+        "Los Bolsos"
+      ]
+    },
+    "1804": {
+      "name": "Deportivo Toluca",
+      "official_name": "Deportivo Toluca Futbol Club, S. A. de C. V.",
+      "country": "Mexico",
+      "market_value": 75800000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1917,
+      "stadium": "Estadio Nemesio Díez Riega",
+      "capacity": 31000,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1804.png",
+      "url": "/deportivo-toluca/startseite/verein/1804",
+      "aliases": [
+        "Deportivo Toluca"
+      ]
+    },
+    "3631": {
+      "name": "CF América",
+      "official_name": "Club de Futbol América S. A. de C. V.",
+      "country": "Mexico",
+      "market_value": 107400000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1916,
+      "stadium": "Estadio Azteca",
+      "capacity": 81070,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/3631.png",
+      "url": "/cf-america/startseite/verein/3631",
+      "aliases": [
+        "América",
+        "CF América"
+      ]
+    },
+    "3711": {
+      "name": "CD Cruz Azul",
+      "official_name": "Club de Fútbol Cruz Azul S.A. de C.V.",
+      "country": "Mexico",
+      "market_value": 82100000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1963,
+      "stadium": "Estadio Olímpico Universitario",
+      "capacity": 62700,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/3711.png",
+      "url": "/cd-cruz-azul/startseite/verein/3711",
+      "aliases": [
+        "CD Cruz Azul",
+        "Cruz Azul"
+      ]
+    },
+    "4035": {
+      "name": "CF Pachuca",
+      "official_name": "Promotora del Club Pachuca S. A. de C. V.",
+      "country": "Mexico",
+      "market_value": 54700000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1900,
+      "stadium": "Estadio Hidalgo",
+      "capacity": 30000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/4035.png",
+      "url": "/cf-pachuca/startseite/verein/4035",
+      "aliases": [
+        "Pachuca",
+        "CF Pachuca"
+      ]
+    },
+    "2407": {
+      "name": "CF Monterrey",
+      "official_name": "Club de Fútbol Monterrey Rayados A.C.",
+      "country": "Mexico",
+      "market_value": 70300000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1945,
+      "stadium": "Estadio BBVA",
+      "capacity": 53500,
+      "squad_size": 25,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/2407.png",
+      "url": "/cf-monterrey/startseite/verein/2407",
+      "aliases": [
+        "CF Monterrey",
+        "Monterrey"
+      ]
+    },
+    "6711": {
+      "name": "Deportivo Guadalajara",
+      "official_name": "Club Deportivo Guadalajara S. A. de C. V.",
+      "country": "Mexico",
+      "market_value": 66330000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1906,
+      "stadium": "Estadio Akron",
+      "capacity": 49580,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/6711.png",
+      "url": "/deportivo-guadalajara/startseite/verein/6711",
+      "aliases": [
+        "Deportivo Guadalajara"
+      ]
+    },
+    "7055": {
+      "name": "Tigres UANL",
+      "official_name": "Club Tigres UANL Sinergia Deportiva S.A. de C.V.",
+      "country": "Mexico",
+      "market_value": 70650000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1967,
+      "stadium": "Estadio Universitario",
+      "capacity": 41886,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/7055.png",
+      "url": "/tigres-uanl/startseite/verein/7055",
+      "aliases": [
+        "Tigres UANL"
+      ]
+    },
+    "7633": {
+      "name": "UNAM Pumas",
+      "official_name": "Club Universidad Nacional A. C.",
+      "country": "Mexico",
+      "market_value": 41250000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1954,
+      "stadium": "Estadio Olímpico Universitario",
+      "capacity": 62700,
+      "squad_size": 22,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/7633.png",
+      "url": "/unam-pumas/startseite/verein/7633",
+      "aliases": [
+        "UNAM Pumas"
+      ]
+    },
+    "4941": {
+      "name": "Club León FC",
+      "official_name": "Club León Fútbol Club",
+      "country": "Mexico",
+      "market_value": 37350000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1944,
+      "stadium": "Nou Camp",
+      "capacity": 33943,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/4941.png",
+      "url": "/club-leon-fc/startseite/verein/4941",
+      "aliases": [
+        "Club León",
+        "Club León FC",
+        "León FC"
+      ]
+    },
+    "1146": {
+      "name": "Club Necaxa",
+      "official_name": "Impulsora del Deportivo Necaxa S.A. de C.V.",
+      "country": "Mexico",
+      "market_value": 41200000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1923,
+      "stadium": "Estadio Victoria",
+      "capacity": 23851,
+      "squad_size": 23,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1146.png",
+      "url": "/club-necaxa/startseite/verein/1146",
+      "aliases": [
+        "Club Necaxa",
+        "Necaxa"
+      ]
+    },
+    "13353": {
+      "name": "Club Tijuana",
+      "official_name": "Club Tijuana Xoloitzcuintles de Caliente",
+      "country": "Mexico",
+      "market_value": 43030000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 2007,
+      "stadium": "Estadio Caliente",
+      "capacity": 29333,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/13353.png",
+      "url": "/club-tijuana/startseite/verein/13353",
+      "aliases": [
+        "Tijuana",
+        "Club Tijuana"
+      ]
+    },
+    "40188": {
+      "name": "Atlético de San Luis",
+      "official_name": "Club Atlético de San Luis",
+      "country": "Mexico",
+      "market_value": 45150000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 2017,
+      "stadium": "Estadio Alfonso Lastras Ramírez",
+      "capacity": 27029,
+      "squad_size": 29,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/40188.png",
+      "url": "/atletico-de-san-luis/startseite/verein/40188",
+      "aliases": [
+        "Atlético de San Luis"
+      ]
+    },
+    "1403": {
+      "name": "Santos Laguna",
+      "official_name": "Club Santos Laguna S. A. de C. V.",
+      "country": "Mexico",
+      "market_value": 30550000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1983,
+      "stadium": "Estadio Territorio Santos Modelo Corona",
+      "capacity": 29237,
+      "squad_size": 24,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/1403.png",
+      "url": "/santos-laguna/startseite/verein/1403",
+      "aliases": [
+        "Santos Laguna"
+      ]
+    },
+    "82696": {
+      "name": "Mazatlán FC",
+      "official_name": "Mazatlán Futbol Club",
+      "country": "",
+      "market_value": 26030000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1900,
+      "stadium": "Estadio de Mazatlán",
+      "capacity": 25000,
+      "squad_size": 31,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/82696.png",
+      "url": "/mazatlan-fc/startseite/verein/82696",
+      "aliases": [
+        "Mazatlán",
+        "Mazatlán FC"
+      ]
+    },
+    "8590": {
+      "name": "Atlas Guadalajara",
+      "official_name": "Club de Futbol Rojinegros S.A. de C.V.",
+      "country": "Mexico",
+      "market_value": 29200000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1916,
+      "stadium": "Estadio Jalisco",
+      "capacity": 56713,
+      "squad_size": 26,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/8590.png",
+      "url": "/atlas-guadalajara/startseite/verein/8590",
+      "aliases": [
+        "Atlas Guadalajara"
+      ]
+    },
+    "5662": {
+      "name": "Puebla FC",
+      "official_name": "Club de Futbol Puebla de La Franja",
+      "country": "Mexico",
+      "market_value": 21230000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1944,
+      "stadium": "Estadio Cuauhtémoc",
+      "capacity": 48000,
+      "squad_size": 27,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/5662.png",
+      "url": "/puebla-fc/startseite/verein/5662",
+      "aliases": [
+        "Puebla",
+        "Puebla FC"
+      ]
+    },
+    "4961": {
+      "name": "Querétaro FC",
+      "official_name": "Querétaro Fútbol Club",
+      "country": "Mexico",
+      "market_value": 21880000,
+      "league": "Liga MX Apertura",
+      "league_id": "MEXA",
+      "tier": 1,
+      "founded": 1950,
+      "stadium": "Estadio La Corregidora",
+      "capacity": 34107,
+      "squad_size": 35,
+      "image": "https://tmssl.akamaized.net//images/wappen/big/4961.png",
+      "url": "/queretaro-fc/startseite/verein/4961",
+      "aliases": [
+        "Querétaro",
+        "Querétaro FC"
+      ]
+    }
+  }
+}

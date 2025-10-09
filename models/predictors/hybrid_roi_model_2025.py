@@ -76,7 +76,8 @@ class HybridROIModel2025:
             print(f"\n📥 INPUT - Hybrid Model:")
             print(f"   👤 Jugador: {player_data.get('player_name', player_data.get('name', 'N/A'))}")
             print(f"   🏟️  Club: {club_data.get('name', 'N/A') if club_data else 'N/A'}")
-            print(f"   💰 Valor mercado: €{player_data.get('market_value', 0):,.0f}")
+            market_value_display = player_data.get('market_value', 0) or 0
+            print(f"   💰 Valor mercado: €{market_value_display:,.0f}")
             
             # Predicción de cambio de valor
             print(f"\n┌─ LLAMANDO A VALUE CHANGE PREDICTOR ─┐")
@@ -142,7 +143,7 @@ class HybridROIModel2025:
         except Exception as e:
             print(f"❌ Error en análisis híbrido: {e}")
             # Fallback simple
-            market_value = player_data.get('market_value', 1000000)
+            market_value = player_data.get('market_value', 1000000) or 1000000
             
             return {
                 'maximum_price': market_value * 1.5,
