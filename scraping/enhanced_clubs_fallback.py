@@ -186,6 +186,39 @@ class EnhancedClubsFallback:
                 'founded': 1905,
                 'stadium': 'Libertadores de América',
                 'capacity': 49000
+            },
+            'CA Talleres': {
+                'name': 'CA Talleres',
+                'country': 'Argentina',
+                'market_value': 38950000,
+                'league': 'Liga Profesional',
+                'tier': 2,
+                'aliases': ['CA Talleres', 'Talleres', 'Talleres de Córdoba', 'La T'],
+                'founded': 1913,
+                'stadium': 'Mario Alberto Kempes',
+                'capacity': 57000
+            },
+            'Club Nacional': {
+                'name': 'Club Nacional',
+                'country': 'Uruguay',
+                'market_value': 19600000,
+                'league': 'Primera División',
+                'tier': 2,
+                'aliases': ['Club Nacional', 'Nacional', 'Nacional de Uruguay', 'Los Bolsos'],
+                'founded': 1899,
+                'stadium': 'Gran Parque Central',
+                'capacity': 34000
+            },
+            'Peñarol': {
+                'name': 'Peñarol',
+                'country': 'Uruguay',
+                'market_value': 35000000,
+                'league': 'Primera División',
+                'tier': 2,
+                'aliases': ['Peñarol', 'Club Atlético Peñarol', 'Carboneros', 'Manyas'],
+                'founded': 1891,
+                'stadium': 'Estadio Campeón del Siglo',
+                'capacity': 40000
             }
         }
     
