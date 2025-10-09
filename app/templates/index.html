@@ -1294,7 +1294,10 @@
             let logoPath = '/static/logo.png'; // Default logo
             
             // Map usernames to their respective logos
-            if (username === 'TalleresDeCordoba') {
+            // Todos los usuarios de Talleres usan el logo de Talleres
+            if (username === 'TalleresDeCordoba' || 
+                username === 'DireccionDeportivaCat' || 
+                username === 'ScoutingCat') {
                 logoPath = '/static/talleres.png';
             } else if (username === 'NacionalDeUruguay') {
                 logoPath = '/static/nacional.png';

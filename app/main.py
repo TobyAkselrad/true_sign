@@ -3656,21 +3656,40 @@ users_db = {
         'password': 'admin123',
         'role': 'admin',
         'email': 'admin@truesign.com',
-        'created_at': '2024-01-01'
+        'created_at': '2024-01-01',
+        'icon': '👑'
     },
     'TalleresDeCordoba': {
         'username': 'TalleresDeCordoba',
         'password': 'Talleres2025',
         'role': 'user',
         'email': 'talleres@truesign.com',
-        'created_at': '2024-10-03'
+        'created_at': '2024-10-03',
+        'icon': '⚽'
     },
     'NacionalDeUruguay': {
         'username': 'NacionalDeUruguay',
         'password': 'Nacional2025',
         'role': 'user',
         'email': 'nacional@truesign.com',
-        'created_at': '2024-10-03'
+        'created_at': '2024-10-03',
+        'icon': '🏆'
+    },
+    'DireccionDeportivaCat': {
+        'username': 'DireccionDeportivaCat',
+        'password': 'Talleres1913',
+        'role': 'user',
+        'email': 'direccion@talleres.com.ar',
+        'created_at': '2024-10-09',
+        'icon': '🎯'
+    },
+    'ScoutingCat': {
+        'username': 'ScoutingCat',
+        'password': 'Talleres1913',
+        'role': 'user',
+        'email': 'scouting@talleres.com.ar',
+        'created_at': '2024-10-09',
+        'icon': '🔍'
     }
 }
 
