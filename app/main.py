@@ -672,22 +672,33 @@ def generate_fallback_analysis(player_data):
     }
 
 def clean_for_json(value):
-    """Limpiar valores para que sean validos en JSON, nunca cero o NaN"""
+    """Limpiar valores para que sean validos en JSON, preservando strings válidos"""
+    # Si es None o NaN, retornar string vacío para campos de texto, 0 para numéricos
     if pd.isna(value) or value is None:
-        return 0
+        return value  # Dejar que el código que llama decida el default
+    
+    # Si es número, validarlo
     if isinstance(value, (int, float)):
         if pd.isna(value) or str(value) == 'nan':
             return 0
-        return float(value)  # Mantener el valor real, incluso si es 0
-    if isinstance(value, str) and value in ['--', 'nan', 'none', '']:
-        return 0
+        return float(value)
+    
+    # Si es string
     if isinstance(value, str):
-        try:
-            # Intentar convertir string a numero
-            num_value = float(value)
-            return num_value  # Mantener el valor real
-        except (ValueError, TypeError):
-            return 0
+        # Limpiar strings inválidos
+        if value.lower() in ['--', 'nan', 'none', '', 'null', 'undefined']:
+            return value  # Dejar que el código que llama decida el default
+        
+        # Intentar convertir a número SOLO si parece un número
+        if value.replace('.', '', 1).replace('-', '', 1).isdigit():
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                pass
+        
+        # Si es un string válido (no numérico), devolverlo tal cual
+        return value.strip()
+    
     return value
 
 def ensure_market_value(value):
@@ -1797,139 +1808,112 @@ def calcular_multiplicador_estadisticas_positivo(stats):
     # GARANTIZAR QUE NUNCA SEA MENOR A 1.0
     return max(1.0, multiplicador)
 
-def calcular_precio_perfecto_definitivo(nombre_jugador, club_destino, jugador_info=None, roi_target=30.0):
-    """Calcular precio usando el modelo original + estadísticas de Transfermarkt"""
-    print(f"=== USANDO MODELO ORIGINAL + ESTADÍSTICAS TRANSFERMARKT ===")
+def calcular_precio_perfecto_definitivo(nombre_jugador, club_destino, jugador_info=None):
+    """Calcular precio usando el modelo híbrido 2025"""
+    print(f"=== USANDO MODELO HÍBRIDO 2025 PARA REPORTE ===")
     print(f"Jugador: {nombre_jugador} -> Club: {club_destino}")
     
     try:
-        # 1. USAR EL MODELO ORIGINAL (ValueChangePredictor)
-        from value_change_predictor import ValueChangePredictor
-        value_predictor = ValueChangePredictor()
-        print("Modelo de cambios de precios inicializado")
+        # Usar el modelo híbrido 2025 global
+        if hybrid_model is None:
+            print("❌ Modelo híbrido no disponible")
+            return None
         
-        # Preparar datos del jugador
-        if jugador_info and jugador_info.get('source') == 'scraping':
-            market_value = jugador_info.get('market_value', 12000000)
-            age = jugador_info.get('age', 25)
-            position = jugador_info.get('position', 'Midfielder')
-            nationality = jugador_info.get('nationality', 'Unknown')
-            current_club = jugador_info.get('current_club_name', 'Unknown')
-        else:
-            # Datos por defecto si no se encuentra el jugador
-            market_value = 12000000
-            age = 25
-            position = 'Midfielder'
-            nationality = 'Unknown'
-            current_club = 'Unknown'
+        print("✅ Modelo híbrido 2025 disponible")
         
-        player_data = {
-            'player_name': nombre_jugador,
-            'market_value': market_value,
-            'age': age,
-            'position': position,
-            'nationality': nationality,
-            'current_club': current_club,
-            'height': '175',
-            'foot': 'Right',
-            'transfer_year': 2025,
-            'transfer_month': 1
+        # Usar los datos directamente de jugador_info
+        if not jugador_info:
+            print("❌ No hay información del jugador")
+            return None
+        
+        print(f"📊 Datos del jugador: {jugador_info.get('player_name', nombre_jugador)}")
+        print(f"💰 Valor: €{jugador_info.get('market_value', 0)/1000000:.2f}M")
+        
+        # Preparar club_data
+        club_data = {'name': club_destino} if isinstance(club_destino, str) else club_destino
+        
+        # Ejecutar modelo híbrido 2025
+        print(f"🚀 Ejecutando modelo híbrido 2025...")
+        result = hybrid_model.calculate_hybrid_analysis(jugador_info, club_data)
+        print(f"✅ Resultado obtenido del modelo híbrido 2025")
+        print(f"📊 ROI calculado: {result.get('roi_percentage', 0):.2f}%")
+        
+        # Formatear resultado para el frontend
+        market_value = jugador_info.get('market_value', 0)
+        age = jugador_info.get('age', 25)
+        position = jugador_info.get('position', 'Midfielder')
+        
+        # Calcular factores dinámicos
+        age_factor = min(100, max(50, 100 - abs(25 - age) * 2))
+        
+        # Position factor basado en la posición
+        position_factors = {
+            'Goalkeeper': 75,
+            'Defender': 80,
+            'Midfielder': 90,
+            'Winger': 92,
+            'Forward': 88,
+            'Attacking Midfield': 95,
+            'Defensive Midfield': 85,
+            'Centre-Back': 78,
+            'Left-Back': 82,
+            'Right-Back': 82
         }
+        position_factor = position_factors.get(position, 85)
         
-        print(f"Datos del jugador: €{market_value/1000000:.1f}M, {age} años, {position}")
-        
-        # Ejecutar modelo original
-        print(f"Ejecutando modelo original ValueChangePredictor...")
-        result = value_predictor.calculate_maximum_price(player_data, club_destino, roi_target)
-        print(f"Resultado del modelo original: {result}")
-        
-        # 2. OBTENER ESTADÍSTICAS DE TRANSFERMARKT
-        print(f"Obteniendo estadísticas de Transfermarkt para {nombre_jugador}...")
-        transfermarkt_stats = scrape_transfermarkt_performance(nombre_jugador)
-        print(f"Estadísticas obtenidas: {transfermarkt_stats}")
-        
-        # 3. CALCULAR MULTIPLICADOR POSITIVO
-        print(f"Calculando multiplicador de estadísticas...")
-        stats_multiplier = calcular_multiplicador_estadisticas_positivo(transfermarkt_stats)
-        print(f"Multiplicador calculado: {stats_multiplier:.2f}x")
-        
-        # 4. APLICAR MULTIPLICADOR AL PRECIO ORIGINAL
-        precio_base = result.get('maximum_price', market_value)
-        precio_con_stats = precio_base * stats_multiplier
-        
-        # 5. APLICAR AJUSTE INFLACIONARIO
-        precio_final = precio_con_stats * 1.10  # 10% inflación
-        
-        # Obtener predicción de cambio del modelo original
-        predicted_change = result.get('predicted_change_percentage', 0)
-        confidence = result.get('confidence', 80)
-        
-        print(f"RESULTADO DEL MODELO ORIGINAL:")
-        print(f"  Valor de mercado actual: €{market_value/1000000:.1f}M")
-        print(f"  Predicción de cambio: {predicted_change:+.1f}%")
-        print(f"  Confianza del modelo: {confidence}%")
-        print(f"  Precio base calculado: €{precio_base/1000000:.1f}M")
-        
-        print(f"APLICACIÓN DE ESTADÍSTICAS:")
-        print(f"  Multiplicador estadísticas: {stats_multiplier:.2f}x")
-        print(f"  Precio con stats: €{precio_con_stats/1000000:.1f}M")
-        print(f"  Ajuste inflacionario: 10%")
-        print(f"  PRECIO FINAL: €{precio_final/1000000:.1f}M")
-        
-        # Mostrar estadísticas utilizadas
-        print(f"ESTADÍSTICAS UTILIZADAS:")
-        print(f"  Goles últimos 2 años: {transfermarkt_stats.get('goles_ultimos_2_anos', 0)}")
-        print(f"  Asistencias últimos 2 años: {transfermarkt_stats.get('asistencias_ultimos_2_anos', 0)}")
-        rendimiento = transfermarkt_stats.get('rendimiento_ultimos_6_meses', 0) or 0
-        print(f"  Rendimiento últimos 6 meses: {rendimiento:.2f}")
-        print(f"  Valor máximo histórico: €{transfermarkt_stats.get('valor_maximo_historico', 0)/1000000:.1f}M")
-        print(f"  Lesiones últimos 2 años: {transfermarkt_stats.get('lesiones_ultimos_2_anos', 0)}")
+        # League factor basado en el club actual
+        current_club = jugador_info.get('current_club_name', '')
+        league_factor = 85  # Por defecto
+        # Ligas top tienen factor más alto
+        top_leagues_clubs = ['Real Madrid', 'Barcelona', 'Manchester City', 'Liverpool', 'Bayern Munich', 'PSG', 'Juventus', 'Inter', 'AC Milan']
+        if any(club in current_club for club in top_leagues_clubs):
+            league_factor = 95
+        elif market_value > 10_000_000:
+            league_factor = 90
+        elif market_value > 5_000_000:
+            league_factor = 85
+        else:
+            league_factor = 75
         
         return {
-            'precio_maximo': precio_final,
-            'adjusted_price': precio_final,
-            'roi_estimate': {'percentage': result.get('predicted_change_percentage', 0)},
-            'confidence': result.get('confidence', 80),
-            'model_used': 'Modelo Original + Estadísticas Transfermarkt',
+            'precio_maximo': result.get('maximum_price', 0),
+            'fair_price': result.get('maximum_price', 0),
+            'adjusted_price': result.get('maximum_price', 0),
+            'roi_estimate': {
+                'percentage': result.get('roi_percentage', 0)
+            },
+            'confidence': result.get('confidence', 85),
+            'model_used': 'Hybrid ROI Model 2025',
             'market_value': market_value,
-            'base_price': precio_base,
-            'stats_multiplier': stats_multiplier,
-            'inflation_adjustment': 1.10,
-            'stats_used': transfermarkt_stats,
-            'five_values': {
-                'marketing_value': market_value * 0.2,
-                'sport_value': market_value * 0.3,
-                'resale_value': market_value * 0.2,
-                'similar_transfers_value': market_value * 0.15,
-                'different_market_values': market_value * 0.15
+            'predicted_future_value': result.get('predicted_future_value', market_value),
+            'club_multiplier': result.get('club_multiplier', 1.0),
+            'success_rate': result.get('success_rate', 75),
+            'five_values': result.get('five_values', {
+                'market_value': market_value,
+                'marketing_impact': market_value * 0.2,
+                'sporting_value': market_value * 0.3,
+                'resale_potential': market_value * 0.25,
+                'similar_transfers': market_value * 0.25
+            }),
+            'performance_analysis': {
+                'age_factor': age_factor,
+                'position_factor': position_factor,
+                'league_factor': league_factor
             },
             'detailed_values': {
                 'mv_component': market_value * 0.2 / 1_000_000,
                 'sv_component': market_value * 0.3 / 1_000_000,
-                'resale_component': market_value * 0.2 / 1_000_000,
-                'similar_transfers': market_value * 0.15 / 1_000_000,
-                'different_markets': market_value * 0.15 / 1_000_000
-            },
-            'performance_analysis': {
-                'success_rate': result.get('confidence', 80),
-                'performance_score': result.get('predicted_change_percentage', 0),
-                'roi_score': result.get('predicted_change_percentage', 0) / 100,
-                'average_fee': precio_final,
-                'high_performance': result.get('confidence', 80),
-                'excellent_roi': result.get('predicted_change_percentage', 0),
-                'median_fee': precio_final,
-                'analysis_type': 'Modelo Original + Estadísticas',
-                'destination_league': club_destino,
-                'performance_text': f"Modelo original con estadísticas: {result.get('predicted_change_percentage', 0):+.1f}% cambio estimado, multiplicador de estadísticas: {stats_multiplier:.2f}x. Precio final: €{precio_final/1_000_000:.1f}M."
+                'resale_component': market_value * 0.25 / 1_000_000,
+                'similar_transfers': market_value * 0.25 / 1_000_000
             },
             'similar_players_count': 100,
             'risk_assessment': {
-                'risk_level': 'low' if result.get('confidence', 80) > 80 else 'medium' if result.get('confidence', 80) > 60 else 'high'
+                'risk_level': 'low' if result.get('confidence', 85) > 80 else 'medium' if result.get('confidence', 85) > 60 else 'high'
             }
         }
         
     except Exception as e:
-        print(f"Error en modelo original + estadísticas: {e}")
+        print(f"❌ Error en modelo híbrido 2025 para reporte: {e}")
         import traceback
         traceback.print_exc()
         return None
@@ -3529,21 +3513,52 @@ def search_player():
         age_value = max(int(float(age_value)), 18)  # Minimo 18 anos
         
         # Preparar datos del jugador (SIN VALORES VACIOS)
+        # Manejar pie hábil - si es "--", "nan", o vacío, poner "Derecho" (estadísticamente más probable)
+        foot_value = jugador_info.get('foot', 'Derecho')
+        if not foot_value or str(foot_value).lower() in ['--', 'nan', 'none', '', 'null', '0']:
+            foot_value = 'Derecho'  # 70% de jugadores son diestros
+        
+        # Función helper para obtener valor limpio con fallback
+        def get_clean_value(key, default, is_numeric=False):
+            value = jugador_info.get(key, default)
+            
+            # Si el valor es None desde el inicio, usar default inmediatamente
+            if value is None:
+                return default
+            
+            cleaned = clean_for_json(value)
+            
+            # Si clean_for_json retornó None o valor inválido, usar default
+            if cleaned is None:
+                return default
+            
+            # Para campos numéricos
+            if is_numeric:
+                if cleaned == 0 and value != 0:
+                    return default
+                return cleaned
+            
+            # Para campos de texto
+            if not cleaned or str(cleaned).lower() in ['--', 'nan', 'none', '', 'null', '0']:
+                return default
+            
+            return cleaned
+        
         player_data = {
             'name': clean_player_name(jugador_info['player_name']),
             'age': age_value,  # Edad limpia y valida
-            'position': clean_for_json(jugador_info.get('position', 'Midfielder')),
-            'nationality': clean_for_json(jugador_info.get('citizenship', 'Unknown')),
+            'position': get_clean_value('position', 'Midfielder'),
+            'nationality': get_clean_value('citizenship', 'Unknown'),
             'club': clean_player_name(jugador_info.get('current_club_name', 'Unknown')),
-            'market_value': max(ensure_market_value(correct_market_value), 1_000_000),  # Usar valor correcto del modelo
-            'height': max(clean_for_json(jugador_info.get('height', 180)), 160),  # Minimo 160cm
-            'weight': max(clean_for_json(jugador_info.get('weight', 75)), 50),  # Minimo 50kg
-            'foot': clean_for_json(jugador_info.get('foot', 'Right')),
-            'contract_expires': clean_for_json(jugador_info.get('contract_expires', '2025')),
-            'place_of_birth': clean_for_json(jugador_info.get('place_of_birth', 'Unknown')),
-            'player_image_url': clean_for_json(jugador_info.get('player_image_url', '')),
-            'joined': clean_for_json(jugador_info.get('joined', '2020')),
-            'outfitter': clean_for_json(jugador_info.get('outfitter', 'Nike'))
+            'market_value': ensure_market_value(correct_market_value),  # Respetar valor real (incluso si es bajo)
+            'height': max(get_clean_value('height', 180, is_numeric=True), 160),  # Minimo 160cm
+            'weight': max(get_clean_value('weight', 75, is_numeric=True), 50),  # Minimo 50kg
+            'foot': foot_value,
+            'contract_expires': get_clean_value('contract_expires', '2025'),
+            'place_of_birth': get_clean_value('place_of_birth', 'Unknown'),
+            'player_image_url': get_clean_value('player_image_url', ''),
+            'joined': get_clean_value('joined', '2020'),
+            'outfitter': get_clean_value('outfitter', 'Nike')
         }
         
         # Preparar analisis TrueSign con valores reales del modelo
@@ -3651,18 +3666,33 @@ def search_player():
         if 'player_info' in truesign_analysis and 'market_value' in truesign_analysis['player_info']:
             truesign_analysis['player_info']['market_value'] = ensure_market_value(truesign_analysis['player_info']['market_value'])
         
-        # Asegurar que todos los valores sean validos (nunca cero o NaN)
-        player_data = ensure_minimum_values(player_data)
-        truesign_analysis = ensure_minimum_values(truesign_analysis)
+        # Nota: Los valores ya están validados en get_clean_value() y ensure_market_value()
+        # No forzamos mínimos artificiales para respetar valores reales bajos
         
-        
-        
+        # Generar análisis de texto con LLM
+        analysis_text = ""
+        try:
+            from utils.llm_analyzer import generate_analysis
+            analysis_text = generate_analysis(
+                player_data=player_data,
+                analysis_data=truesign_analysis,
+                club_destino=club_name,
+                api_key=os.getenv('GROQ_API_KEY')
+            )
+            print(f"✅ Análisis LLM generado: {len(analysis_text)} caracteres")
+        except Exception as e:
+            print(f"⚠️ Error generando análisis LLM: {e}")
+            # Fallback a análisis básico
+            roi = truesign_analysis.get('roi_estimate', {}).get('percentage', 0)
+            analysis_text = f"Análisis de la transferencia de {player_data.get('name')} al {club_name}: ROI estimado de {roi:+.1f}% con {truesign_analysis.get('confidence', 85)}% de confianza."
         
         # Devolver estructura original que funcionaba
         return jsonify({
             'player': player_data,
             'truesign_analysis': truesign_analysis,
-            'market_value': correct_market_value
+            'market_value': correct_market_value,
+            'club_destino': club_name,  # Incluir club destino en la respuesta
+            'analysis_text': analysis_text  # Análisis generado por LLM
         })
         
     except Exception as e:
@@ -4343,9 +4373,37 @@ def generate_player_report(player_name):
         analisis = calcular_precio_perfecto_definitivo(
             player_name, 
             'Análisis general', 
-            jugador_info, 
-            30.0  # ROI objetivo por defecto
+            jugador_info
         )
+        
+        if not analisis:
+            return jsonify({'error': 'Error al analizar jugador'}), 500
+        
+        # Calcular tendencia de valor basada en el ROI predicho
+        roi_percentage = analisis.get('roi_estimate', {}).get('percentage', 0)
+        if roi_percentage > 15:
+            value_trend = 'Strong Growth'
+        elif roi_percentage > 5:
+            value_trend = 'Growth'
+        elif roi_percentage > -5:
+            value_trend = 'Stable'
+        elif roi_percentage > -15:
+            value_trend = 'Decline'
+        else:
+            value_trend = 'Strong Decline'
+        
+        # Calcular posición de mercado basada en valor
+        market_value = jugador_info.get('market_value', 0)
+        if market_value > 50_000_000:
+            market_position = 'Elite'
+        elif market_value > 20_000_000:
+            market_position = 'High'
+        elif market_value > 5_000_000:
+            market_position = 'Medium-High'
+        elif market_value > 1_000_000:
+            market_position = 'Medium'
+        else:
+            market_position = 'Emerging'
         
         # Generar reporte detallado
         reporte = {
@@ -4355,8 +4413,8 @@ def generate_player_report(player_name):
             'detailed_breakdown': {
                 'market_value_analysis': {
                     'current_value': jugador_info.get('market_value', 0),
-                    'value_trend': 'Estable',
-                    'market_position': 'Medio'
+                    'value_trend': value_trend,
+                    'market_position': market_position
                 },
                 'performance_metrics': {
                     'age_factor': analisis.get('performance_analysis', {}).get('age_factor', 0),
@@ -4364,10 +4422,12 @@ def generate_player_report(player_name):
                     'league_factor': analisis.get('performance_analysis', {}).get('league_factor', 0)
                 },
                 'financial_projections': {
-                    'recommended_price': analisis.get('fair_price', 0),
+                    'recommended_price': analisis.get('precio_maximo', 0),
                     'roi_estimate': analisis.get('roi_estimate', {}).get('percentage', 0),
-                    'confidence_level': analisis.get('confidence', 0)
-                }
+                    'confidence_level': analisis.get('confidence', 0),
+                    'future_value': analisis.get('predicted_future_value', 0)
+                },
+                'five_values': analisis.get('five_values', {})
             }
         }
         
@@ -4415,8 +4475,8 @@ def compare_players():
             return jsonify({'error': f'Jugador 2 ({player2_name}) no encontrado'}), 404
         
         # Realizar análisis de ambos jugadores
-        analisis1 = calcular_precio_perfecto_definitivo(player1_name, club1, jugador1_info, 30.0)
-        analisis2 = calcular_precio_perfecto_definitivo(player2_name, club2, jugador2_info, 30.0)
+        analisis1 = calcular_precio_perfecto_definitivo(player1_name, club1 if club1 else 'Análisis general', jugador1_info)
+        analisis2 = calcular_precio_perfecto_definitivo(player2_name, club2 if club2 else 'Análisis general', jugador2_info)
         
         # Calcular comparación
         precio1 = analisis1.get('fair_price', 0)

@@ -52,6 +52,47 @@ class ValueChangePredictor2025:
             print(f"❌ ERROR cargando modelos 2025: {e}")
             raise
     
+    def _calculate_confidence(self, player_data, predicted_value):
+        """
+        Calcular confianza dinámica basada en calidad de datos y factores de riesgo
+        Retorna un valor entre 50-95%
+        """
+        base_confidence = 85  # Confianza base del modelo (R² típico de RandomForest)
+        
+        # Factores que REDUCEN la confianza
+        penalties = 0
+        
+        # 1. Edad extrema (-10%)
+        age = player_data.get('age', 25)
+        if age < 18 or age > 33:
+            penalties += 10
+            print(f"   ⚠️ Edad extrema ({age} años): -10% confianza")
+        
+        # 2. Valor de mercado extremo (-5%)
+        market_value = player_data.get('market_value', 0)
+        if market_value < 500_000 or market_value > 150_000_000:
+            penalties += 5
+            print(f"   ⚠️ Valor extremo (€{market_value/1_000_000:.1f}M): -5% confianza")
+        
+        # 3. Datos faltantes (-5% por campo crítico)
+        critical_fields = ['position', 'nationality', 'height']
+        for field in critical_fields:
+            value = player_data.get(field)
+            if not value or value == 'Unknown' or value == 0:
+                penalties += 5
+                print(f"   ⚠️ Campo faltante ({field}): -5% confianza")
+        
+        # 4. Predicción muy alta o muy baja (-10%)
+        if predicted_value > market_value * 2.5 or predicted_value < market_value * 0.5:
+            penalties += 10
+            change_pct = ((predicted_value - market_value) / market_value) * 100
+            print(f"   ⚠️ Cambio extremo ({change_pct:+.1f}%): -10% confianza")
+        
+        # Calcular confianza final
+        final_confidence = max(50, min(95, base_confidence - penalties))
+        
+        return final_confidence
+    
     def _prepare_features(self, player_data):
         """Preparar 19 features del jugador"""
         age = player_data.get('age', 25)
@@ -113,11 +154,21 @@ class ValueChangePredictor2025:
             print(f"📥 INPUT recibido:")
             print(f"   - Nombre: {player_data.get('player_name', player_data.get('name', 'N/A'))}")
             print(f"   - Edad: {player_data.get('age', 'N/A')}")
-            print(f"   - Altura: {player_data.get('height', 'N/A')} cm")
-            print(f"   - Valor mercado: €{player_data.get('market_value', 0):,.0f}")
-            print(f"   - Posición: {player_data.get('position', 'N/A')}")
-            print(f"   - Nacionalidad: {player_data.get('nationality', 'N/A')}")
-            print(f"   - Pie: {player_data.get('foot', 'N/A')}")
+            
+            # Manejar None en altura
+            height = player_data.get('height', 'N/A')
+            print(f"   - Altura: {height if height else 'N/A'} cm")
+            
+            # Manejar None en valor de mercado
+            market_value = player_data.get('market_value', 0)
+            if market_value is None or market_value == 0:
+                print(f"   - Valor mercado: €0 (no disponible)")
+            else:
+                print(f"   - Valor mercado: €{market_value:,.0f}")
+            
+            print(f"   - Posición: {player_data.get('position', 'N/A') or 'N/A'}")
+            print(f"   - Nacionalidad: {player_data.get('nationality', 'N/A') or 'N/A'}")
+            print(f"   - Pie: {player_data.get('foot', 'N/A') or 'N/A'}")
             
             # Preparar features
             print(f"\n🔧 Preparando 19 features...")
@@ -148,11 +199,16 @@ class ValueChangePredictor2025:
             if original_change != value_change_pct:
                 print(f"   ⚠️  Cambio ajustado a límites de seguridad: {original_change:.2f}% → {value_change_pct:.2f}%")
             
+            # Calcular confianza dinámica
+            print(f"\n🎯 Calculando confianza...")
+            confidence = self._calculate_confidence(player_data, predicted_future_value)
+            print(f"   ✅ Confianza calculada: {confidence}%")
+            
             result = {
                 'maximum_price': predicted_future_value,
                 'predicted_change_percentage': value_change_pct,
                 'roi_percentage': value_change_pct,
-                'confidence': 85,
+                'confidence': confidence,
                 'model_used': 'ValueChangePredictor 2025'
             }
             

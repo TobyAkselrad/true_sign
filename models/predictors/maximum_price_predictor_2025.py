@@ -52,6 +52,54 @@ class MaximumPricePredictor2025:
             print(f"❌ ERROR cargando modelos 2025: {e}")
             raise
     
+    def _calculate_confidence(self, player_data, predicted_price):
+        """
+        Calcular confianza dinámica basada en calidad de datos y factores de riesgo
+        Retorna un valor entre 50-95%
+        """
+        base_confidence = 85  # Confianza base del modelo (R² típico de RandomForest)
+        
+        # Factores que REDUCEN la confianza
+        penalties = 0
+        
+        # 1. Edad extrema (-10%)
+        age = player_data.get('age', 25)
+        if age < 18 or age > 33:
+            penalties += 10
+            print(f"   ⚠️ Edad extrema ({age} años): -10% confianza")
+        
+        # 2. Valor de mercado extremo (-5%)
+        market_value = player_data.get('market_value', 0)
+        if market_value < 500_000 or market_value > 150_000_000:
+            penalties += 5
+            print(f"   ⚠️ Valor extremo (€{market_value/1_000_000:.1f}M): -5% confianza")
+        
+        # 3. Datos faltantes (-5% por campo crítico)
+        critical_fields = ['position', 'nationality', 'height']
+        for field in critical_fields:
+            value = player_data.get(field)
+            if not value or value == 'Unknown' or value == 0:
+                penalties += 5
+                print(f"   ⚠️ Campo faltante ({field}): -5% confianza")
+        
+        # 4. Predicción muy diferente del valor de mercado (-10%)
+        if predicted_price > market_value * 2 or predicted_price < market_value * 0.7:
+            penalties += 10
+            ratio = predicted_price / market_value if market_value > 0 else 1
+            print(f"   ⚠️ Precio muy diferente ({ratio:.1f}x del valor): -10% confianza")
+        
+        # 5. Posición poco común (-5%)
+        position = str(player_data.get('position', '')).lower()
+        rare_positions = ['goalkeeper', 'portero', 'keeper']
+        if any(rare in position for rare in rare_positions):
+            penalties += 5
+            print(f"   ⚠️ Posición poco común ({position}): -5% confianza")
+        
+        # Calcular confianza final
+        final_confidence = max(50, min(95, base_confidence - penalties))
+        
+        return final_confidence
+    
     def _prepare_features(self, player_data):
         """Preparar 14 features del jugador"""
         age = player_data.get('age', 25)
@@ -164,11 +212,16 @@ class MaximumPricePredictor2025:
             print(f"   - Resale Potential: €{five_values['resale_potential']:,.0f}")
             print(f"   - Similar Transfers: €{five_values['similar_transfers']:,.0f}")
             
+            # Calcular confianza dinámica
+            print(f"\n🎯 Calculando confianza...")
+            confidence = self._calculate_confidence(player_data, maximum_price)
+            print(f"   ✅ Confianza calculada: {confidence}%")
+            
             result = {
                 'maximum_price': maximum_price,
                 'five_values': five_values,
                 'success_rate': success_rate,
-                'confidence': 85,
+                'confidence': confidence,
                 'model_used': 'MaximumPricePredictor 2025'
             }
             

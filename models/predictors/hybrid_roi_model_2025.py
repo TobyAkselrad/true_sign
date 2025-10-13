@@ -99,8 +99,15 @@ class HybridROIModel2025:
             
             # Combinar resultados
             print(f"\n🔀 Combinando resultados de ambos modelos...")
-            maximum_price = price_result['maximum_price'] * club_multiplier
-            predicted_future_value = value_result['maximum_price']
+            
+            # IMPORTANTE: El club multiplier afecta TANTO al precio como al valor futuro
+            # Si un jugador va al PSG, tanto el precio de compra como el valor de reventa serán más altos
+            maximum_price_base = price_result['maximum_price']
+            predicted_future_value_base = value_result['maximum_price']
+            
+            # Aplicar multiplier a AMBOS lados de la ecuación
+            maximum_price = maximum_price_base * club_multiplier
+            predicted_future_value = predicted_future_value_base * club_multiplier
             
             # Calcular ROI REAL basado en el precio que pagas vs valor futuro
             # ROI = (ganancia / inversión) × 100
@@ -109,9 +116,11 @@ class HybridROIModel2025:
             else:
                 roi_percentage = 0
             
-            print(f"   📊 Precio base (MaxPrice): €{price_result['maximum_price']:,.0f}")
-            print(f"   ✖️  Club multiplier: {club_multiplier}x")
+            print(f"   📊 Precio base (MaxPrice): €{maximum_price_base:,.0f}")
+            print(f"   📊 Valor futuro base: €{predicted_future_value_base:,.0f}")
+            print(f"   ✖️  Club multiplier: {club_multiplier}x (aplica a ambos)")
             print(f"   = Precio final: €{maximum_price:,.0f}")
+            print(f"   = Valor futuro final: €{predicted_future_value:,.0f}")
             print(f"   💡 ROI calculado: ({predicted_future_value:,.0f} - {maximum_price:,.0f}) / {maximum_price:,.0f} = {roi_percentage:.2f}%")
             
             # Confianza combinada
