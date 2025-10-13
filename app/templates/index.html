@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- html2pdf.js for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
@@ -516,43 +518,43 @@
         <div id="search" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">Buscar Jugadores</h1>
+                    <h1 class="text-4xl font-extrabold text-white">Search Players</h1>
                 </header>
 
                 <!-- Search Form -->
                 <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-8">
-                    <h2 class="text-2xl font-bold text-white mb-4">Análisis de Jugador</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4">Player Analysis</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Nombre del Jugador</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Player Name</label>
                             <div class="relative">
-                                <input type="text" id="playerSearch2" placeholder="Ej: Lionel Messi" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                                <input type="text" id="playerSearch2" placeholder="e.g: Lionel Messi" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                                 <div id="autocompleteDropdown2" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                 </div>
             </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">ROI Objetivo (%)</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Target ROI (%)</label>
                             <select id="roiTarget" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
-                                <option value="10">10% - Conservador</option>
-                                <option value="20">20% - Moderado</option>
-                                <option value="30" selected>30% - Equilibrado</option>
-                                <option value="40">40% - Agresivo</option>
-                                <option value="50">50% - Alto Riesgo</option>
-                                <option value="60">60% - Muy Agresivo</option>
-                                <option value="70">70% - Extremo</option>
-                                <option value="80">80% - Máximo</option>
+                                <option value="10">10% - Conservative</option>
+                                <option value="20">20% - Moderate</option>
+                                <option value="30" selected>30% - Balanced</option>
+                                <option value="40">40% - Aggressive</option>
+                                <option value="50">50% - High Risk</option>
+                                <option value="60">60% - Very Aggressive</option>
+                                <option value="70">70% - Extreme</option>
+                                <option value="80">80% - Maximum</option>
                             </select>
         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Club Destino</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Destination Club</label>
                             <div class="relative">
-                                <input type="text" id="clubDestino" placeholder="Buscar club destino..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                                <input type="text" id="clubDestino" placeholder="Search destination club..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                                 <div id="clubDestinoDropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
     </div>
                         </div>
                         <div class="flex items-end">
                             <button onclick="searchPlayerFromPage('search')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-4 rounded-md transition duration-300 ease-in-out shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <i class="fas fa-search mr-2"></i>Analizar Jugador
+                                <i class="fas fa-search mr-2"></i>Analyze Player
                             </button>
                         </div>
                     </div>
@@ -572,26 +574,26 @@
                     
                     <!-- 5 Values Section -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Los 5 Valores Fundamentales</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4">The 5 Fundamental Values</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-green-400 mb-2">Valor Marketing</h3>
+                                <h3 class="text-lg font-semibold text-green-400 mb-2">Marketing Value</h3>
                                 <p id="marketingValue2" class="text-2xl font-bold text-white">€0.0M</p>
         </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-blue-400 mb-2">Valor Deportivo</h3>
+                                <h3 class="text-lg font-semibold text-blue-400 mb-2">Sporting Value</h3>
                                 <p id="sportValue2" class="text-2xl font-bold text-white">€0.0M</p>
         </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-purple-400 mb-2">Valor Reventa</h3>
+                                <h3 class="text-lg font-semibold text-purple-400 mb-2">Resale Value</h3>
                                 <p id="resaleValue2" class="text-2xl font-bold text-white">€0.0M</p>
      </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-yellow-400 mb-2">Transferencias Similares</h3>
+                                <h3 class="text-lg font-semibold text-yellow-400 mb-2">Similar Transfers</h3>
                                 <p id="similarTransfersValue2" class="text-2xl font-bold text-white">€0.0M</p>
      </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-red-400 mb-2">Valores de Mercado</h3>
+                                <h3 class="text-lg font-semibold text-red-400 mb-2">Market Values</h3>
                                 <p id="marketValuesValue2" class="text-2xl font-bold text-white">€0.0M</p>
         </div>
         </div>
@@ -599,26 +601,37 @@
 
                     <!-- Predicción ML de Valor Post-Transferencia -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Predicción ML Mejorada con Análisis de Club</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4">Enhanced ML Prediction with Club Analysis</h2>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Cambio Predicho:</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Predicted Change:</h3>
                                 <p id="predictedChange" class="text-xl font-bold text-green-400">--%</p>
      </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Valor Futuro:</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Future Value:</h3>
                                 <p id="futureValue" class="text-xl font-bold text-blue-400">€--M</p>
                             </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Confianza:</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Confidence:</h3>
                                 <p id="predictionConfidence" class="text-xl font-bold text-purple-400">--%</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Club Destino:</h3>
-                                <p id="clubDestinoDisplay" class="text-xl font-bold text-cyan-400">--</p>
-                            </div>
+                        <div class="mt-4 flex items-center gap-3">
+                            <h3 class="text-lg font-semibold text-gray-300">Destination Club:</h3>
+                            <p id="clubDestinoDisplay" class="text-xl font-bold text-cyan-400">--</p>
+                        </div>
+                        
+                        <!-- Análisis LLM -->
+                        <div class="mt-6 bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/30 rounded-lg p-4">
+                            <h3 class="text-lg font-semibold text-purple-300 mb-3 flex items-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                                Intelligent Analysis
+                            </h3>
+                            <p id="llmAnalysisText" class="text-gray-300 leading-relaxed text-sm">
+                                Generating analysis...
+                            </p>
                         </div>
                     </section>
       </div>
@@ -629,24 +642,24 @@
         <div id="compare" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">Comparar Jugadores</h1>
+                    <h1 class="text-4xl font-extrabold text-white">Compare Players</h1>
                 </header>
 
                 <!-- Player Search Forms -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     <!-- Player 1 -->
                     <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
-                        <h2 class="text-xl font-bold text-white mb-4">Jugador 1</h2>
+                        <h2 class="text-xl font-bold text-white mb-4">Player 1</h2>
                         <div class="relative mb-4">
-                            <input type="text" id="player1Search" placeholder="Buscar jugador..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="player1Search" placeholder="Search player..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="player1Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
         </div>
                         <div class="relative mb-4">
-                            <input type="text" id="club1Search" placeholder="Club destino..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="club1Search" placeholder="Destination club..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="club1Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
         </div>
                         <button onclick="searchPlayer1()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Buscar Jugador 1
+                            Search Player 1
                         </button>
                         
                         <!-- Player 1 Results -->
@@ -663,50 +676,60 @@
                                         <p id="player1Info" class="text-gray-400 text-sm">--</p>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-3 gap-4">
                                     <div>
-                                        <p class="text-gray-400 text-sm">Valor de Mercado:</p>
+                                        <p class="text-gray-400 text-sm">Market Value:</p>
                                         <p id="player1MarketValue" class="text-green-400 font-semibold">€--M</p>
                                     </div>
                                     <div>
-                                        <p class="text-gray-400 text-sm">Precio Recomendado:</p>
+                                        <p class="text-gray-400 text-sm">Recommended Price:</p>
                                         <p id="player1RecommendedPrice" class="text-blue-400 font-semibold">€--M</p>
-      </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Estimated ROI:</p>
+                                        <p id="player1ROI" class="text-purple-400 font-semibold">--%</p>
+                                    </div>
       </div>
       </div>
 
                             <!-- Player 1 Five Values -->
                             <div class="mt-4">
-                                <h4 class="text-lg font-semibold text-white mb-3">Los 5 Valores Fundamentales</h4>
+                                <h4 class="text-lg font-semibold text-white mb-3">The 5 Fundamental Values</h4>
                                 <div class="grid grid-cols-5 gap-2">
                                     <div class="bg-gray-700 p-2 rounded text-center">
                                         <p class="text-xs text-gray-400">Marketing</p>
                                         <p id="player1Marketing" class="text-green-400 font-bold text-sm">€--M</p>
                                     </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Deportivo</p>
+                                        <p class="text-xs text-gray-400">Sporting</p>
                                         <p id="player1Sport" class="text-blue-400 font-bold text-sm">€--M</p>
                                     </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Reventa</p>
+                                        <p class="text-xs text-gray-400">Resale</p>
                                         <p id="player1Resale" class="text-purple-400 font-bold text-sm">€--M</p>
                                     </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Similares</p>
+                                        <p class="text-xs text-gray-400">Similar</p>
                                         <p id="player1Similar" class="text-yellow-400 font-bold text-sm">€--M</p>
                                     </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Mercado</p>
+                                        <p class="text-xs text-gray-400">Market</p>
                                         <p id="player1Market" class="text-red-400 font-bold text-sm">€--M</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Player 1 Performance Analysis -->
+                            <!-- Player 1 Club Destino -->
+                            <div class="mt-4 flex items-center gap-3">
+                                <h4 class="text-sm font-semibold text-gray-300">Destination Club:</h4>
+                                <p id="player1ClubDestino" class="text-base font-bold text-cyan-400">--</p>
+                            </div>
+                            
+                            <!-- Player 1 Análisis LLM -->
                             <div class="mt-4">
-                                <h4 class="text-lg font-semibold text-white mb-3">Análisis de Rendimiento</h4>
-                                <div class="bg-gray-700 p-3 rounded">
-                                    <p id="player1PerformanceAnalysis" class="text-gray-300 text-sm leading-relaxed">Análisis de rendimiento no disponible.</p>
+                                <h4 class="text-lg font-semibold text-white mb-3">Intelligent Analysis</h4>
+                                <div class="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/30 rounded p-3">
+                                    <p id="player1LLMAnalysis" class="text-gray-300 text-sm leading-relaxed">Generating analysis...</p>
                                 </div>
                             </div>
                         </div>
@@ -714,17 +737,17 @@
 
                     <!-- Player 2 -->
                     <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
-                        <h2 class="text-xl font-bold text-white mb-4">Jugador 2</h2>
+                        <h2 class="text-xl font-bold text-white mb-4">Player 2</h2>
                         <div class="relative mb-4">
-                            <input type="text" id="player2Search" placeholder="Buscar jugador..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="player2Search" placeholder="Search player..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="player2Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                         </div>
                         <div class="relative mb-4">
-                            <input type="text" id="club2Search" placeholder="Club destino..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="club2Search" placeholder="Destination club..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="club2Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                         </div>
                         <button onclick="searchPlayer2()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Buscar Jugador 2
+                            Search Player 2
                     </button>
                         
                         <!-- Player 2 Results -->
@@ -741,50 +764,60 @@
                                         <p id="player2Info" class="text-gray-400 text-sm">--</p>
                                     </div>
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-3 gap-4">
                                     <div>
-                                        <p class="text-gray-400 text-sm">Valor de Mercado:</p>
+                                        <p class="text-gray-400 text-sm">Market Value:</p>
                                         <p id="player2MarketValue" class="text-green-400 font-semibold">€--M</p>
                                     </div>
                                     <div>
-                                        <p class="text-gray-400 text-sm">Precio Recomendado:</p>
+                                        <p class="text-gray-400 text-sm">Recommended Price:</p>
                                         <p id="player2RecommendedPrice" class="text-blue-400 font-semibold">€--M</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-400 text-sm">Estimated ROI:</p>
+                                        <p id="player2ROI" class="text-purple-400 font-semibold">--%</p>
                                     </div>
                                 </div>
       </div>
                 
                             <!-- Player 2 Five Values -->
                             <div class="mt-4">
-                                <h4 class="text-lg font-semibold text-white mb-3">Los 5 Valores Fundamentales</h4>
+                                <h4 class="text-lg font-semibold text-white mb-3">The 5 Fundamental Values</h4>
                                 <div class="grid grid-cols-5 gap-2">
                                     <div class="bg-gray-700 p-2 rounded text-center">
                                         <p class="text-xs text-gray-400">Marketing</p>
                                         <p id="player2Marketing" class="text-green-400 font-bold text-sm">€--M</p>
       </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Deportivo</p>
+                                        <p class="text-xs text-gray-400">Sporting</p>
                                         <p id="player2Sport" class="text-blue-400 font-bold text-sm">€--M</p>
                                     </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Reventa</p>
+                                        <p class="text-xs text-gray-400">Resale</p>
                                         <p id="player2Resale" class="text-purple-400 font-bold text-sm">€--M</p>
                                     </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Similares</p>
+                                        <p class="text-xs text-gray-400">Similar</p>
                                         <p id="player2Similar" class="text-yellow-400 font-bold text-sm">€--M</p>
                                     </div>
                                     <div class="bg-gray-700 p-2 rounded text-center">
-                                        <p class="text-xs text-gray-400">Mercado</p>
+                                        <p class="text-xs text-gray-400">Market</p>
                                         <p id="player2Market" class="text-red-400 font-bold text-sm">€--M</p>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Análisis de Rendimiento Player 2 -->
-                            <div class="mt-6">
-                                <h4 class="text-lg font-semibold text-white mb-3">Análisis de Rendimiento</h4>
-                                <div class="bg-gray-700 p-3 rounded">
-                                    <p id="player2PerformanceAnalysis" class="text-gray-300 text-sm leading-relaxed">Análisis de rendimiento no disponible.</p>
+                            <!-- Player 2 Club Destino -->
+                            <div class="mt-4 flex items-center gap-3">
+                                <h4 class="text-sm font-semibold text-gray-300">Destination Club:</h4>
+                                <p id="player2ClubDestino" class="text-base font-bold text-cyan-400">--</p>
+                            </div>
+                            
+                            <!-- Player 2 Análisis LLM -->
+                            <div class="mt-4">
+                                <h4 class="text-lg font-semibold text-white mb-3">Intelligent Analysis</h4>
+                                <div class="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-500/30 rounded p-3">
+                                    <p id="player2LLMAnalysis" class="text-gray-300 text-sm leading-relaxed">Generating analysis...</p>
                                 </div>
                             </div>
                         </div>
@@ -793,18 +826,18 @@
 
                 <!-- Comparison Summary -->
                 <div id="comparisonSummary" class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 hidden">
-                    <h2 class="text-2xl font-bold text-white mb-4">Resumen de Comparación</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4">Comparison Summary</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Diferencia de Precio</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Price Difference</h3>
                             <p id="priceDifference" class="text-2xl font-bold text-green-400">€--M</p>
     </div>
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Mejor Valor</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Better Value</h3>
                             <p id="betterValue" class="text-xl font-bold text-blue-400">--</p>
     </div>
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">ROI Estimado</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Estimated ROI</h3>
                             <p id="roiComparison" class="text-xl font-bold text-purple-400">--</p>
                         </div>
                     </div>
@@ -816,19 +849,24 @@
         <div id="reports" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">Reportes ROI</h1>
+                    <h1 class="text-4xl font-extrabold text-white">ROI Reports</h1>
                 </header>
 
                 <!-- Player Search for Report -->
                 <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-8">
-                    <h2 class="text-2xl font-bold text-white mb-4">Generar Reporte de Jugador</h2>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-2xl font-bold text-white">Generate Player Report</h2>
+                        <button id="downloadPdfBtn" onclick="downloadReportPDF()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 hidden">
+                            <i class="fas fa-download mr-2"></i>Download PDF
+                        </button>
+                    </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div class="relative">
-                            <input type="text" id="reportPlayerSearch" placeholder="Buscar jugador para reporte..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="reportPlayerSearch" placeholder="Search player for report..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="reportPlayerDropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                         </div>
                         <button onclick="generatePlayerReport()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Generar Reporte
+                            Generate Report
                         </button>
                     </div>
                 </section>
@@ -837,7 +875,7 @@
                 <div id="reportResults" class="hidden">
                     <!-- Player Overview -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Resumen del Jugador</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4">Player Summary</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="text-center">
                                 <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
@@ -849,11 +887,11 @@
                                 <p id="reportPlayerInfo" class="text-gray-400 text-sm">--</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Valor de Mercado</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Market Value</h4>
                                 <p id="reportMarketValue" class="text-2xl font-bold text-green-400">€--M</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Precio Recomendado</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Recommended Price</h4>
                                 <p id="reportRecommendedPrice" class="text-2xl font-bold text-blue-400">€--M</p>
                             </div>
                         </div>
@@ -861,17 +899,17 @@
 
                     <!-- Financial Analysis -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Análisis Financiero</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4">Financial Analysis</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-3">Proyecciones de ROI</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-3">ROI Projections</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">ROI Estimado:</span>
+                                        <span class="text-gray-400">Estimated ROI:</span>
                                         <span id="reportROI" class="text-green-400 font-semibold">--%</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Nivel de Confianza:</span>
+                                        <span class="text-gray-400">Confidence Level:</span>
                                         <span id="reportConfidence" class="text-blue-400 font-semibold">--%</span>
                                     </div>
                                     
@@ -880,24 +918,24 @@
                                     <div id="priceComparison" class="mt-4"></div>
                                     <div id="roiRecommendation" class="mt-2 text-sm text-gray-300"></div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Valor Futuro:</span>
+                                        <span class="text-gray-400">Future Value:</span>
                                         <span id="reportFutureValue" class="text-purple-400 font-semibold">€--M</span>
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-3">Análisis de Mercado</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-3">Market Analysis</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Tendencia de Valor:</span>
+                                        <span class="text-gray-400">Value Trend:</span>
                                         <span id="reportValueTrend" class="text-yellow-400 font-semibold">--</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Posición en Mercado:</span>
+                                        <span class="text-gray-400">Market Position:</span>
                                         <span id="reportMarketPosition" class="text-orange-400 font-semibold">--</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Fecha del Reporte:</span>
+                                        <span class="text-gray-400">Report Date:</span>
                                         <span id="reportDate" class="text-gray-300 font-semibold">--</span>
                                     </div>
                                 </div>
@@ -907,18 +945,18 @@
 
                     <!-- Performance Metrics -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Métricas de Rendimiento</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4">Performance Metrics</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Factor de Edad</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Age Factor</h4>
                                 <p id="reportAgeFactor" class="text-xl font-bold text-green-400">--</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Factor de Posición</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Position Factor</h4>
                                 <p id="reportPositionFactor" class="text-xl font-bold text-blue-400">--</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Factor de Liga</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2">League Factor</h4>
                                 <p id="reportLeagueFactor" class="text-xl font-bold text-purple-400">--</p>
                             </div>
                         </div>
@@ -926,26 +964,26 @@
 
                     <!-- Five Values Breakdown -->
                 <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
-                        <h2 class="text-2xl font-bold text-white mb-4">Desglose de los 5 Valores Fundamentales</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4">The 5 Fundamental Values Breakdown</h2>
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor de Marketing</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Marketing Value</h4>
                                 <p id="reportMarketingValue" class="text-lg font-bold text-green-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor Deportivo</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Sporting Value</h4>
                                 <p id="reportSportValue" class="text-lg font-bold text-blue-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor de Reventa</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Resale Value</h4>
                                 <p id="reportResaleValue" class="text-lg font-bold text-purple-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Transferencias Similares</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Similar Transfers</h4>
                                 <p id="reportSimilarValue" class="text-lg font-bold text-yellow-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Valor de Mercado</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Market Value</h4>
                                 <p id="reportMarketValueBreakdown" class="text-lg font-bold text-red-400">€--M</p>
                             </div>
         </div>
@@ -958,59 +996,59 @@
         <div id="settings" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">Configuración</h1>
+                    <h1 class="text-4xl font-extrabold text-white">Settings</h1>
                 </header>
 
                 <!-- Language Settings -->
                 <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                    <h2 class="text-2xl font-bold text-white mb-4">Configuración de Idioma</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4">Language Settings</h2>
                     <div class="flex items-center space-x-4">
-                        <label class="text-gray-300">Idioma:</label>
+                        <label class="text-gray-300">Language:</label>
                         <select id="languageSelect" class="bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:outline-none focus:border-green-500">
-                            <option value="es">Español</option>
+                            <option value="es" selected>Español</option>
                             <option value="en">English</option>
                         </select>
                         <button onclick="changeLanguage()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Cambiar Idioma
+                            Change Language
                 </button>
         </div>
-                    <p class="text-gray-400 text-sm mt-2">Selecciona tu idioma preferido para la interfaz</p>
+                    <p class="text-gray-400 text-sm mt-2">Select your preferred language for the interface</p>
                 </div>
 
                 <!-- System Settings -->
                 <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                    <h2 class="text-2xl font-bold text-white mb-4">Configuración del Sistema</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4">System Settings</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Preferencias de Visualización</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Display Preferences</h3>
                             <div class="space-y-3">
                                 <label class="flex items-center">
                                     <input type="checkbox" class="mr-3" checked>
-                                    <span class="text-gray-300">Mostrar valores en millones</span>
+                                    <span class="text-gray-300">Show values in millions</span>
                                 </label>
                                 <label class="flex items-center">
                                     <input type="checkbox" class="mr-3" checked>
-                                    <span class="text-gray-300">Mostrar análisis detallado</span>
+                                    <span class="text-gray-300">Show detailed analysis</span>
                                 </label>
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Configuración de Datos</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Data Configuration</h3>
                             <div class="space-y-3">
                                 <div>
-                                    <label class="text-gray-300 text-sm">Actualización automática:</label>
+                                    <label class="text-gray-300 text-sm">Automatic update:</label>
                                     <select class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-1 text-white text-sm mt-1">
-                                        <option>Cada hora</option>
-                                        <option>Diariamente</option>
-                                        <option>Semanalmente</option>
+                                        <option>Hourly</option>
+                                        <option>Daily</option>
+                                        <option>Weekly</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="text-gray-300 text-sm">Precisión de análisis:</label>
+                                    <label class="text-gray-300 text-sm">Analysis precision:</label>
                                     <select class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-1 text-white text-sm mt-1">
-                                        <option>Alta (recomendado)</option>
-                                        <option>Media</option>
-                                        <option>Rápida</option>
+                                        <option>High (recommended)</option>
+                                        <option>Medium</option>
+                                        <option>Fast</option>
                                     </select>
                                 </div>
                             </div>
@@ -1020,33 +1058,33 @@
 
                 <!-- Account Settings -->
                 <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
-                    <h2 class="text-2xl font-bold text-white mb-4">Configuración de Cuenta</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4">Account Settings</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Información Personal</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Personal Information</h3>
                             <div class="space-y-3">
                                 <div>
-                                    <label class="text-gray-300 text-sm">Nombre de usuario:</label>
-                                    <input type="text" id="settingsUsername" value="Panel de control" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1" readonly>
+                                    <label class="text-gray-300 text-sm">Username:</label>
+                                    <input type="text" id="settingsUsername" value="Control Panel" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1" readonly>
                                 </div>
                                 <div>
                                     <label class="text-gray-300 text-sm">Email:</label>
-                                    <input type="email" id="settingsEmail" placeholder="usuario@truesign.com" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1">
+                                    <input type="email" id="settingsEmail" placeholder="user@truesign.com" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1">
                                 </div>
                                 <div>
-                                    <label class="text-gray-300 text-sm">Rol:</label>
-                                    <input type="text" id="settingsRole" value="Usuario" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1" readonly>
+                                    <label class="text-gray-300 text-sm">Role:</label>
+                                    <input type="text" id="settingsRole" value="User" class="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white mt-1" readonly>
                                 </div>
                             </div>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Seguridad</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Security</h3>
                             <div class="space-y-3">
                                 <button id="changePasswordBtn" onclick="showChangePasswordModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                                    Cambiar Contraseña
+                                    Change Password
                                 </button>
                                 <button id="logoutBtn" onclick="logout()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                                    Cerrar Sesión
+                                    Logout
                                 </button>
                             </div>
                         </div>
@@ -1361,11 +1399,7 @@
             document.getElementById('changePasswordForm').reset();
         }
 
-        function changeLanguage() {
-            const language = document.getElementById('languageSelect').value;
-            localStorage.setItem('language', language);
-            showNotification('Idioma cambiado a ' + (language === 'es' ? 'Español' : 'English'), 'success');
-        }
+        // changeLanguage() está definida más adelante (línea ~2856) con sistema completo de traducción
 
         function loadSettings() {
             // Load saved settings
@@ -1550,7 +1584,7 @@
                             <p class="text-gray-400">${playerInfo.current_club_name || playerInfo.current_club || playerInfo.club || 'Sin club'}</p>
                             <div class="grid grid-cols-2 gap-4 mt-2">
                                 <div>
-                                    <p class="text-gray-400 text-sm">${formatPosition(playerInfo.position)} • ${playerInfo.age || '--'} años</p>
+                                    <p class="text-gray-400 text-sm">${formatPosition(playerInfo.position)} • ${playerInfo.age && playerInfo.age > 0 ? playerInfo.age : '25'} años</p>
                                     <p class="text-gray-400 text-sm">Altura: ${formatHeight(playerInfo.height)}</p>
                                 </div>
                                 <div>
@@ -1738,7 +1772,13 @@
             console.log('Actualizando futureValue con:', futureValueText);
             safeUpdateElement('futureValue', futureValueText);
             safeUpdateElement('predictionConfidence', confidenceText);
-            safeUpdateElement('clubDestinoDisplay', 'Análisis general');
+            // Usar club destino real del response
+            const clubDestino = data.club_destino || document.getElementById('clubDestino')?.value || 'Análisis general';
+            safeUpdateElement('clubDestinoDisplay', clubDestino);
+            
+            // Mostrar análisis LLM si está disponible
+            const analysisText = data.analysis_text || 'Análisis no disponible.';
+            safeUpdateElement('llmAnalysisText', analysisText);
             
             console.log('Elementos actualizados:', {
                 predictedChange: changeText,
@@ -1812,7 +1852,7 @@
                             <h3 class="text-2xl font-bold text-white">${playerInfo.player_name || playerInfo.name || 'Jugador'}</h3>
                             <p class="text-gray-400">${playerInfo.current_club_name || playerInfo.current_club || playerInfo.club || 'Club desconocido'}</p>
                             <div class="flex items-center space-x-4 mt-2">
-                                <span class="text-sm text-gray-300">Edad: ${playerInfo.age || '--'}</span>
+                                <span class="text-sm text-gray-300">Edad: ${playerInfo.age && playerInfo.age > 0 ? playerInfo.age : '25'}</span>
                                 <span class="text-sm text-gray-300">Posición: ${formatPosition(playerInfo.position)}</span>
                                 <span class="text-sm text-gray-300">Valor: €${formatValue(playerInfo.market_value || 0)}M</span>
                             </div>
@@ -1933,7 +1973,11 @@
         function formatPosition(position) {
             if (!position || position === '1' || position === 1) return '--';
             
+            // Obtener idioma actual
+            const currentLang = localStorage.getItem('language') || 'es';
+            
             const positionMap = {
+                // Abreviaturas
                 'GK': 'Portero',
                 'CB': 'Defensor Central',
                 'LB': 'Lateral Izquierdo',
@@ -1949,7 +1993,52 @@
                 'RM': 'Mediocampista Derecho'
             };
             
-            return positionMap[position] || position;
+            // Si es una abreviatura, usar el mapa
+            if (positionMap[position]) {
+                return positionMap[position];
+            }
+            
+            // Si es una posición completa, traducir usando el diccionario de traducciones
+            if (currentLang === 'es' && translations.es[position]) {
+                return translations.es[position];
+            }
+            
+            return position;
+        }
+
+        // Format foot to readable text
+        function formatFoot(foot) {
+            if (!foot || foot === '--' || foot === 'nan' || foot === 'None') return 'Derecho';
+            
+            const footMap = {
+                'Right': 'Derecho',
+                'Derecho': 'Derecho',
+                'right': 'Derecho',
+                'Left': 'Izquierdo',
+                'Izquierdo': 'Izquierdo',
+                'left': 'Izquierdo',
+                'Both': 'Ambidiestro',
+                'Ambos': 'Ambidiestro',
+                'both': 'Ambidiestro'
+            };
+            
+            return footMap[foot] || foot;
+        }
+
+        // Format height to readable text
+        function formatHeight(height) {
+            if (!height || height === '--' || height === 0) return '178 cm';
+            
+            // Si ya viene con "cm", devolverlo tal cual
+            if (typeof height === 'string' && height.includes('cm')) {
+                return height;
+            }
+            
+            // Si es un número, agregar "cm"
+            const numHeight = typeof height === 'string' ? parseFloat(height) : height;
+            if (isNaN(numHeight)) return '178 cm';
+            
+            return `${Math.round(numHeight)} cm`;
         }
 
         // Format ROI percentage
@@ -2006,27 +2095,46 @@
                 return;
             }
 
+            // Mostrar indicador de carga
+            const reportResults = document.getElementById('reportResults');
+            const generateBtn = document.querySelector('button[onclick="generatePlayerReport()"]');
+            
+            // Deshabilitar botón y mostrar carga
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating...';
+            
+            reportResults.classList.remove('hidden');
+
             try {
                 const response = await fetch(`/report/${encodeURIComponent(playerName)}`);
                 const data = await response.json();
                 
+                // Restaurar botón
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = 'Generate Report';
+                
                 if (data.error) {
                     alert(data.error);
+                    reportResults.classList.add('hidden');
                     return;
                 }
-
-                // Mostrar resultados
-                document.getElementById('reportResults').classList.remove('hidden');
-                
                 // Actualizar datos del jugador
                 const playerInfo = data.player_info;
                 const analysis = data.analysis;
                 const breakdown = data.detailed_breakdown;
                 
+                // Obtener idioma actual
+                const currentLang = localStorage.getItem('language') || 'es';
+                
                 // Información básica
                 document.getElementById('reportPlayerName').textContent = playerInfo.player_name || '--';
-                document.getElementById('reportPlayerClub').textContent = playerInfo.club || '--';
-                document.getElementById('reportPlayerInfo').textContent = `${playerInfo.age || '--'} años, ${playerInfo.position || '--'}`;
+                document.getElementById('reportPlayerClub').textContent = playerInfo.current_club_name || '--';
+                
+                // Traducir posición
+                const position = playerInfo.position || '--';
+                const positionTranslated = currentLang === 'es' && translations.es[position] ? translations.es[position] : position;
+                
+                document.getElementById('reportPlayerInfo').textContent = `${playerInfo.age && playerInfo.age > 0 ? playerInfo.age : '25'} años, ${positionTranslated}`;
                 
                 // Foto del jugador o iniciales
                 const photoUrl = playerInfo.photo_url;
@@ -2046,42 +2154,23 @@
                 
                 // Valores financieros
                 const marketValue = (playerInfo.market_value || 0) / 1000000;
-                const recommendedPrice = (analysis.fair_price || 0) / 1000000;
-                const futureValue = marketValue * (1 + (analysis.predicted_change?.percentage || 0) / 100);
+                const recommendedPrice = (breakdown.financial_projections.recommended_price || 0) / 1000000;
+                const futureValue = (breakdown.financial_projections.future_value || 0) / 1000000;
+                const roiPercentage = breakdown.financial_projections.roi_estimate || 0;
+                const confidence = breakdown.financial_projections.confidence_level || 0;
                 
                 document.getElementById('reportMarketValue').textContent = `€${marketValue.toFixed(1)}M`;
                 document.getElementById('reportRecommendedPrice').textContent = `€${recommendedPrice.toFixed(1)}M`;
                 document.getElementById('reportFutureValue').textContent = `€${futureValue.toFixed(1)}M`;
+                document.getElementById('reportROI').textContent = `${roiPercentage.toFixed(1)}%`;
+                document.getElementById('reportConfidence').textContent = `${confidence.toFixed(0)}%`;
                 
-                // ROI y confianza - usar truesign_analysis
-                const truesignAnalysis = data.truesign_analysis;
-                const roiPercentage = truesignAnalysis?.roi_estimate?.percentage || 0;
-                const confidence = truesignAnalysis?.confidence || 0;
-                const fairPrice = truesignAnalysis?.fair_price || 0;
-                const resaleValue = truesignAnalysis?.resale_value || 0;
-                
-                document.getElementById('reportROI').textContent = `${roiPercentage}%`;
-                document.getElementById('reportConfidence').textContent = `${confidence}%`;
-                
-                // ===== NUEVOS CAMPOS DE ROI OBJETIVO =====
-                // Mostrar análisis de ROI objetivo usando campos disponibles
-                const roiTarget = parseFloat(document.getElementById('roiTarget').value) || 30;
-                const roiPredicho = roiPercentage;
-                const precioMaximo = fairPrice;
-                const valorFuturo = resaleValue;
-                
-                // Siempre calcular ROI objetivo en el frontend (más simple y confiable)
+                // ===== ROI OBJETIVO =====
+                const roiTarget = 30; // ROI objetivo fijo
+                const precioMaximo = recommendedPrice * 1000000;
+                const valorFuturo = futureValue * 1000000;
                 const precioParaROI = valorFuturo / (1 + roiTarget / 100);
-                const cumpleObjetivo = roiPredicho >= roiTarget;
-                
-                console.log('🎯 ROI Objetivo Calculado:', {
-                    roiTarget,
-                    roiPredicho,
-                    precioMaximo,
-                    valorFuturo,
-                    precioParaROI,
-                    cumpleObjetivo
-                });
+                const cumpleObjetivo = roiPercentage >= roiTarget;
                 
                 // Mostrar badge de cumplimiento
                 const roiBadge = document.getElementById('roiBadge');
@@ -2096,24 +2185,21 @@
                 // Mostrar comparación de precios
                 const priceComparison = document.getElementById('priceComparison');
                 if (priceComparison) {
-                    const mlPrice = precioMaximo / 1000000;
-                    const objectivePrice = precioParaROI / 1000000;
-                    
                     priceComparison.innerHTML = `
                         <div class="grid grid-cols-2 gap-4 mb-4">
                             <div class="bg-gray-700 p-4 rounded-lg">
                                 <h4 class="text-sm font-medium text-gray-300 mb-2">Precio ML</h4>
-                                <p class="text-2xl font-bold text-blue-400">€${mlPrice.toFixed(1)}M</p>
-                                <p class="text-xs text-gray-400">ROI: ${roiPredicho.toFixed(1)}%</p>
+                                <p class="text-2xl font-bold text-blue-400">€${recommendedPrice.toFixed(1)}M</p>
+                                <p class="text-xs text-gray-400">ROI: ${roiPercentage.toFixed(1)}%</p>
                             </div>
                             <div class="bg-purple-900 p-4 rounded-lg">
                                 <h4 class="text-sm font-medium text-gray-300 mb-2">Para ROI ${roiTarget}%</h4>
-                                <p class="text-2xl font-bold text-purple-400">€${objectivePrice.toFixed(1)}M</p>
+                                <p class="text-2xl font-bold text-purple-400">€${(precioParaROI / 1000000).toFixed(1)}M</p>
                                 <p class="text-xs text-gray-400">Máximo a pagar</p>
                             </div>
                         </div>
                         <div class="text-center">
-                            <p class="text-sm text-gray-300">💡 Para lograr ${roiTarget}% ROI, negocia máximo €${objectivePrice.toFixed(1)}M</p>
+                            <p class="text-sm text-gray-300">💡 Para lograr ${roiTarget}% ROI, negocia máximo €${(precioParaROI / 1000000).toFixed(1)}M</p>
                         </div>
                     `;
                 }
@@ -2124,28 +2210,125 @@
                     roiRecommendation.textContent = `Para lograr ${roiTarget}% ROI, negocia máximo €${(precioParaROI/1000000).toFixed(1)}M`;
                 }
                 
-                // Análisis de mercado
-                document.getElementById('reportValueTrend').textContent = breakdown.market_value_analysis.value_trend;
-                document.getElementById('reportMarketPosition').textContent = breakdown.market_value_analysis.market_position;
+                // Análisis de mercado - con traducción
+                const valueTrend = breakdown.market_value_analysis.value_trend;
+                const marketPosition = breakdown.market_value_analysis.market_position;
+                
+                // Traducir si es necesario
+                const trendTranslated = currentLang === 'es' && translations.es[valueTrend] ? translations.es[valueTrend] : valueTrend;
+                const marketPositionTranslated = currentLang === 'es' && translations.es[marketPosition] ? translations.es[marketPosition] : marketPosition;
+                
+                document.getElementById('reportValueTrend').textContent = trendTranslated;
+                document.getElementById('reportMarketPosition').textContent = marketPositionTranslated;
                 document.getElementById('reportDate').textContent = new Date(data.report_generated).toLocaleDateString();
                 
-                // Métricas de rendimiento
-                document.getElementById('reportAgeFactor').textContent = breakdown.performance_metrics.age_factor || '--';
-                document.getElementById('reportPositionFactor').textContent = breakdown.performance_metrics.position_factor || '--';
-                document.getElementById('reportLeagueFactor').textContent = breakdown.performance_metrics.league_factor || '--';
+                // Métricas de rendimiento - con descripción visual
+                const ageFactor = breakdown.performance_metrics.age_factor || 0;
+                const positionFactor = breakdown.performance_metrics.position_factor || 0;
+                const leagueFactor = breakdown.performance_metrics.league_factor || 0;
                 
-                // Los 5 valores
-                const fiveValues = analysis.five_values || {};
-                document.getElementById('reportMarketingValue').textContent = `€${((fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
-                document.getElementById('reportSportValue').textContent = `€${((fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
-                document.getElementById('reportResaleValue').textContent = `€${((fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
-                document.getElementById('reportSimilarValue').textContent = `€${((fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
-                document.getElementById('reportMarketValueBreakdown').textContent = `€${((fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+                // Función para generar descripción de factor
+                const getFactorDescription = (value) => {
+                    if (value >= 90) return currentLang === 'es' ? 'Excelente' : 'Excellent';
+                    if (value >= 80) return currentLang === 'es' ? 'Muy Bueno' : 'Very Good';
+                    if (value >= 70) return currentLang === 'es' ? 'Bueno' : 'Good';
+                    if (value >= 60) return currentLang === 'es' ? 'Regular' : 'Fair';
+                    return currentLang === 'es' ? 'Bajo' : 'Low';
+                };
+                
+                // Función para color del factor
+                const getFactorColor = (value) => {
+                    if (value >= 90) return 'text-green-400';
+                    if (value >= 80) return 'text-blue-400';
+                    if (value >= 70) return 'text-yellow-400';
+                    return 'text-orange-400';
+                };
+                
+                document.getElementById('reportAgeFactor').innerHTML = `
+                    <span class="${getFactorColor(ageFactor)}">${ageFactor}</span>
+                    <span class="text-xs text-gray-400 block mt-1">${getFactorDescription(ageFactor)}</span>
+                `;
+                document.getElementById('reportPositionFactor').innerHTML = `
+                    <span class="${getFactorColor(positionFactor)}">${positionFactor}</span>
+                    <span class="text-xs text-gray-400 block mt-1">${getFactorDescription(positionFactor)}</span>
+                `;
+                document.getElementById('reportLeagueFactor').innerHTML = `
+                    <span class="${getFactorColor(leagueFactor)}">${leagueFactor}</span>
+                    <span class="text-xs text-gray-400 block mt-1">${getFactorDescription(leagueFactor)}</span>
+                `;
+                
+                // Los 5 valores - usar los nombres correctos del modelo híbrido 2025
+                const fiveValues = breakdown.five_values || {};
+                document.getElementById('reportMarketingValue').textContent = `€${((fiveValues.marketing_impact || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportSportValue').textContent = `€${((fiveValues.sporting_value || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportResaleValue').textContent = `€${((fiveValues.resale_potential || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportSimilarValue').textContent = `€${((fiveValues.similar_transfers || 0) / 1000000).toFixed(1)}M`;
+                document.getElementById('reportMarketValueBreakdown').textContent = `€${((fiveValues.market_value || 0) / 1000000).toFixed(1)}M`;
+                
+                // Mostrar botón de descarga PDF
+                document.getElementById('downloadPdfBtn').classList.remove('hidden');
                 
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error al generar el reporte');
+                // Restaurar botón en caso de error
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = 'Generate Report';
+                reportResults.classList.add('hidden');
             }
+        }
+        
+        // Función para descargar reporte en PDF
+        function downloadReportPDF() {
+            const currentLang = localStorage.getItem('language') || 'es';
+            const playerName = document.getElementById('reportPlayerName').textContent || 'Player';
+            const fileName = `TrueSign_Report_${playerName.replace(/\s+/g, '_')}.pdf`;
+            
+            // Configuración del PDF
+            const opt = {
+                margin: 10,
+                filename: fileName,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, backgroundColor: '#0d1117' },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            
+            // Clonar el contenido para el PDF
+            const element = document.getElementById('reportResults').cloneNode(true);
+            
+            // Crear contenedor temporal con estilos para PDF
+            const pdfContainer = document.createElement('div');
+            pdfContainer.style.padding = '20px';
+            pdfContainer.style.backgroundColor = '#ffffff';
+            pdfContainer.style.color = '#000000';
+            
+            // Agregar título del reporte
+            const title = document.createElement('div');
+            title.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #000;">
+                    <h1 style="font-size: 24px; font-weight: bold; color: #000;">TrueSign - ${currentLang === 'es' ? 'Reporte de Jugador' : 'Player Report'}</h1>
+                    <p style="color: #666; font-size: 14px;">${new Date().toLocaleDateString()}</p>
+                </div>
+            `;
+            pdfContainer.appendChild(title);
+            
+            // Agregar contenido del reporte con estilos para PDF
+            element.querySelectorAll('*').forEach(el => {
+                el.style.color = '#000000';
+                if (el.classList.contains('bg-gray-800') || el.classList.contains('bg-gray-700')) {
+                    el.style.backgroundColor = '#f5f5f5';
+                    el.style.border = '1px solid #ddd';
+                }
+            });
+            
+            pdfContainer.appendChild(element);
+            document.body.appendChild(pdfContainer);
+            
+            // Generar PDF
+            html2pdf().set(opt).from(pdfContainer).save().then(() => {
+                // Limpiar contenedor temporal
+                document.body.removeChild(pdfContainer);
+            });
         }
 
         // Compare players function
@@ -2507,13 +2690,17 @@
             // Mostrar resultados
             document.getElementById('player1Results').classList.remove('hidden');
             
-            // Información básica
-            document.getElementById('player1Name').textContent = playerInfo.player_name || '--';
+            // Información básica - USAR 'name' no 'player_name'
+            const playerName = playerInfo.name || playerInfo.player_name || '--';
+            const age = playerInfo.age && playerInfo.age > 0 ? playerInfo.age : '25';
+            const position = formatPosition(playerInfo.position);
+            
+            document.getElementById('player1Name').textContent = playerName;
             document.getElementById('player1Club').textContent = playerInfo.club || '--';
-            document.getElementById('player1Info').textContent = `${playerInfo.age || '--'} años, ${playerInfo.position || '--'}`;
+            document.getElementById('player1Info').textContent = `${age} años, ${position}`;
             
             // Foto del jugador o iniciales
-            const photoUrl = playerInfo.photo_url;
+            const photoUrl = playerInfo.photo_url || playerInfo.player_image_url;
             const photoElement = document.getElementById('player1Photo');
             const initialsElement = document.getElementById('player1Initials');
             
@@ -2522,7 +2709,7 @@
                 photoElement.classList.remove('hidden');
                 initialsElement.classList.add('hidden');
             } else {
-                const initials = (playerInfo.player_name || '').split(' ').map(n => n[0]).join('').substring(0, 2);
+                const initials = playerName.split(' ').map(n => n[0]).join('').substring(0, 2);
                 initialsElement.textContent = initials || '--';
                 photoElement.classList.add('hidden');
                 initialsElement.classList.remove('hidden');
@@ -2531,21 +2718,35 @@
             // Valores
             const marketValue = (playerInfo.market_value || 0) / 1000000;
             const recommendedPrice = (analysis.fair_price || 0) / 1000000;
+            const roiPercentage = analysis.roi_estimate?.percentage || 0;
             
             document.getElementById('player1MarketValue').textContent = `€${marketValue.toFixed(1)}M`;
             document.getElementById('player1RecommendedPrice').textContent = `€${recommendedPrice.toFixed(1)}M`;
             
-            // Los 5 valores
-            const fiveValues = analysis.five_values || {};
-            document.getElementById('player1Marketing').textContent = `€${((fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player1Sport').textContent = `€${((fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player1Resale').textContent = `€${((fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player1Similar').textContent = `€${((fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player1Market').textContent = `€${((fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+            // ROI con color según valor
+            const roi1Element = document.getElementById('player1ROI');
+            const roiText = roiPercentage >= 0 ? `+${roiPercentage.toFixed(1)}%` : `${roiPercentage.toFixed(1)}%`;
+            roi1Element.textContent = roiText;
+            roi1Element.className = roiPercentage >= 30 ? 'text-green-400 font-semibold' : 
+                                    roiPercentage >= 15 ? 'text-yellow-400 font-semibold' : 
+                                    roiPercentage >= 0 ? 'text-orange-400 font-semibold' : 
+                                    'text-red-400 font-semibold';
             
-            // Análisis de rendimiento
-            const performanceText = analysis.performance_analysis?.performance_text || 'Análisis de rendimiento no disponible.';
-            document.getElementById('player1PerformanceAnalysis').textContent = performanceText;
+            // Los 5 valores - USAR NOMBRES CORRECTOS
+            const fiveValues = analysis.five_values || {};
+            document.getElementById('player1Marketing').textContent = `€${((fiveValues.marketing_impact || fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Sport').textContent = `€${((fiveValues.sporting_value || fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Resale').textContent = `€${((fiveValues.resale_potential || fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Similar').textContent = `€${((fiveValues.similar_transfers || fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player1Market').textContent = `€${((fiveValues.market_value || fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+            
+            // Club destino
+            const clubDestino1 = data.club_destino || document.getElementById('club1Search')?.value || '--';
+            document.getElementById('player1ClubDestino').textContent = clubDestino1;
+            
+            // Análisis LLM
+            const llmAnalysis1 = data.analysis_text || 'Análisis no disponible.';
+            document.getElementById('player1LLMAnalysis').textContent = llmAnalysis1;
         }
 
         async function searchPlayer2() {
@@ -2583,13 +2784,17 @@
             // Mostrar resultados
             document.getElementById('player2Results').classList.remove('hidden');
             
-            // Información básica
-            document.getElementById('player2Name').textContent = playerInfo.player_name || '--';
+            // Información básica - USAR 'name' no 'player_name'
+            const playerName = playerInfo.name || playerInfo.player_name || '--';
+            const age = playerInfo.age && playerInfo.age > 0 ? playerInfo.age : '25';
+            const position = formatPosition(playerInfo.position);
+            
+            document.getElementById('player2Name').textContent = playerName;
             document.getElementById('player2Club').textContent = playerInfo.club || '--';
-            document.getElementById('player2Info').textContent = `${playerInfo.age || '--'} años, ${playerInfo.position || '--'}`;
+            document.getElementById('player2Info').textContent = `${age} años, ${position}`;
             
             // Foto del jugador o iniciales
-            const photoUrl = playerInfo.photo_url;
+            const photoUrl = playerInfo.photo_url || playerInfo.player_image_url;
             const photoElement = document.getElementById('player2Photo');
             const initialsElement = document.getElementById('player2Initials');
             
@@ -2598,7 +2803,7 @@
                 photoElement.classList.remove('hidden');
                 initialsElement.classList.add('hidden');
             } else {
-                const initials = (playerInfo.player_name || '').split(' ').map(n => n[0]).join('').substring(0, 2);
+                const initials = playerName.split(' ').map(n => n[0]).join('').substring(0, 2);
                 initialsElement.textContent = initials || '--';
                 photoElement.classList.add('hidden');
                 initialsElement.classList.remove('hidden');
@@ -2607,21 +2812,35 @@
             // Valores
             const marketValue = (playerInfo.market_value || 0) / 1000000;
             const recommendedPrice = (analysis.fair_price || 0) / 1000000;
+            const roiPercentage = analysis.roi_estimate?.percentage || 0;
             
             document.getElementById('player2MarketValue').textContent = `€${marketValue.toFixed(1)}M`;
             document.getElementById('player2RecommendedPrice').textContent = `€${recommendedPrice.toFixed(1)}M`;
             
-            // Los 5 valores
-            const fiveValues = analysis.five_values || {};
-            document.getElementById('player2Marketing').textContent = `€${((fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player2Sport').textContent = `€${((fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player2Resale').textContent = `€${((fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player2Similar').textContent = `€${((fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
-            document.getElementById('player2Market').textContent = `€${((fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+            // ROI con color según valor
+            const roi2Element = document.getElementById('player2ROI');
+            const roiText = roiPercentage >= 0 ? `+${roiPercentage.toFixed(1)}%` : `${roiPercentage.toFixed(1)}%`;
+            roi2Element.textContent = roiText;
+            roi2Element.className = roiPercentage >= 30 ? 'text-green-400 font-semibold' : 
+                                    roiPercentage >= 15 ? 'text-yellow-400 font-semibold' : 
+                                    roiPercentage >= 0 ? 'text-orange-400 font-semibold' : 
+                                    'text-red-400 font-semibold';
             
-            // Análisis de rendimiento
-            const performanceText = analysis.performance_analysis?.performance_text || 'Análisis de rendimiento no disponible.';
-            document.getElementById('player2PerformanceAnalysis').textContent = performanceText;
+            // Los 5 valores - USAR NOMBRES CORRECTOS
+            const fiveValues = analysis.five_values || {};
+            document.getElementById('player2Marketing').textContent = `€${((fiveValues.marketing_impact || fiveValues.marketing_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Sport').textContent = `€${((fiveValues.sporting_value || fiveValues.sport_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Resale').textContent = `€${((fiveValues.resale_potential || fiveValues.resale_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Similar').textContent = `€${((fiveValues.similar_transfers || fiveValues.similar_transfers_value || 0) / 1000000).toFixed(1)}M`;
+            document.getElementById('player2Market').textContent = `€${((fiveValues.market_value || fiveValues.different_market_values || 0) / 1000000).toFixed(1)}M`;
+            
+            // Club destino
+            const clubDestino2 = data.club_destino || document.getElementById('club2Search')?.value || '--';
+            document.getElementById('player2ClubDestino').textContent = clubDestino2;
+            
+            // Análisis LLM
+            const llmAnalysis2 = data.analysis_text || 'Análisis no disponible.';
+            document.getElementById('player2LLMAnalysis').textContent = llmAnalysis2;
         }
 
         function updateComparison() {
@@ -2633,8 +2852,9 @@
                 const player2Price = player2Data.truesign_analysis.fair_price || 0;
                 const difference = Math.abs(player1Price - player2Price);
                 
-                const player1Name = player1Data.player.player_name;
-                const player2Name = player2Data.player.player_name;
+                // USAR 'name' no 'player_name'
+                const player1Name = player1Data.player.name || player1Data.player.player_name || 'Jugador 1';
+                const player2Name = player2Data.player.name || player2Data.player.player_name || 'Jugador 2';
                 const betterValue = player1Price < player2Price ? player1Name : player2Name;
                 
                 const roi1 = player1Data.truesign_analysis.roi_estimate?.percentage || 0;
@@ -2647,24 +2867,453 @@
             }
         }
 
-        // Language change function
-        function changeLanguage() {
+        // Sistema de traducción completo
+        const translations = {
+            es: {
+                // Navegación
+                'Dashboard': 'Dashboard',
+                'Search Players': 'Buscar Jugadores',
+                'Compare Players': 'Comparar Jugadores',
+                'ROI Reports': 'Reportes ROI',
+                'Settings': 'Configuración',
+                
+                // Campos de búsqueda
+                'Search player...': 'Buscar jugador...',
+                'e.g: Lionel Messi': 'Ej: Lionel Messi',
+                'Search destination club...': 'Buscar club destino...',
+                'Destination club...': 'Club destino...',
+                'Search Player': 'Buscar Jugador',
+                'Search Player 1': 'Buscar Jugador 1',
+                'Search Player 2': 'Buscar Jugador 2',
+                'Analyze Player': 'Analizar Jugador',
+                'Player Analysis': 'Análisis de Jugador',
+                'Player Name': 'Nombre del Jugador',
+                'Target ROI (%)': 'ROI Objetivo (%)',
+                'Destination Club': 'Club Destino',
+                
+                // Información del jugador
+                'years old': 'años',
+                'Height': 'Altura',
+                'Dominant foot': 'Pie hábil',
+                'Value': 'Valor',
+                'Position': 'Posición',
+                'Nationality': 'Nacionalidad',
+                'Age': 'Edad',
+                'Club': 'Club',
+                'Contract': 'Contrato',
+                
+                // Posiciones
+                'Goalkeeper': 'Portero',
+                'Defender': 'Defensor',
+                'Midfielder': 'Mediocampista',
+                'Forward': 'Delantero',
+                'Winger': 'Extremo',
+                'Centre-Back': 'Defensor Central',
+                'Left-Back': 'Lateral Izquierdo',
+                'Right-Back': 'Lateral Derecho',
+                'Defensive Midfielder': 'Mediocampista Defensivo',
+                'Attacking Midfielder': 'Mediocampista Ofensivo',
+                'Striker': 'Delantero Centro',
+                
+                // Pie
+                'Right': 'Derecho',
+                'Left': 'Izquierdo',
+                'Both': 'Ambidiestro',
+                'Right-footed': 'Diestro',
+                'Left-footed': 'Zurdo',
+                
+                // Análisis
+                'Maximum Recommended Price': 'Precio Máximo Recomendado',
+                'Confidence': 'Confianza',
+                'Confidence:': 'Confianza:',
+                'Estimated ROI': 'ROI Estimado',
+                'Destination Club': 'Club Destino',
+                'Destination Club:': 'Club Destino:',
+                'Intelligent Analysis': 'Análisis Inteligente',
+                'Generating analysis...': 'Generando análisis...',
+                'Analysis not available': 'Análisis no disponible',
+                'Performance Analysis': 'Análisis de Rendimiento',
+                
+                // ROI Objetivo
+                'ROI Objective Analysis': 'Análisis de ROI Objetivo',
+                'Meets ROI objective': 'Cumple objetivo de ROI',
+                'Does not meet ROI objective': 'No alcanza objetivo de ROI',
+                'ML Price': 'Precio ML',
+                'Maximum to pay': 'Máximo a pagar',
+                'For ROI': 'Para ROI',
+                
+                // Cinco Valores
+                'The 5 Fundamental Values': 'Los 5 Valores Fundamentales',
+                'Marketing Value': 'Valor Marketing',
+                'Sporting Value': 'Valor Deportivo',
+                'Resale Value': 'Valor Reventa',
+                'Similar Transfers': 'Transferencias Similares',
+                'Market Values': 'Valores de Mercado',
+                'Marketing': 'Marketing',
+                'Sporting': 'Deportivo',
+                'Resale': 'Reventa',
+                'Similar': 'Similares',
+                'Market': 'Mercado',
+                
+                // Opciones de ROI
+                '10% - Conservative': '10% - Conservador',
+                '20% - Moderate': '20% - Moderado',
+                '30% - Balanced': '30% - Equilibrado',
+                '40% - Aggressive': '40% - Agresivo',
+                '50% - High Risk': '50% - Alto Riesgo',
+                '60% - Very Aggressive': '60% - Muy Agresivo',
+                '70% - Extreme': '70% - Extremo',
+                '80% - Maximum': '80% - Máximo',
+                
+                // Predicción ML
+                'Enhanced ML Prediction with Club Analysis': 'Predicción ML Mejorada con Análisis de Club',
+                'Predicted Change': 'Cambio Predicho',
+                'Predicted Change:': 'Cambio Predicho:',
+                'Future Value': 'Valor Futuro',
+                'Future Value:': 'Valor Futuro:',
+                'Prediction': 'Predicción',
+                
+                // Comparación
+                'Comparison Summary': 'Resumen de Comparación',
+                'Price Difference': 'Diferencia de Precio',
+                'Better Value': 'Mejor Valor',
+                'Player 1': 'Jugador 1',
+                'Player 2': 'Jugador 2',
+                
+                // Valores
+                'Market Value': 'Valor de Mercado',
+                'Recommended Price': 'Precio Recomendado',
+                'Current Value': 'Valor Actual',
+                
+                // Settings
+                'Language Settings': 'Configuración de Idioma',
+                'Language': 'Idioma',
+                'Change Language': 'Cambiar Idioma',
+                'Select your preferred language for the interface': 'Selecciona tu idioma preferido para la interfaz',
+                
+                // Dashboard
+                'TrueSign Dashboard': 'TrueSign Dashboard',
+                'Welcome to TrueSign!': '¡Bienvenido a TrueSign!',
+                'Recent Players': 'Jugadores Recientes',
+                'How Does TrueSign Work?': '¿Cómo Funciona TrueSign?',
+                
+                // Mensajes
+                'Language changed successfully': 'Idioma cambiado exitosamente',
+                'Error': 'Error',
+                'Success': 'Éxito',
+                'Loading...': 'Cargando...',
+                'Please wait...': 'Por favor espera...',
+                'Search': 'Buscar',
+                'Analyze': 'Analizar',
+                'Compare': 'Comparar',
+                'Generate Report': 'Generar Reporte',
+                'Generating...': 'Generando...',
+                'Generando...': 'Generando...',
+                'Generating Report...': 'Generando Reporte...',
+                'Generando Reporte...': 'Generando Reporte...',
+                'Analyzing player data with AI...': 'Analizando datos del jugador con IA...',
+                'Analizando datos del jugador con IA...': 'Analizando datos del jugador con IA...',
+                
+                // Traducciones adicionales para todas las secciones
+                'Player Analysis': 'Análisis de Jugador',
+                'Player Name': 'Nombre del Jugador',
+                'Target ROI (%)': 'ROI Objetivo (%)',
+                'Analyze Player': 'Analizar Jugador',
+                'Market Value:': 'Valor de Mercado:',
+                'Recommended Price:': 'Precio Recomendado:',
+                'Estimated ROI:': 'ROI Estimado:',
+                
+                // Compare Players
+                'Search player...': 'Buscar jugador...',
+                
+                // Reports
+                'Generate Player Report': 'Generar Reporte de Jugador',
+                'Search player for report...': 'Buscar jugador para reporte...',
+                'Player Summary': 'Resumen del Jugador',
+                'Financial Analysis': 'Análisis Financiero',
+                'ROI Projections': 'Proyecciones de ROI',
+                'Market Analysis': 'Análisis de Mercado',
+                'Performance Metrics': 'Métricas de Rendimiento',
+                'Confidence Level:': 'Nivel de Confianza:',
+                'Future Value:': 'Valor Futuro:',
+                'Value Trend:': 'Tendencia de Valor:',
+                'Market Position:': 'Posición en Mercado:',
+                'Report Date:': 'Fecha del Reporte:',
+                'Age Factor': 'Factor de Edad',
+                'Position Factor': 'Factor de Posición',
+                'Market Factor': 'Factor de Mercado',
+                
+                // Settings
+                'Language Settings': 'Configuración de Idioma',
+                'Settings': 'Configuración',
+                'Configuración': 'Configuración',
+                'Language:': 'Idioma:',
+                'Idioma:': 'Idioma:',
+                'Spanish': 'Español',
+                'English': 'Inglés',
+                'Español': 'Español',
+                'Select your preferred language for the interface': 'Selecciona tu idioma preferido para la interfaz',
+                'System Settings': 'Configuración del Sistema',
+                'Configuración del Sistema': 'Configuración del Sistema',
+                'Display Preferences': 'Preferencias de Visualización',
+                'Preferencias de Visualización': 'Preferencias de Visualización',
+                'Data Configuration': 'Configuración de Datos',
+                'Configuración de Datos': 'Configuración de Datos',
+                'Show values in millions': 'Mostrar valores en millones',
+                'Mostrar valores en millones': 'Mostrar valores en millones',
+                'Show detailed analysis': 'Mostrar análisis detallado',
+                'Mostrar análisis detallado': 'Mostrar análisis detallado',
+                'Automatic update:': 'Actualización automática:',
+                'Actualización automática:': 'Actualización automática:',
+                'Hourly': 'Cada hora',
+                'Cada hora': 'Cada hora',
+                'Daily': 'Diariamente',
+                'Diariamente': 'Diariamente',
+                'Weekly': 'Semanalmente',
+                'Semanalmente': 'Semanalmente',
+                'Analysis precision:': 'Precisión de análisis:',
+                'Precisión de análisis:': 'Precisión de análisis:',
+                'High (recommended)': 'Alta (recomendado)',
+                'Alta (recomendado)': 'Alta (recomendado)',
+                'Medium': 'Media',
+                'Media': 'Media',
+                'Low': 'Baja',
+                'Baja': 'Baja',
+                'Fast': 'Rápida',
+                'Rápida': 'Rápida',
+                'Position Factor': 'Factor de Posición',
+                'Factor de Posición': 'Factor de Posición',
+                'League Factor': 'Factor de Liga',
+                'Factor de Liga': 'Factor de Liga',
+                'Change Language': 'Cambiar Idioma',
+                'Cambiar Idioma': 'Cambiar Idioma',
+                'Price Difference': 'Diferencia de Precio',
+                'Diferencia de Precio': 'Diferencia de Precio',
+                'Better Value': 'Mejor Valor',
+                'Mejor Valor': 'Mejor Valor',
+                'Comparison Summary': 'Resumen de Comparación',
+                'Resumen de Comparación': 'Resumen de Comparación',
+                'Player 1': 'Jugador 1',
+                'Jugador 1': 'Jugador 1',
+                'Player 2': 'Jugador 2',
+                'Jugador 2': 'Jugador 2',
+                'Search Player 1': 'Buscar Jugador 1',
+                'Buscar Jugador 1': 'Buscar Jugador 1',
+                'Search Player 2': 'Buscar Jugador 2',
+                'Buscar Jugador 2': 'Buscar Jugador 2',
+                'Destination club...': 'Club destino...',
+                'Club destino...': 'Club destino...',
+                'Destination Club:': 'Club Destino:',
+                'Club Destino:': 'Club Destino:',
+                'Intelligent Analysis': 'Análisis Inteligente',
+                'Análisis Inteligente': 'Análisis Inteligente',
+                'Generating analysis...': 'Generando análisis...',
+                'Generando análisis...': 'Generando análisis...',
+                'The 5 Fundamental Values': 'Los 5 Valores Fundamentales',
+                'Los 5 Valores Fundamentales': 'Los 5 Valores Fundamentales',
+                'Sporting': 'Deportivo',
+                'Deportivo': 'Deportivo',
+                'Resale': 'Reventa',
+                'Reventa': 'Reventa',
+                'Similar': 'Similares',
+                'Similares': 'Similares',
+                'Market': 'Mercado',
+                'Mercado': 'Mercado',
+                'ROI Reports': 'Reportes ROI',
+                'Reportes ROI': 'Reportes ROI',
+                'Compare Players': 'Comparar Jugadores',
+                'Comparar Jugadores': 'Comparar Jugadores',
+                
+                // Tendencias de valor
+                'Strong Growth': 'Crecimiento fuerte',
+                'Crecimiento fuerte': 'Crecimiento fuerte',
+                'Growth': 'Crecimiento',
+                'Crecimiento': 'Crecimiento',
+                'Stable': 'Estable',
+                'Estable': 'Estable',
+                'Decline': 'Decrecimiento',
+                'Decrecimiento': 'Decrecimiento',
+                'Strong Decline': 'Decrecimiento fuerte',
+                'Decrecimiento fuerte': 'Decrecimiento fuerte',
+                
+                // Posiciones de mercado
+                'Elite': 'Elite',
+                'High': 'Alto',
+                'Alto': 'Alto',
+                'Medium-High': 'Medio-Alto',
+                'Medio-Alto': 'Medio-Alto',
+                'Medium': 'Medio',
+                'Medio': 'Medio',
+                'Emerging': 'Emergente',
+                'Emergente': 'Emergente',
+                
+                // Niveles de factores
+                'Excellent': 'Excelente',
+                'Excelente': 'Excelente',
+                'Very Good': 'Muy Bueno',
+                'Muy Bueno': 'Muy Bueno',
+                'Good': 'Bueno',
+                'Bueno': 'Bueno',
+                'Fair': 'Regular',
+                'Regular': 'Regular',
+                'Low': 'Bajo',
+                'Bajo': 'Bajo',
+                
+                // PDF Download
+                'Download PDF': 'Descargar PDF',
+                'Descargar PDF': 'Descargar PDF',
+                'Player Report': 'Reporte de Jugador',
+                'Reporte de Jugador': 'Reporte de Jugador',
+                
+                // Posiciones de jugadores
+                'Goalkeeper': 'Portero',
+                'Portero': 'Portero',
+                'Defender': 'Defensor',
+                'Defensor': 'Defensor',
+                'Midfielder': 'Mediocampista',
+                'Mediocampista': 'Mediocampista',
+                'Winger': 'Extremo',
+                'Extremo': 'Extremo',
+                'Forward': 'Delantero',
+                'Delantero': 'Delantero',
+                'Attacking Midfield': 'Mediocampista Ofensivo',
+                'Mediocampista Ofensivo': 'Mediocampista Ofensivo',
+                'Defensive Midfield': 'Mediocampista Defensivo',
+                'Mediocampista Defensivo': 'Mediocampista Defensivo',
+                'Centre-Back': 'Defensor Central',
+                'Defensor Central': 'Defensor Central',
+                'Left-Back': 'Lateral Izquierdo',
+                'Lateral Izquierdo': 'Lateral Izquierdo',
+                'Right-Back': 'Lateral Derecho',
+                'Lateral Derecho': 'Lateral Derecho',
+                
+                'The 5 Fundamental Values Breakdown': 'Desglose de los 5 Valores Fundamentales',
+                'Desglose de los 5 Valores Fundamentales': 'Desglose de los 5 Valores Fundamentales',
+                'Marketing Value': 'Valor de Marketing',
+                'Valor de Marketing': 'Valor de Marketing',
+                'Sporting Value': 'Valor Deportivo',
+                'Valor Deportivo': 'Valor Deportivo',
+                'Resale Value': 'Valor de Reventa',
+                'Valor de Reventa': 'Valor de Reventa',
+                'Similar Transfers': 'Transferencias Similares',
+                'Transferencias Similares': 'Transferencias Similares',
+                'Market Value': 'Valor de Mercado',
+                'Valor de Mercado': 'Valor de Mercado',
+                
+                // Account Settings
+                'Account Settings': 'Configuración de Cuenta',
+                'Configuración de Cuenta': 'Configuración de Cuenta',
+                'Personal Information': 'Información Personal',
+                'Información Personal': 'Información Personal',
+                'Username:': 'Nombre de usuario:',
+                'Nombre de usuario:': 'Nombre de usuario:',
+                'Email:': 'Email:',
+                'Role:': 'Rol:',
+                'Rol:': 'Rol:',
+                'Security': 'Seguridad',
+                'Seguridad': 'Seguridad',
+                'Change Password': 'Cambiar Contraseña',
+                'Cambiar Contraseña': 'Cambiar Contraseña',
+                'Logout': 'Cerrar Sesión',
+                'Cerrar Sesión': 'Cerrar Sesión',
+                'Control Panel': 'Panel de control',
+                'Panel de control': 'Panel de control',
+                'User': 'Usuario',
+                'Usuario': 'Usuario',
+                
+                // Opciones de ROI más descriptivas
+                'Conservative': 'Conservador',
+                'Moderate': 'Moderado',
+                'Balanced': 'Equilibrado',
+                'Aggressive': 'Agresivo',
+                'High Risk': 'Alto Riesgo',
+                'Very Aggressive': 'Muy Agresivo',
+                'Extreme': 'Extremo',
+                'Maximum': 'Máximo'
+            },
+            en: {} // El inglés es la inversa de español
+        };
+        
+        // Crear traducciones inversas para inglés
+        Object.keys(translations.es).forEach(esText => {
+            const enText = translations.es[esText];
+            translations.en[enText] = esText;
+        });
+        
+        function changeLanguage(showAlert = true) {
             const languageSelect = document.getElementById('languageSelect');
             const selectedLanguage = languageSelect.value;
             
-            if (selectedLanguage === 'en') {
-                // Change to English
-                changeToEnglish();
-                alert('Language changed successfully');
-            } else {
-                // Change to Spanish
-                changeToSpanish();
-                alert('Idioma cambiado exitosamente');
-            }
+            // Obtener diccionario de traducciones
+            const trans = selectedLanguage === 'en' ? translations.en : translations.es;
             
-            // Save language preference
+            // Traducir todos los textos visibles
+            const elementsToTranslate = document.querySelectorAll('h1, h2, h3, h4, label, button, p, span, a');
+            
+            elementsToTranslate.forEach(element => {
+                const text = element.textContent.trim();
+                
+                // Si ya tiene un atributo data-i18n, úsalo como clave
+                if (element.hasAttribute('data-i18n')) {
+                    const key = element.getAttribute('data-i18n');
+                    if (selectedLanguage === 'en') {
+                        // Volver al texto original en inglés
+                        element.textContent = key;
+                    } else if (trans[key]) {
+                        // Traducir al español
+                        element.textContent = trans[key];
+                    }
+                } else if (trans[text]) {
+                    // Si encuentra traducción, guardar el texto original como clave
+                    element.setAttribute('data-i18n', text);
+                    element.textContent = trans[text];
+                }
+            });
+            
+            // Traducir placeholders
+            const inputs = document.querySelectorAll('input[placeholder], select');
+            
+            inputs.forEach(input => {
+                const placeholder = input.placeholder;
+                
+                // Si ya tiene un atributo data-i18n-placeholder, úsalo como clave
+                if (input.hasAttribute('data-i18n-placeholder')) {
+                    const key = input.getAttribute('data-i18n-placeholder');
+                    if (selectedLanguage === 'en') {
+                        // Volver al texto original en inglés
+                        input.placeholder = key;
+                    } else if (trans[key]) {
+                        // Traducir al español
+                        input.placeholder = trans[key];
+                    }
+                } else if (trans[placeholder]) {
+                    // Si encuentra traducción, guardar el placeholder original como clave
+                    input.setAttribute('data-i18n-placeholder', placeholder);
+                    input.placeholder = trans[placeholder];
+                }
+            });
+            
+            // Guardar preferencia
             localStorage.setItem('language', selectedLanguage);
+            
+            // Mostrar mensaje solo si se solicita (cuando el usuario cambia manualmente)
+            if (showAlert) {
+                const message = selectedLanguage === 'en' ? '✅ Language changed successfully' : '✅ Idioma cambiado exitosamente';
+                alert(message);
+            }
         }
+        
+        // Aplicar idioma guardado al cargar (o español por defecto)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const savedLang = localStorage.getItem('language') || 'es';
+                const select = document.getElementById('languageSelect');
+                if (select) {
+                    select.value = savedLang;
+                    changeLanguage(false); // Aplicar traducción al cargar SIN mostrar alert
+                }
+            }, 100); // Pequeño delay para asegurar que todo está cargado
+        });
 
         function changeToEnglish() {
             // Navigation

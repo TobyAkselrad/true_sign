@@ -272,16 +272,20 @@ class TransfermarktScraper:
             # Buscar en diferentes ubicaciones
             name_element = soup.find('h1', class_='data-header__headline-wrapper')
             if name_element:
-                name_text = name_element.get_text(strip=True)
+                # NO usar strip=True para preservar espacios internos
+                name_text = name_element.get_text(separator=' ')
                 # Limpiar texto (remover números y símbolos)
-                clean_name = re.sub(r'#\d+', '', name_text).strip()
+                clean_name = re.sub(r'#\d+', '', name_text)
+                # Limpiar espacios múltiples y trim
+                clean_name = ' '.join(clean_name.split())
                 return clean_name
             
             # Buscar en otra ubicación
             name_element = soup.find('div', class_='data-header__headline-wrapper')
             if name_element:
-                name_text = name_element.get_text(strip=True)
-                clean_name = re.sub(r'#\d+', '', name_text).strip()
+                name_text = name_element.get_text(separator=' ')
+                clean_name = re.sub(r'#\d+', '', name_text)
+                clean_name = ' '.join(clean_name.split())
                 return clean_name
             
             return None
