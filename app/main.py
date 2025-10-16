@@ -3851,6 +3851,15 @@ users_db = {
         'created_at': '2024-10-09',
         'icon': '🎯'
     },
+    'VelezSarsfield': {
+        'username': 'VelezSarsfield',
+        'password': 'velez2025',
+        'role': 'user',
+        'email': 'velez@truesign.com',
+        'created_at': '2024-10-16',
+        'icon': '⚡',
+        'logo': '/static/velez.png'
+    },
     'ScoutingCat': {
         'username': 'ScoutingCat',
         'password': 'Talleres1913',
