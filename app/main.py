@@ -3827,7 +3827,7 @@ users_db = {
         'created_at': '2024-01-01',
         'icon': '👑'
     },
-    'Ariel': {
+    'ariel': {
         'username': 'ariel',
         'password': 'ariel',
         'role': 'user',
