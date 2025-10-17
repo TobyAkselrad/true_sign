@@ -3827,6 +3827,14 @@ users_db = {
         'created_at': '2024-01-01',
         'icon': '👑'
     },
+    'Ariel': {
+        'username': 'ariel',
+        'password': 'ariel',
+        'role': 'user',
+        'email': 'ariel@truesign.com',
+        'created_at': '2025-10-17',
+        'icon': '👑'
+    },
     'TalleresDeCordoba': {
         'username': 'TalleresDeCordoba',
         'password': 'Talleres2025',
