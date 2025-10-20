@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- html2pdf.js for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Sistema de traducciones -->
+    <script src="{{ url_for('static', filename='translations.js') }}"></script>
   <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
@@ -335,34 +337,34 @@
                     <ul>
                         <li class="mb-4">
                             <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer active" onclick="showPage('dashboard')">
-                                <i class="fas fa-tachometer-alt mr-3"></i> Dashboard
+                                <i class="fas fa-tachometer-alt mr-3"></i><span data-i18n="nav_dashboard">Dashboard</span>
                             </a>
                         </li>
                         <li class="mb-4">
                             <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('search')">
-                                <i class="fas fa-search mr-3"></i> Buscar Jugadores
+                                <i class="fas fa-search mr-3"></i><span data-i18n="nav_search">Buscar Jugadores</span>
                             </a>
                         </li>
                         <li class="mb-4">
                             <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('compare')">
-                                <i class="fas fa-exchange-alt mr-3"></i> Comparar Jugadores
+                                <i class="fas fa-exchange-alt mr-3"></i><span data-i18n="nav_compare">Comparar Jugadores</span>
                             </a>
                         </li>
                         <li class="mb-4">
                             <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('reports')">
-                                <i class="fas fa-chart-line mr-3"></i> Reportes ROI
+                                <i class="fas fa-chart-line mr-3"></i><span data-i18n="nav_reports">Reportes ROI</span>
                             </a>
                         </li>
                         <li class="mb-4">
                             <a href="#" class="nav-item flex items-center px-4 py-2 text-gray-300 hover:text-white cursor-pointer" onclick="showPage('settings')">
-                                <i class="fas fa-cog mr-3"></i> Configuración
-        </a>
-     </li>
-    </ul>
-   </nav>
+                                <i class="fas fa-cog mr-3"></i><span data-i18n="nav_settings">Configuración</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
                 <div class="mt-auto">
                     <a href="#" class="flex items-center px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-md transition duration-200" onclick="logout()">
-                        <i class="fas fa-sign-out-alt mr-3"></i> Log Out
+                        <i class="fas fa-sign-out-alt mr-3"></i><span data-i18n="nav_logout">Cerrar Sesión</span>
                     </a>
                 </div>
             </aside>
@@ -518,22 +520,22 @@
         <div id="search" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">Search Players</h1>
+                    <h1 class="text-4xl font-extrabold text-white" data-i18n="nav_search">Search Players</h1>
                 </header>
 
                 <!-- Search Form -->
                 <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-8">
-                    <h2 class="text-2xl font-bold text-white mb-4">Player Analysis</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4" data-i18n="player_analysis">Player Analysis</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Player Name</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2" data-i18n="player_name">Player Name</label>
                             <div class="relative">
-                                <input type="text" id="playerSearch2" placeholder="e.g: Lionel Messi" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                                <input type="text" id="playerSearch2" placeholder="ej: Lionel Messi" data-placeholder-i18n="player_name_placeholder" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                                 <div id="autocompleteDropdown2" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                 </div>
             </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Target ROI (%)</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2" data-i18n="target_roi">Target ROI (%)</label>
                             <select id="roiTarget" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                                 <option value="10">10% - Conservative</option>
                                 <option value="20">20% - Moderate</option>
@@ -546,15 +548,15 @@
                             </select>
         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Destination Club</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2" data-i18n="destination_club">Destination Club</label>
                             <div class="relative">
-                                <input type="text" id="clubDestino" placeholder="Search destination club..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                                <input type="text" id="clubDestino" placeholder="Buscar club destino..." data-placeholder-i18n="destination_club_placeholder" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                                 <div id="clubDestinoDropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
     </div>
                         </div>
                         <div class="flex items-end">
                             <button onclick="searchPlayerFromPage('search')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 px-4 rounded-md transition duration-300 ease-in-out shadow-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-800">
-                                <i class="fas fa-search mr-2"></i>Analyze Player
+                                <i class="fas fa-search mr-2"></i><span data-i18n="analyze_player">Analyze Player</span>
                             </button>
                         </div>
                     </div>
@@ -574,50 +576,58 @@
                     
                     <!-- 5 Values Section -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">The 5 Fundamental Values</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4" data-i18n="five_values_title">Los 5 Valores Fundamentales</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-green-400 mb-2">Marketing Value</h3>
+                                <h3 class="text-lg font-semibold text-green-400 mb-2" data-i18n="value_marketing">Valor de Marketing</h3>
                                 <p id="marketingValue2" class="text-2xl font-bold text-white">€0.0M</p>
-        </div>
+                            </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-blue-400 mb-2">Sporting Value</h3>
+                                <h3 class="text-lg font-semibold text-blue-400 mb-2" data-i18n="value_sporting">Valor Deportivo</h3>
                                 <p id="sportValue2" class="text-2xl font-bold text-white">€0.0M</p>
-        </div>
+                            </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-purple-400 mb-2">Resale Value</h3>
+                                <h3 class="text-lg font-semibold text-purple-400 mb-2" data-i18n="value_resale">Valor de Reventa</h3>
                                 <p id="resaleValue2" class="text-2xl font-bold text-white">€0.0M</p>
-     </div>
+                            </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-yellow-400 mb-2">Similar Transfers</h3>
+                                <h3 class="text-lg font-semibold text-yellow-400 mb-2" data-i18n="value_similar">Transferencias Similares</h3>
                                 <p id="similarTransfersValue2" class="text-2xl font-bold text-white">€0.0M</p>
-     </div>
+                            </div>
                             <div class="bg-gray-700 p-4 rounded-lg text-center">
-                                <h3 class="text-lg font-semibold text-red-400 mb-2">Market Values</h3>
+                                <h3 class="text-lg font-semibold text-red-400 mb-2" data-i18n="value_market">Valores de Mercado</h3>
                                 <p id="marketValuesValue2" class="text-2xl font-bold text-white">€0.0M</p>
-        </div>
-        </div>
+                            </div>
+                        </div>
                     </section>
 
                     <!-- Predicción ML de Valor Post-Transferencia -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Enhanced ML Prediction with Club Analysis</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4" data-i18n="ml_prediction_title">Predicción ML Mejorada con Análisis de Club</h2>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Predicted Change:</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">
+                                    <span data-i18n="predicted_change">Cambio Predicho</span>:
+                                </h3>
                                 <p id="predictedChange" class="text-xl font-bold text-green-400">--%</p>
-     </div>
+                            </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Future Value:</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">
+                                    <span data-i18n="future_value">Valor Futuro</span>:
+                                </h3>
                                 <p id="futureValue" class="text-xl font-bold text-blue-400">€--M</p>
                             </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-2">Confidence:</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-2">
+                                    <span data-i18n="confidence">Confianza</span>:
+                                </h3>
                                 <p id="predictionConfidence" class="text-xl font-bold text-purple-400">--%</p>
                             </div>
                         </div>
                         <div class="mt-4 flex items-center gap-3">
-                            <h3 class="text-lg font-semibold text-gray-300">Destination Club:</h3>
+                            <h3 class="text-lg font-semibold text-gray-300">
+                                <span data-i18n="club_destino">Club Destino</span>:
+                            </h3>
                             <p id="clubDestinoDisplay" class="text-xl font-bold text-cyan-400">--</p>
                         </div>
                         
@@ -627,10 +637,9 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                                 </svg>
-                                Intelligent Analysis
+                                <span data-i18n="intelligent_analysis">Análisis Inteligente</span>
                             </h3>
-                            <p id="llmAnalysisText" class="text-gray-300 leading-relaxed text-sm">
-                                Generating analysis...
+                            <p id="llmAnalysisText" class="text-gray-300 leading-relaxed text-sm" data-i18n="generating_analysis">Generando análisis...
                             </p>
                         </div>
                     </section>
@@ -642,24 +651,24 @@
         <div id="compare" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">Compare Players</h1>
+                    <h1 class="text-4xl font-extrabold text-white" data-i18n="compare_players">Compare Players</h1>
                 </header>
 
                 <!-- Player Search Forms -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     <!-- Player 1 -->
                     <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
-                        <h2 class="text-xl font-bold text-white mb-4">Player 1</h2>
+                        <h2 class="text-xl font-bold text-white mb-4" data-i18n="player_1">Player 1</h2>
                         <div class="relative mb-4">
-                            <input type="text" id="player1Search" placeholder="Search player..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="player1Search" placeholder="Buscar jugador..." data-placeholder-i18n="search_player_placeholder" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="player1Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
         </div>
                         <div class="relative mb-4">
-                            <input type="text" id="club1Search" placeholder="Destination club..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="club1Search" placeholder="Club destino..." data-placeholder-i18n="search_club_placeholder" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="club1Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
         </div>
                         <button onclick="searchPlayer1()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Search Player 1
+                            <span data-i18n="search_player_1">Search Player 1</span>
                         </button>
                         
                         <!-- Player 1 Results -->
@@ -678,11 +687,11 @@
                                 </div>
                                 <div class="grid grid-cols-3 gap-4">
                                     <div>
-                                        <p class="text-gray-400 text-sm">Market Value:</p>
+                                        <p class="text-gray-400 text-sm" data-i18n="market_value">Market Value:</p>
                                         <p id="player1MarketValue" class="text-green-400 font-semibold">€--M</p>
                                     </div>
                                     <div>
-                                        <p class="text-gray-400 text-sm">Recommended Price:</p>
+                                        <p class="text-gray-400 text-sm" data-i18n="recommended_price">Recommended Price:</p>
                                         <p id="player1RecommendedPrice" class="text-blue-400 font-semibold">€--M</p>
                                     </div>
                                     <div>
@@ -721,7 +730,7 @@
 
                             <!-- Player 1 Club Destino -->
                             <div class="mt-4 flex items-center gap-3">
-                                <h4 class="text-sm font-semibold text-gray-300">Destination Club:</h4>
+                                <h4 class="text-sm font-semibold text-gray-300" data-i18n="destination_club">Destination Club:</h4>
                                 <p id="player1ClubDestino" class="text-base font-bold text-cyan-400">--</p>
                             </div>
                             
@@ -737,17 +746,17 @@
 
                     <!-- Player 2 -->
                     <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
-                        <h2 class="text-xl font-bold text-white mb-4">Player 2</h2>
+                        <h2 class="text-xl font-bold text-white mb-4" data-i18n="player_2">Player 2</h2>
                         <div class="relative mb-4">
-                            <input type="text" id="player2Search" placeholder="Search player..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="player2Search" placeholder="Buscar jugador..." data-placeholder-i18n="search_player_placeholder" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="player2Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                         </div>
                         <div class="relative mb-4">
-                            <input type="text" id="club2Search" placeholder="Destination club..." class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
+                            <input type="text" id="club2Search" placeholder="Club destino..." data-placeholder-i18n="search_club_placeholder" class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:outline-none focus:border-green-500">
                             <div id="club2Dropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                         </div>
                         <button onclick="searchPlayer2()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Search Player 2
+                            <span data-i18n="search_player_2">Search Player 2</span>
                     </button>
                         
                         <!-- Player 2 Results -->
@@ -766,11 +775,11 @@
                                 </div>
                                 <div class="grid grid-cols-3 gap-4">
                                     <div>
-                                        <p class="text-gray-400 text-sm">Market Value:</p>
+                                        <p class="text-gray-400 text-sm" data-i18n="market_value">Market Value:</p>
                                         <p id="player2MarketValue" class="text-green-400 font-semibold">€--M</p>
                                     </div>
                                     <div>
-                                        <p class="text-gray-400 text-sm">Recommended Price:</p>
+                                        <p class="text-gray-400 text-sm" data-i18n="recommended_price">Recommended Price:</p>
                                         <p id="player2RecommendedPrice" class="text-blue-400 font-semibold">€--M</p>
                                     </div>
                                     <div>
@@ -809,7 +818,7 @@
                             
                             <!-- Player 2 Club Destino -->
                             <div class="mt-4 flex items-center gap-3">
-                                <h4 class="text-sm font-semibold text-gray-300">Destination Club:</h4>
+                                <h4 class="text-sm font-semibold text-gray-300" data-i18n="destination_club">Destination Club:</h4>
                                 <p id="player2ClubDestino" class="text-base font-bold text-cyan-400">--</p>
                             </div>
                             
@@ -826,18 +835,18 @@
 
                 <!-- Comparison Summary -->
                 <div id="comparisonSummary" class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 hidden">
-                    <h2 class="text-2xl font-bold text-white mb-4">Comparison Summary</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4" data-i18n="comparison_summary">Comparison Summary</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Price Difference</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="price_difference">Price Difference</h3>
                             <p id="priceDifference" class="text-2xl font-bold text-green-400">€--M</p>
     </div>
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Better Value</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="better_value">Better Value</h3>
                             <p id="betterValue" class="text-xl font-bold text-blue-400">--</p>
     </div>
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Estimated ROI</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="estimated_roi">Estimated ROI</h3>
                             <p id="roiComparison" class="text-xl font-bold text-purple-400">--</p>
                         </div>
                     </div>
@@ -849,15 +858,15 @@
         <div id="reports" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">ROI Reports</h1>
+                    <h1 class="text-4xl font-extrabold text-white" data-i18n="roi_reports">ROI Reports</h1>
                 </header>
 
                 <!-- Player Search for Report -->
                 <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-8">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold text-white">Generate Player Report</h2>
+                        <h2 class="text-2xl font-bold text-white" data-i18n="generate_player_report">Generate Player Report</h2>
                         <button id="downloadPdfBtn" onclick="downloadReportPDF()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 hidden">
-                            <i class="fas fa-download mr-2"></i>Download PDF
+                            <i class="fas fa-download mr-2"></i><span data-i18n="download_pdf">Download PDF</span>
                         </button>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -866,7 +875,7 @@
                             <div id="reportPlayerDropdown" class="absolute z-10 w-full bg-gray-700 border border-gray-600 rounded-lg mt-1 max-h-60 overflow-y-auto hidden"></div>
                         </div>
                         <button onclick="generatePlayerReport()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Generate Report
+                            <span data-i18n="generate_report">Generate Report</span>
                         </button>
                     </div>
                 </section>
@@ -875,7 +884,7 @@
                 <div id="reportResults" class="hidden">
                     <!-- Player Overview -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Player Summary</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4" data-i18n="player_summary">Player Summary</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="text-center">
                                 <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
@@ -887,11 +896,11 @@
                                 <p id="reportPlayerInfo" class="text-gray-400 text-sm">--</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Market Value</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="market_value">Market Value</h4>
                                 <p id="reportMarketValue" class="text-2xl font-bold text-green-400">€--M</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Recommended Price</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="recommended_price">Recommended Price</h4>
                                 <p id="reportRecommendedPrice" class="text-2xl font-bold text-blue-400">€--M</p>
                             </div>
                         </div>
@@ -899,17 +908,17 @@
 
                     <!-- Financial Analysis -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Financial Analysis</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4" data-i18n="financial_analysis">Financial Analysis</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-3">ROI Projections</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-3" data-i18n="roi_projections">ROI Projections</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between">
                                         <span class="text-gray-400">Estimated ROI:</span>
                                         <span id="reportROI" class="text-green-400 font-semibold">--%</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Confidence Level:</span>
+                                        <span class="text-gray-400" data-i18n="confidence_level">Confidence Level:</span>
                                         <span id="reportConfidence" class="text-blue-400 font-semibold">--%</span>
                                     </div>
                                     
@@ -918,24 +927,24 @@
                                     <div id="priceComparison" class="mt-4"></div>
                                     <div id="roiRecommendation" class="mt-2 text-sm text-gray-300"></div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Future Value:</span>
+                                        <span class="text-gray-400" data-i18n="future_value">Future Value:</span>
                                         <span id="reportFutureValue" class="text-purple-400 font-semibold">€--M</span>
                                     </div>
                                 </div>
                             </div>
                             <div>
-                                <h3 class="text-lg font-semibold text-gray-300 mb-3">Market Analysis</h3>
+                                <h3 class="text-lg font-semibold text-gray-300 mb-3" data-i18n="market_analysis">Market Analysis</h3>
                                 <div class="space-y-3">
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Value Trend:</span>
+                                        <span class="text-gray-400" data-i18n="value_trend">Value Trend:</span>
                                         <span id="reportValueTrend" class="text-yellow-400 font-semibold">--</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Market Position:</span>
+                                        <span class="text-gray-400" data-i18n="market_position">Market Position:</span>
                                         <span id="reportMarketPosition" class="text-orange-400 font-semibold">--</span>
                                     </div>
                                     <div class="flex justify-between">
-                                        <span class="text-gray-400">Report Date:</span>
+                                        <span class="text-gray-400" data-i18n="report_date">Report Date:</span>
                                         <span id="reportDate" class="text-gray-300 font-semibold">--</span>
                                     </div>
                                 </div>
@@ -945,18 +954,18 @@
 
                     <!-- Performance Metrics -->
                     <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                        <h2 class="text-2xl font-bold text-white mb-4">Performance Metrics</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4" data-i18n="performance_metrics">Performance Metrics</h2>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Age Factor</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="age_factor">Age Factor</h4>
                                 <p id="reportAgeFactor" class="text-xl font-bold text-green-400">--</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">Position Factor</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="position_factor">Position Factor</h4>
                                 <p id="reportPositionFactor" class="text-xl font-bold text-blue-400">--</p>
                             </div>
                             <div class="text-center">
-                                <h4 class="text-lg font-semibold text-gray-300 mb-2">League Factor</h4>
+                                <h4 class="text-lg font-semibold text-gray-300 mb-2" data-i18n="league_factor">League Factor</h4>
                                 <p id="reportLeagueFactor" class="text-xl font-bold text-purple-400">--</p>
                             </div>
                         </div>
@@ -964,26 +973,26 @@
 
                     <!-- Five Values Breakdown -->
                 <section class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700">
-                        <h2 class="text-2xl font-bold text-white mb-4">The 5 Fundamental Values Breakdown</h2>
+                        <h2 class="text-2xl font-bold text-white mb-4" data-i18n="five_values_breakdown">The 5 Fundamental Values Breakdown</h2>
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Marketing Value</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2" data-i18n="value_marketing">Marketing Value</h4>
                                 <p id="reportMarketingValue" class="text-lg font-bold text-green-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Sporting Value</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2" data-i18n="value_sporting">Sporting Value</h4>
                                 <p id="reportSportValue" class="text-lg font-bold text-blue-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Resale Value</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2" data-i18n="value_resale">Resale Value</h4>
                                 <p id="reportResaleValue" class="text-lg font-bold text-purple-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Similar Transfers</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2" data-i18n="value_similar">Similar Transfers</h4>
                                 <p id="reportSimilarValue" class="text-lg font-bold text-yellow-400">€--M</p>
                             </div>
                             <div class="bg-gray-700 p-4 rounded text-center">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-2">Market Value</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-2" data-i18n="market_value">Market Value</h4>
                                 <p id="reportMarketValueBreakdown" class="text-lg font-bold text-red-400">€--M</p>
                             </div>
         </div>
@@ -996,39 +1005,57 @@
         <div id="settings" class="page-content">
             <div class="flex-grow p-8">
                 <header class="flex justify-between items-center mb-8 pb-4 border-b border-gray-700">
-                    <h1 class="text-4xl font-extrabold text-white">Settings</h1>
+                    <h1 class="text-4xl font-extrabold text-white" data-i18n="title_settings">Configuración</h1>
                 </header>
 
                 <!-- Language Settings -->
                 <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                    <h2 class="text-2xl font-bold text-white mb-4">Language Settings</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4" data-i18n="settings_language">Configuración de Idioma</h2>
                     <div class="flex items-center space-x-4">
-                        <label class="text-gray-300">Language:</label>
+                        <label class="text-gray-300" data-i18n="settings_language_label">Idioma:</label>
                         <select id="languageSelect" class="bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-white focus:outline-none focus:border-green-500">
                             <option value="es" selected>Español</option>
                             <option value="en">English</option>
                         </select>
-                        <button onclick="changeLanguage()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200">
-                            Change Language
-                </button>
-        </div>
-                    <p class="text-gray-400 text-sm mt-2">Select your preferred language for the interface</p>
+                        <button onclick="changeLanguage()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-200" data-i18n="settings_change_language">
+                            Cambiar Idioma
+                        </button>
+                    </div>
+                    <p class="text-gray-400 text-sm mt-2" data-i18n="settings_language_description">Selecciona tu idioma preferido para la interfaz</p>
+                </div>
+
+                <!-- Theme Settings -->
+                <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
+                    <h2 class="text-2xl font-bold text-white mb-4" data-i18n="settings_theme">Configuración de Tema</h2>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <label class="text-gray-300 block mb-2" data-i18n="settings_theme_label">Modo de Visualización:</label>
+                            <p class="text-gray-400 text-sm" data-i18n="settings_theme_description">Selecciona entre tema oscuro o claro</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-gray-300" data-i18n="theme_dark">Oscuro</span>
+                            <button id="themeToggle" onclick="toggleTheme()" class="relative inline-flex h-8 w-14 items-center rounded-full bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                                <span id="themeToggleCircle" class="inline-block h-6 w-6 transform rounded-full bg-white transition-transform translate-x-1"></span>
+                            </button>
+                            <span class="text-gray-300" data-i18n="theme_light">Claro</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- System Settings -->
                 <div class="bg-gray-800 p-6 rounded-lg shadow-md border border-gray-700 mb-6">
-                    <h2 class="text-2xl font-bold text-white mb-4">System Settings</h2>
+                    <h2 class="text-2xl font-bold text-white mb-4" data-i18n="settings_system">Configuración del Sistema</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-300 mb-3">Display Preferences</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-3" data-i18n="settings_display">Preferencias de Visualización</h3>
                             <div class="space-y-3">
                                 <label class="flex items-center">
                                     <input type="checkbox" class="mr-3" checked>
-                                    <span class="text-gray-300">Show values in millions</span>
+                                    <span class="text-gray-300" data-i18n="settings_show_millions">Mostrar valores en millones</span>
                                 </label>
                                 <label class="flex items-center">
                                     <input type="checkbox" class="mr-3" checked>
-                                    <span class="text-gray-300">Show detailed analysis</span>
+                                    <span class="text-gray-300" data-i18n="settings_detailed_analysis">Mostrar análisis detallado</span>
                                 </label>
                             </div>
                         </div>
@@ -1334,10 +1361,8 @@
         }
 
         function updateUserLogos(username) {
-            let logoPath = '/static/logo.png'; // Default logo
+            let logoPath = '/static/logo.png';
             
-            // Map usernames to their respective logos
-            // Todos los usuarios de Talleres usan el logo de Talleres
             if (username === 'TalleresDeCordoba' || 
                 username === 'DireccionDeportivaCat' || 
                 username === 'ScoutingCat') {
@@ -1543,7 +1568,8 @@
             `;
             
             try {
-                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&roi_target=${encodeURIComponent(roiTarget)}`);
+                const currentLanguage = localStorage.getItem('language') || 'es';
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&roi_target=${encodeURIComponent(roiTarget)}&language=${currentLanguage}`);
                 const data = await response.json();
                 
                 if (data.error) {
@@ -1600,7 +1626,6 @@
                 
                 // Display analysis
                 const analysis = data.truesign_analysis;
-                console.log('Análisis recibido del backend:', analysis);
                 
                 // Calcular ROI objetivo (usar la variable roiTarget ya declarada arriba)
                 const roiTargetValue = parseFloat(roiTarget) || 30;
@@ -1610,64 +1635,25 @@
                 const precioParaROI = valorFuturo > 0 ? valorFuturo / (1 + roiTargetValue / 100) : 0;
                 const cumpleObjetivo = roiPredicho >= roiTargetValue;
                 
-                console.log('🎯 ROI Objetivo Calculado (searchPlayerFromPage):', {
-                    roiTargetValue,
-                    roiPredicho,
-                    precioMaximo,
-                    valorFuturo,
-                    precioParaROI,
-                    cumpleObjetivo
-                });
-                
-                // Construir badge de ROI
-                const roiBadge = cumpleObjetivo 
-                    ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">✅ Cumple objetivo de ROI (${roiTargetValue}%)</span>`
-                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">⚠️ No alcanza objetivo de ROI (${roiTargetValue}%)</span>`;
+                const currentLang = localStorage.getItem('language') || 'es';
+                const trans = translations[currentLang];
                 
                 analysisCard.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Precio Máximo Recomendado</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">${trans.recommended_price || 'Precio Máximo Recomendado'}</h3>
                             <p class="text-3xl font-bold text-green-400">€${formatValue(analysis.precio_maximo || analysis.fair_price)}M</p>
                         </div>
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">Confianza</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">${trans.confidence || 'Confianza'}</h3>
                             <p class="text-3xl font-bold text-blue-400">${analysis.confidence || '--'}%</p>
                         </div>
                         <div class="text-center">
-                            <h3 class="text-lg font-semibold text-gray-300 mb-2">ROI Estimado</h3>
+                            <h3 class="text-lg font-semibold text-gray-300 mb-2">${trans.roi_estimate || 'ROI Estimado'}</h3>
                             <p class="text-3xl font-bold text-purple-400">${analysis.roi_estimate?.percentage || '--'}%</p>
                         </div>
                     </div>
                     
-                    <!-- ROI Objetivo Analysis -->
-                    <div class="border-t border-gray-700 pt-4 mt-4">
-                        <h3 class="text-xl font-bold text-white mb-4">📊 Análisis de ROI Objetivo</h3>
-                        
-                        <!-- Badge de cumplimiento -->
-                        <div class="mb-4">
-                            ${roiBadge}
-                        </div>
-                        
-                        <!-- Comparación de precios -->
-                        <div class="grid grid-cols-2 gap-4 mb-4">
-                            <div class="bg-gray-700 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-300 mb-2">Precio ML</h4>
-                                <p class="text-2xl font-bold text-blue-400">€${formatValue(precioMaximo)}M</p>
-                                <p class="text-xs text-gray-400">ROI: ${roiPredicho.toFixed(1)}%</p>
-                            </div>
-                            <div class="bg-purple-900 p-4 rounded-lg">
-                                <h4 class="text-sm font-medium text-gray-300 mb-2">Para ROI ${roiTargetValue}%</h4>
-                                <p class="text-2xl font-bold text-purple-400">€${formatValue(precioParaROI)}M</p>
-                                <p class="text-xs text-gray-400">Máximo a pagar</p>
-                            </div>
-                        </div>
-                        
-                        <!-- Recomendación -->
-                        <div class="text-center bg-gray-700 p-3 rounded-lg">
-                            <p class="text-sm text-gray-300">💡 Para lograr ${roiTargetValue}% ROI, negocia máximo €${formatValue(precioParaROI)}M</p>
-                        </div>
-                    </div>
                 `;
                 
                 // Update 5 values
@@ -1678,6 +1664,10 @@
                 
                 // Update club analysis
                 updateClubAnalysis(clubName);
+                
+                // Aplicar traducciones al contenido dinámico
+                const savedLang = localStorage.getItem('language') || 'es';
+                applyTranslations(savedLang);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -1690,28 +1680,11 @@
             // Usar los 5 valores directamente del backend
             const fiveValues = analysis.five_values || {};
             
-            console.log('Debug - analysis:', analysis);
-            console.log('Debug - five_values:', fiveValues);
-            
-            console.log('🔍 NUEVO DEBUG - fiveValues before formatting:', fiveValues);
-            console.log('🔍 NUEVO DEBUG - marketing_impact value:', fiveValues.marketing_impact);
-            console.log('🔍 NUEVO DEBUG - sporting_value value:', fiveValues.sporting_value);
-            
             const marketingValue = formatValue(fiveValues.marketing_impact || 0);
             const sportValue = formatValue(fiveValues.sporting_value || 0);
             const resaleValue = formatValue(fiveValues.resale_potential || 0);
             const similarValue = formatValue(fiveValues.similar_transfers || 0);
             const marketValue = formatValue(fiveValues.market_value || 0);
-            
-            console.log('Debug - raw values:', {
-                marketing_impact: fiveValues.marketing_impact,
-                sporting_value: fiveValues.sporting_value,
-                resale_potential: fiveValues.resale_potential,
-                similar_transfers: fiveValues.similar_transfers,
-                market_value: fiveValues.market_value
-            });
-            
-            console.log('Debug - formatted values:', {marketingValue, sportValue, resaleValue, similarValue, marketValue});
             
             // Verificar que los elementos existen
             const marketingEl = document.getElementById('marketingValue2');
@@ -1720,27 +1693,15 @@
             const similarEl = document.getElementById('similarTransfersValue2');
             const marketEl = document.getElementById('marketValuesValue2');
             
-            console.log('Debug - Elements found:', {
-                marketingEl: !!marketingEl,
-                sportEl: !!sportEl,
-                resaleEl: !!resaleEl,
-                similarEl: !!similarEl,
-                marketEl: !!marketEl
-            });
-            
             if (marketingEl) marketingEl.textContent = `€${marketingValue}M`;
             if (sportEl) sportEl.textContent = `€${sportValue}M`;
             if (resaleEl) resaleEl.textContent = `€${resaleValue}M`;
             if (similarEl) similarEl.textContent = `€${similarValue}M`;
             if (marketEl) marketEl.textContent = `€${marketValue}M`;
-            
-            console.log('Debug - Elements updated directly');
         }
 
         // Update ML prediction info
         function updateMLPredictionFromPage(data) {
-            console.log('updateMLPredictionFromPage - data recibido:', data);
-            
             // Obtener datos del análisis
             const analysis = data.truesign_analysis;
             const performanceAnalysis = analysis.performance_analysis || {};
@@ -1754,15 +1715,6 @@
             
             // Usar resale_value del backend como valor futuro
             const futureValue = resaleValue > 0 ? resaleValue : marketValue * (1 + predictedChange / 100);
-            
-            console.log('Valores calculados:', {
-                predictedChange,
-                marketValue,
-                futureValue,
-                confidence,
-                resaleValue,
-                roiEstimate
-            });
             
             // Formatear valores
             const changeText = predictedChange >= 0 ? `+${predictedChange.toFixed(1)}%` : `${predictedChange.toFixed(1)}%`;
@@ -1780,13 +1732,12 @@
             
             // Mostrar análisis LLM si está disponible
             const analysisText = data.analysis_text || 'Análisis no disponible.';
-            safeUpdateElement('llmAnalysisText', analysisText);
-            
-            console.log('Elementos actualizados:', {
-                predictedChange: changeText,
-                futureValue: futureValueText,
-                confidence: confidenceText
-            });
+            const llmElement = document.getElementById('llmAnalysisText');
+            if (llmElement) {
+                llmElement.textContent = analysisText;
+                // Quitar data-i18n para que no se traduzca automáticamente
+                llmElement.removeAttribute('data-i18n');
+            }
             
             // Colorear según el cambio
             const changeElement = document.getElementById('predictedChange');
@@ -2500,6 +2451,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 TrueSign initialized');
             
+            // Las traducciones se inicializan automáticamente desde translations.js
+            
             // Initialize landing page
             checkLoginState();
             
@@ -2545,16 +2498,8 @@
                 initializeAutocompleteForPage('reportPlayerSearch', 'reportPlayerDropdown');
             }
             
-            // Load saved language preference
-            const savedLanguage = localStorage.getItem('language');
-            if (savedLanguage) {
-                document.getElementById('languageSelect').value = savedLanguage;
-                if (savedLanguage === 'en') {
-                    changeToEnglish();
-                } else {
-                    changeToSpanish();
-                }
-            }
+            // Load saved language preference - Manejado por translations.js
+            // La inicialización se hace en translations.js y en DOMContentLoaded más arriba
         });
 
         // Initialize autocomplete for different pages
@@ -2667,7 +2612,8 @@
             }
 
             try {
-                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}`);
+                const currentLanguage = localStorage.getItem('language') || 'es';
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&language=${currentLanguage}`);
                 const data = await response.json();
                 
                 if (data.error) {
@@ -2748,7 +2694,15 @@
             
             // Análisis LLM
             const llmAnalysis1 = data.analysis_text || 'Análisis no disponible.';
-            document.getElementById('player1LLMAnalysis').textContent = llmAnalysis1;
+            const llmElement1 = document.getElementById('player1LLMAnalysis');
+            if (llmElement1) {
+                llmElement1.textContent = llmAnalysis1;
+                llmElement1.removeAttribute('data-i18n');
+            }
+            
+            // Aplicar traducciones
+            const savedLang = localStorage.getItem('language') || 'es';
+            applyTranslations(savedLang);
         }
 
         async function searchPlayer2() {
@@ -2761,7 +2715,8 @@
             }
 
             try {
-                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}`);
+                const currentLanguage = localStorage.getItem('language') || 'es';
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&language=${currentLanguage}`);
                 const data = await response.json();
                 
                 if (data.error) {
@@ -2842,7 +2797,15 @@
             
             // Análisis LLM
             const llmAnalysis2 = data.analysis_text || 'Análisis no disponible.';
-            document.getElementById('player2LLMAnalysis').textContent = llmAnalysis2;
+            const llmElement2 = document.getElementById('player2LLMAnalysis');
+            if (llmElement2) {
+                llmElement2.textContent = llmAnalysis2;
+                llmElement2.removeAttribute('data-i18n');
+            }
+            
+            // Aplicar traducciones
+            const savedLang = localStorage.getItem('language') || 'es';
+            applyTranslations(savedLang);
         }
 
         function updateComparison() {
@@ -2869,7 +2832,8 @@
             }
         }
 
-        // Sistema de traducción completo
+        // Traducciones cargadas desde translations.js externo
+        /* BLOQUE DE TRADUCCIONES ELIMINADO - Se usa translations.js
         const translations = {
             es: {
                 // Navegación
@@ -3235,88 +3199,33 @@
             },
             en: {} // El inglés es la inversa de español
         };
+        FIN DEL BLOQUE ELIMINADO */
         
-        // Crear traducciones inversas para inglés
+        // Crear traducciones inversas para inglés (TAMBIÉN ELIMINADO - se hace en translations.js)
+        /*
         Object.keys(translations.es).forEach(esText => {
             const enText = translations.es[esText];
             translations.en[enText] = esText;
         });
+        */
         
         function changeLanguage(showAlert = true) {
             const languageSelect = document.getElementById('languageSelect');
             const selectedLanguage = languageSelect.value;
             
-            // Obtener diccionario de traducciones
-            const trans = selectedLanguage === 'en' ? translations.en : translations.es;
-            
-            // Traducir todos los textos visibles
-            const elementsToTranslate = document.querySelectorAll('h1, h2, h3, h4, label, button, p, span, a');
-            
-            elementsToTranslate.forEach(element => {
-                const text = element.textContent.trim();
+            // Usar función del archivo externo translations.js
+            if (typeof applyTranslations === 'function') {
+                applyTranslations(selectedLanguage);
                 
-                // Si ya tiene un atributo data-i18n, úsalo como clave
-                if (element.hasAttribute('data-i18n')) {
-                    const key = element.getAttribute('data-i18n');
-                    if (selectedLanguage === 'en') {
-                        // Volver al texto original en inglés
-                        element.textContent = key;
-                    } else if (trans[key]) {
-                        // Traducir al español
-                        element.textContent = trans[key];
-                    }
-                } else if (trans[text]) {
-                    // Si encuentra traducción, guardar el texto original como clave
-                    element.setAttribute('data-i18n', text);
-                    element.textContent = trans[text];
+                // Mostrar mensaje
+                if (showAlert) {
+                    const message = selectedLanguage === 'en' ? '✅ Language changed successfully' : '✅ Idioma cambiado exitosamente';
+                    showSuccessMessage(message);
                 }
-            });
-            
-            // Traducir placeholders
-            const inputs = document.querySelectorAll('input[placeholder], select');
-            
-            inputs.forEach(input => {
-                const placeholder = input.placeholder;
-                
-                // Si ya tiene un atributo data-i18n-placeholder, úsalo como clave
-                if (input.hasAttribute('data-i18n-placeholder')) {
-                    const key = input.getAttribute('data-i18n-placeholder');
-                    if (selectedLanguage === 'en') {
-                        // Volver al texto original en inglés
-                        input.placeholder = key;
-                    } else if (trans[key]) {
-                        // Traducir al español
-                        input.placeholder = trans[key];
-                    }
-                } else if (trans[placeholder]) {
-                    // Si encuentra traducción, guardar el placeholder original como clave
-                    input.setAttribute('data-i18n-placeholder', placeholder);
-                    input.placeholder = trans[placeholder];
-                }
-            });
-            
-            // Guardar preferencia
-            localStorage.setItem('language', selectedLanguage);
-            
-            // Mostrar mensaje solo si se solicita (cuando el usuario cambia manualmente)
-            if (showAlert) {
-                const message = selectedLanguage === 'en' ? '✅ Language changed successfully' : '✅ Idioma cambiado exitosamente';
-                alert(message);
             }
         }
-        
-        // Aplicar idioma guardado al cargar (o español por defecto)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const savedLang = localStorage.getItem('language') || 'es';
-                const select = document.getElementById('languageSelect');
-                if (select) {
-                    select.value = savedLang;
-                    changeLanguage(false); // Aplicar traducción al cargar SIN mostrar alert
-                }
-            }, 100); // Pequeño delay para asegurar que todo está cargado
-        });
 
+        /* FUNCIONES changeToEnglish y changeToSpanish ELIMINADAS - Se usa applyTranslations
         function changeToEnglish() {
             // Navigation
             document.querySelector('a[onclick="showPage(\'dashboard\')"]').innerHTML = '<i class="fas fa-tachometer-alt mr-3"></i> Dashboard';
@@ -3693,6 +3602,7 @@
                 }
             });
         }
+        FIN DE FUNCIONES ELIMINADAS */
 
         // Initialize autocomplete for compare page
         function initializeComparePage() {
@@ -3712,6 +3622,15 @@
         }
 
         function translateDynamicTexts() {
+            const currentLang = getCurrentLanguage();
+            // Usar función del archivo externo
+            if (typeof applyTranslations === 'function') {
+                applyTranslations(currentLang);
+            }
+        }
+
+        /* FUNCIONES DE TRADUCCIÓN LEGACY ELIMINADAS - Se usa applyTranslations de translations.js
+        function translateDynamicTextsOLD() {
             const currentLang = getCurrentLanguage();
             
             if (currentLang === 'en') {
@@ -3902,6 +3821,7 @@
                 });
             }
         }
+        FIN DE TRADUCCIÓN LEGACY */
 
         // Enhanced search functions with translation
         async function searchPlayerFromPageWithTranslation(pageId) {
@@ -3938,6 +3858,342 @@
             await originalSearchPlayerFromPage(pageId);
             translateDynamicTexts();
         };
+
+        // ============================================================
+        // SISTEMA DE TEMA CLARO/OSCURO
+        // ============================================================
+        
+        function toggleTheme() {
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Mostrar mensaje
+            const currentLang = localStorage.getItem('language') || 'es';
+            const message = currentLang === 'es' ? 'Tema cambiado exitosamente' : 'Theme changed successfully';
+            showSuccessMessage(message);
+        }
+        
+        function applyTheme(theme) {
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+            const circle = document.getElementById('themeToggleCircle');
+            
+            if (theme === 'light') {
+                // Modo Claro
+                body.classList.remove('bg-gray-900');
+                body.classList.add('theme-light');
+                
+                // Actualizar toggle
+                if (toggle) {
+                    toggle.classList.remove('bg-gray-600');
+                    toggle.classList.add('bg-green-500');
+                }
+                if (circle) {
+                    circle.classList.remove('translate-x-1');
+                    circle.classList.add('translate-x-7');
+                }
+            } else {
+                // Modo Oscuro
+                body.classList.remove('theme-light');
+                body.classList.add('bg-gray-900');
+                
+                // Actualizar toggle
+                if (toggle) {
+                    toggle.classList.remove('bg-green-500');
+                    toggle.classList.add('bg-gray-600');
+                }
+                if (circle) {
+                    circle.classList.remove('translate-x-7');
+                    circle.classList.add('translate-x-1');
+                }
+            }
+        }
+        
+        function showSuccessMessage(message) {
+            // Crear elemento de mensaje
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-opacity';
+            msgDiv.textContent = message;
+            document.body.appendChild(msgDiv);
+            
+            // Remover después de 2 segundos
+            setTimeout(() => {
+                msgDiv.style.opacity = '0';
+                setTimeout(() => msgDiv.remove(), 300);
+            }, 2000);
+        }
+        
+        // Inicializar tema al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme(savedTheme);
+        });
     </script>
+    
+    <!-- CSS para modo claro -->
+    <style>
+        /* TEMA CLARO - FONDO BLANCO */
+        body.theme-light {
+            background: #ffffff !important;
+            color: #1f2937 !important;
+        }
+        
+        /* Forzar fondo blanco en todos los elementos del modo claro */
+        body.theme-light,
+        body.theme-light *,
+        body.theme-light html {
+            background-color: #ffffff !important;
+        }
+        
+        /* Fondo principal */
+        body.theme-light .bg-gray-900,
+        body.theme-light .main-content,
+        body.theme-light .flex.h-screen,
+        body.theme-light #mainApp,
+        body.theme-light #landing,
+        body.theme-light .bg-gradient-to-br,
+        body.theme-light .from-gray-900,
+        body.theme-light .via-blue-900,
+        body.theme-light .to-gray-900,
+        body.theme-light .min-h-screen {
+            background: #ffffff !important;
+        }
+        
+        /* Imágenes - fondo transparente */
+        body.theme-light img,
+        body.theme-light .player-photo,
+        body.theme-light .club-logo,
+        body.theme-light .w-16.h-16,
+        body.theme-light .rounded-full,
+        body.theme-light .fas,
+        body.theme-light .fa,
+        body.theme-light i {
+            background-color: transparent !important;
+        }
+        
+        /* Contenedores principales */
+        body.theme-light .bg-gray-900,
+        body.theme-light .main-content,
+        body.theme-light .flex.h-screen,
+        body.theme-light #mainApp,
+        body.theme-light #landing,
+        body.theme-light .bg-gradient-to-br,
+        body.theme-light .from-gray-900,
+        body.theme-light .via-blue-900,
+        body.theme-light .to-gray-900,
+        body.theme-light .min-h-screen {
+            background: #f3f4f6 !important;
+        }
+        
+        /* Sidebar en modo claro */
+        body.theme-light .sidebar,
+        body.theme-light #sidebar {
+            background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
+            border-right: 1px solid #e5e7eb !important;
+            color: #111827 !important;
+        }
+        
+        /* Eliminar fondos grises del sidebar */
+        body.theme-light .sidebar *,
+        body.theme-light #sidebar *,
+        body.theme-light .nav-item,
+        body.theme-light .nav-item *,
+        body.theme-light li,
+        body.theme-light li * {
+            background-color: transparent !important;
+        }
+        
+        body.theme-light .nav-item {
+            color: #4b5563 !important;
+        }
+        
+        body.theme-light .nav-item:hover {
+            background: #f3f4f6 !important;
+            color: #111827 !important;
+        }
+        
+        body.theme-light .nav-item.active {
+            background: #dcfce7 !important;
+            color: #166534 !important;
+        }
+        
+        /* Iconos del sidebar en modo claro */
+        body.theme-light .nav-item i {
+            color: #4b5563 !important;
+        }
+        
+        body.theme-light .nav-item.active i {
+            color: #ffffff !important;
+        }
+        
+        /* Forzar transparencia en todos los elementos del sidebar */
+        body.theme-light .sidebar span,
+        body.theme-light .sidebar a,
+        body.theme-light .sidebar ul,
+        body.theme-light .sidebar li,
+        body.theme-light .sidebar div,
+        body.theme-light .sidebar p {
+            background-color: transparent !important;
+        }
+        
+        body.theme-light .nav-item:hover i {
+            color: #111827 !important;
+        }
+        
+        /* Corregir fondo del item activo del sidebar */
+        body.theme-light .nav-item.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            color: #ffffff !important;
+            border-left: 3px solid #047857 !important;
+        }
+        
+        /* Botones y iconos en modo claro */
+        body.theme-light .bg-green-500,
+        body.theme-light .bg-green-600,
+        body.theme-light button[class*="bg-green"] {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            color: #ffffff !important;
+        }
+        
+        body.theme-light .bg-green-500 i,
+        body.theme-light .bg-green-600 i,
+        body.theme-light button[class*="bg-green"] i {
+            color: #ffffff !important;
+        }
+        
+        /* Cards específicas con fondo blanco y mejor contraste */
+        body.theme-light .bg-gray-800:not(.sidebar):not(.nav-item),
+        body.theme-light .bg-gray-700:not(.sidebar):not(.nav-item) {
+            background: #ffffff !important;
+            border: 2px solid #d1d5db !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        }
+        
+        /* Secciones específicas en modo claro */
+        body.theme-light section {
+            background: transparent !important;
+        }
+        
+        /* Gradientes específicos en modo claro */
+        body.theme-light .from-gray-900,
+        body.theme-light .via-blue-900,
+        body.theme-light .to-gray-900,
+        body.theme-light .bg-gradient-to-br,
+        body.theme-light .min-h-screen {
+            background: #ffffff !important;
+        }
+        
+        /* Elementos con fondos grises - hacer transparentes */
+        body.theme-light .bg-gray-800,
+        body.theme-light .bg-gray-700,
+        body.theme-light .bg-gray-600,
+        body.theme-light .bg-gray-500,
+        body.theme-light .bg-gray-400,
+        body.theme-light .bg-gray-300,
+        body.theme-light .bg-gray-200,
+        body.theme-light .bg-gray-100,
+        body.theme-light .bg-blue-900,
+        body.theme-light .bg-blue-800,
+        body.theme-light .bg-blue-700,
+        body.theme-light .bg-blue-600,
+        body.theme-light .bg-blue-500,
+        body.theme-light .bg-blue-400,
+        body.theme-light .bg-blue-300,
+        body.theme-light .bg-blue-200,
+        body.theme-light .bg-blue-100 {
+            background: transparent !important;
+        }
+        
+        /* Elementos con fondo específico */
+        body.theme-light .bg-opacity-50,
+        body.theme-light .bg-opacity-30 {
+            background: transparent !important;
+        }
+        
+        /* Textos en modo claro - MEJOR CONTRASTE */
+        body.theme-light .text-white {
+            color: #000000 !important;
+        }
+        
+        body.theme-light .text-gray-300,
+        body.theme-light .text-gray-400 {
+            color: #374151 !important;
+        }
+        
+        /* Mejorar contraste de elementos */
+        body.theme-light h1,
+        body.theme-light h2,
+        body.theme-light h3,
+        body.theme-light p,
+        body.theme-light span,
+        body.theme-light div {
+            color: #000000 !important;
+        }
+        
+        /* Inputs en modo claro */
+        body.theme-light input,
+        body.theme-light select,
+        body.theme-light textarea {
+            background: #f9fafb !important;
+            border-color: #d1d5db !important;
+            color: #111827 !important;
+        }
+        
+        body.theme-light input::placeholder {
+            color: #9ca3af !important;
+        }
+        
+        /* Bordes en modo claro */
+        body.theme-light .border-gray-700,
+        body.theme-light .border-gray-600 {
+            border-color: #e5e7eb !important;
+        }
+        
+        /* Gradientes en modo claro - ajustar para mejor contraste */
+        body.theme-light .bg-gradient-to-r.from-blue-900 {
+            background: linear-gradient(to right, #dbeafe, #e0e7ff) !important;
+        }
+        
+        body.theme-light .bg-gradient-to-r.from-purple-900 {
+            background: linear-gradient(to right, #f3e8ff, #ddd6fe) !important;
+        }
+        
+        /* Mantener colores de acento visibles */
+        body.theme-light .text-green-400 {
+            color: #10b981 !important;
+        }
+        
+        body.theme-light .text-blue-400 {
+            color: #3b82f6 !important;
+        }
+        
+        body.theme-light .text-purple-400 {
+            color: #a855f7 !important;
+        }
+        
+        body.theme-light .text-yellow-400 {
+            color: #f59e0b !important;
+        }
+        
+        body.theme-light .text-red-400 {
+            color: #ef4444 !important;
+        }
+        
+        /* Botones en modo claro - mantener visibilidad */
+        body.theme-light .bg-green-600 {
+            background: #16a34a !important;
+        }
+        
+        body.theme-light .bg-blue-600 {
+            background: #2563eb !important;
+        }
+        
+        body.theme-light .bg-purple-600 {
+            background: #9333ea !important;
+        }
+    </style>
  </body>
 </html>

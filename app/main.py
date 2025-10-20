@@ -2127,36 +2127,59 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino, roi_
             
             cumple_objetivo = roi_percentage >= roi_target
             
+            # ============================================================
+            # LÓGICA NUEVA: AJUSTAR PRECIO Y ROI SEGÚN OBJETIVO
+            # ============================================================
             if cumple_objetivo:
-                # El jugador SUPERA el objetivo - puedes pagar más
-                print(f"      ✅ El jugador SUPERA el objetivo de ROI ({roi_percentage:.1f}% > {roi_target}%)")
-                print(f"      💡 Podrías pagar hasta €{precio_para_roi_objetivo:,.0f} y aún lograr {roi_target}% ROI")
-                recomendacion = f"Excelente inversión: ROI predicho {roi_percentage:.1f}% supera objetivo {roi_target}%. Puedes pagar hasta €{precio_para_roi_objetivo/1000000:.1f}M"
+                # ✅ El jugador SUPERA el objetivo → MANTENER precio y ROI del modelo ML
+                print(f"      ✅ El jugador SUPERA el objetivo de ROI ({roi_percentage:.1f}% ≥ {roi_target}%)")
+                print(f"      💡 Mantener precio ML: €{precio_maximo_final:,.0f} con ROI {roi_percentage:.1f}%")
+                recomendacion = f"Excelente inversión con ROI de {roi_percentage:.1f}%"
+                
+                # MANTENER VALORES ORIGINALES
+                precio_final_mostrar = precio_maximo_final
+                roi_final_mostrar = roi_percentage
+                
             else:
-                # El jugador NO alcanza el objetivo - necesitas pagar menos
+                # ⚠️ El jugador NO alcanza el objetivo → MOSTRAR precio ajustado para lograr objetivo
                 print(f"      ⚠️ El jugador NO alcanza el objetivo ({roi_percentage:.1f}% < {roi_target}%)")
-                print(f"      💡 Para lograr {roi_target}% ROI, paga máximo €{precio_para_roi_objetivo:,.0f}")
-                recomendacion = f"Para lograr {roi_target}% ROI, negocia máximo €{precio_para_roi_objetivo/1000000:.1f}M (predicho: {roi_percentage:.1f}%)"
+                print(f"      💡 AJUSTANDO: Mostrar precio para lograr {roi_target}% ROI")
+                print(f"      🔄 Precio ajustado: €{precio_para_roi_objetivo:,.0f}")
+                recomendacion = f"Para lograr {roi_target}% ROI, paga máximo €{precio_para_roi_objetivo/1000000:.1f}M"
+                
+                # AJUSTAR A PRECIO PARA ROI OBJETIVO
+                precio_final_mostrar = precio_para_roi_objetivo
+                roi_final_mostrar = roi_target  # Mostrar el ROI objetivo que se logrará
             
         else:
             precio_para_roi_objetivo = precio_maximo_final
             recomendacion = "No se pudo calcular precio para ROI objetivo"
             cumple_objetivo = False
+            precio_final_mostrar = precio_maximo_final
+            roi_final_mostrar = roi_percentage
         
-        print(f"\n✅ Análisis híbrido completado: €{precio_maximo_final:,.0f} (ROI: {roi_percentage:.1f}%)")
+        print(f"\n✅ Análisis híbrido completado:")
+        print(f"   💰 Precio a mostrar: €{precio_final_mostrar:,.0f}")
+        print(f"   📊 ROI a mostrar: {roi_final_mostrar:.1f}%")
+        print(f"   🎯 Cumple objetivo: {'✅ SÍ' if cumple_objetivo else '❌ NO (ajustado)'}")
         
         # Redondear valores para visualización limpia
-        roi_percentage_rounded = round(roi_percentage, 2)
-        precio_maximo_rounded = round(precio_maximo_final, 0)
+        roi_percentage_rounded = round(roi_percentage, 2)  # ROI original del modelo
+        precio_maximo_rounded = round(precio_maximo_final, 0)  # Precio original del modelo
         resale_value_rounded = round(resale_value, 0)
         confidence_rounded = round(confidence, 0)
         
+        # Valores ajustados para mostrar al usuario
+        precio_final_mostrar_rounded = round(precio_final_mostrar, 0)
+        roi_final_mostrar_rounded = round(roi_final_mostrar, 2)
+        
         result = {
-            'precio_maximo': precio_maximo_rounded,
+            # ===== VALORES PRINCIPALES (AJUSTADOS SEGÚN ROI OBJETIVO) =====
+            'precio_maximo': precio_final_mostrar_rounded,  # 🔄 CAMBIO: Usar precio ajustado
             'cinco_valores': cinco_valores,
-            'roi_percentage': roi_percentage_rounded,
-            'roi_estimate': {'percentage': roi_percentage_rounded},
-            'predicted_change': {'percentage': roi_percentage_rounded},
+            'roi_percentage': roi_final_mostrar_rounded,  # 🔄 CAMBIO: Usar ROI ajustado
+            'roi_estimate': {'percentage': roi_final_mostrar_rounded},  # 🔄 CAMBIO
+            'predicted_change': {'percentage': roi_final_mostrar_rounded},  # 🔄 CAMBIO
             'confidence': confidence_rounded,
             'performance_analysis': performance_analysis,
             'similar_players_count': similar_analysis.get('similar_count', 50),
@@ -2167,37 +2190,52 @@ def format_hybrid_result_for_app(hybrid_result, jugador_info, club_destino, roi_
             'value_change_confidence': hybrid_result.get('value_change_confidence', confidence),
             'ultimate_confidence': hybrid_result.get('ultimate_confidence', confidence),
             
-            # ===== NUEVOS CAMPOS PARA ROI OBJETIVO =====
+            # ===== CAMPOS INFORMATIVOS (VALORES ORIGINALES DEL MODELO) =====
+            'precio_ml_original': float(precio_maximo_rounded),  # Precio del modelo ML sin ajustar
+            'roi_ml_original': float(roi_percentage_rounded),    # ROI del modelo ML sin ajustar
+            
+            # ===== CAMPOS PARA ROI OBJETIVO =====
             'roi_target': float(roi_target),
             'precio_para_roi_objetivo': float(round(precio_para_roi_objetivo, 0)),
             'cumple_roi_objetivo': 1 if cumple_objetivo else 0,
             'roi_analysis': {
-                'roi_predicho': float(roi_percentage_rounded),
+                'roi_predicho': float(roi_percentage_rounded),  # ROI original del modelo
                 'roi_objetivo': float(roi_target),
-                'cumple_objetivo': 1 if cumple_objetivo else 0,  # Convertir a int explícitamente
-                'precio_ml': float(precio_maximo_rounded),
+                'cumple_objetivo': 1 if cumple_objetivo else 0,
+                'precio_ml': float(precio_maximo_rounded),  # Precio original del modelo
                 'precio_para_objetivo': float(round(precio_para_roi_objetivo, 0)),
+                'precio_mostrado': float(precio_final_mostrar_rounded),  # 🆕 Precio que se muestra al usuario
+                'roi_mostrado': float(roi_final_mostrar_rounded),  # 🆕 ROI que se muestra al usuario
+                'fue_ajustado': 0 if cumple_objetivo else 1,  # 🆕 Indica si se ajustó el precio
                 'diferencia': float(round(abs(precio_maximo_final - precio_para_roi_objetivo), 0)),
                 'diferencia_porcentual': float(round(abs(diferencia_porcentual), 2)) if 'diferencia_porcentual' in locals() else 0.0,
-                'recomendacion': str(recomendacion),  # Asegurar que sea string
+                'recomendacion': str(recomendacion),
                 'valor_futuro': float(resale_value_rounded)
             }
         }
         
-        print(f"\n📤 OUTPUT FINAL para frontend (VALORES REDONDEADOS):")
-        print(f"   💰 precio_maximo: €{result['precio_maximo']:,.0f} (sin decimales)")
-        print(f"   📊 roi_percentage: {result['roi_percentage']}% (máx 2 decimales)")
-        print(f"   ✅ confidence: {result['confidence']}% (sin decimales)")
-        print(f"   📈 resale_value: €{result['resale_value']:,.0f} (sin decimales)")
+        print(f"\n📤 OUTPUT FINAL para frontend:")
+        print(f"   💰 precio_maximo (MOSTRADO): €{result['precio_maximo']:,.0f}")
+        print(f"   📊 roi_percentage (MOSTRADO): {result['roi_percentage']}%")
+        if result['roi_analysis']['fue_ajustado']:
+            print(f"   ⚙️  VALORES AJUSTADOS POR ROI OBJETIVO")
+            print(f"      - Precio ML original: €{result['precio_ml_original']:,.0f}")
+            print(f"      - ROI ML original: {result['roi_ml_original']}%")
+            print(f"      - Ajustado a: €{result['precio_maximo']:,.0f} para lograr {result['roi_target']}% ROI")
+        else:
+            print(f"   ✅ USANDO VALORES DEL MODELO ML (supera objetivo)")
+        print(f"   📈 resale_value: €{result['resale_value']:,.0f}")
+        print(f"   ✅ confidence: {result['confidence']}%")
         print(f"   🏆 club_multiplier: {result['club_multiplier']}x")
-        print(f"   💎 cinco_valores (sin decimales):")
+        print(f"   💎 cinco_valores:")
         for key, value in result['cinco_valores'].items():
             print(f"      - {key}: €{value:,.0f}")
-        print(f"\n   🎯 ROI OBJETIVO - NUEVOS CAMPOS:")
-        print(f"      - ROI objetivo: {result['roi_target']}%")
-        print(f"      - Precio para ROI objetivo: €{result['precio_para_roi_objetivo']:,.0f}")
-        print(f"      - Cumple objetivo: {'✅ SÍ' if result['cumple_roi_objetivo'] else '❌ NO'}")
-        print(f"      - Recomendación: {result['roi_analysis']['recomendacion']}")
+        print(f"\n   🎯 ANÁLISIS ROI OBJETIVO:")
+        print(f"      - ROI objetivo usuario: {result['roi_target']}%")
+        print(f"      - ROI predicho ML: {result['roi_analysis']['roi_predicho']}%")
+        print(f"      - Cumple objetivo: {'✅ SÍ' if result['cumple_roi_objetivo'] else '❌ NO (ajustado)'}")
+        print(f"      - Fue ajustado: {'✅ SÍ' if result['roi_analysis']['fue_ajustado'] else '❌ NO'}")
+        print(f"      - 💡 {result['roi_analysis']['recomendacion']}")
         print("="*70 + "\n")
         
         return result
@@ -3323,6 +3361,7 @@ def search_player():
         player_name = request.args.get('name', '').strip()
         club_name = request.args.get('club', 'Real Madrid').strip()
         roi_target = request.args.get('roi_target', '30').strip()
+        language = request.args.get('language', 'es').strip()  # 🌍 Recibir idioma
         
         # Validacion de entrada
         if not player_name:
@@ -3587,7 +3626,8 @@ def search_player():
             'performance_analysis': analisis.get('performance_analysis', {}),
             'confidence': clean_for_json(analisis.get('confidence', 85)),
             'model_used': analisis.get('model_used', 'Hybrid ROI Model'),
-            'resale_value': clean_for_json(analisis.get('resale_value', analisis.get('predicted_future_value', 0)))  # Agregar resale_value
+            'resale_value': clean_for_json(analisis.get('resale_value', analisis.get('predicted_future_value', 0))),
+            'roi_analysis': analisis.get('roi_analysis', {})  # 🆕 Agregar roi_analysis
         }
         
         # Incluir analisis de rendimiento si esta disponible
@@ -3677,7 +3717,8 @@ def search_player():
                 player_data=player_data,
                 analysis_data=truesign_analysis,
                 club_destino=club_name,
-                api_key=os.getenv('GROQ_API_KEY')
+                api_key=os.getenv('GROQ_API_KEY'),
+                language=language  # 🌍 Pasar idioma al LLM
             )
             print(f"✅ Análisis LLM generado: {len(analysis_text)} caracteres")
         except Exception as e:
