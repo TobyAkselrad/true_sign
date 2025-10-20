@@ -133,5 +133,170 @@
       "photo_url": "https://img.a.transfermarkt.technology/portrait/header/406625-1695024988.jpg?lm=1"
     },
     "timestamp": "2025-10-13T16:26:29.393950"
+  },
+  "jordi alba": {
+    "data": {
+      "name": "Jordi Alba",
+      "current_club": "Miami",
+      "market_value": 1500000,
+      "age": 36,
+      "position": "Defender",
+      "height": "1,70 m",
+      "foot": "Left",
+      "nationality": "United States",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/69751-1740774854.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T13:56:38.462486"
+  },
+  "franco mastantuono": {
+    "data": {
+      "name": "Franco Mastantuono",
+      "current_club": "Real Madrid",
+      "market_value": 50000000,
+      "age": 18,
+      "position": "Winger",
+      "height": "1,77 m",
+      "foot": "Right",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/1057316-1755702696.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T14:17:03.791790"
+  },
+  "michal skvarka": {
+    "data": {
+      "name": "Michal Skvarka",
+      "current_club": "MSK Zilina B",
+      "market_value": 250000,
+      "age": 33,
+      "position": "Midfielder",
+      "height": "1,75 m",
+      "foot": "Both",
+      "nationality": "Slovakia",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/104977-1742565504.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T14:54:58.950699"
+  },
+  "pietro messina": {
+    "data": {
+      "name": "Pietro Messina",
+      "current_club": "Palermo U19",
+      "market_value": null,
+      "age": 19,
+      "position": "Forward",
+      "height": null,
+      "foot": "Right",
+      "nationality": "Italy",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/default.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T15:29:58.344006"
+  },
+  "jordan mendes": {
+    "data": {
+      "name": "Jordan Mendes",
+      "current_club": "Rodez AF",
+      "market_value": 500000,
+      "age": 21,
+      "position": "Midfielder",
+      "height": "1,80 m",
+      "foot": "Right",
+      "nationality": "France",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/1138156-1742299746.png?lm=1"
+    },
+    "timestamp": "2025-10-20T15:34:07.877404"
+  },
+  "sebastien caleiras": {
+    "data": {
+      "name": "Sébastien Caleiras",
+      "current_club": "Roche/Novillars",
+      "market_value": null,
+      "age": 41,
+      "position": "Goalkeeper",
+      "height": "1,81 m",
+      "foot": null,
+      "nationality": "France",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/default.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T15:37:49.527501"
+  },
+  "leonel monti": {
+    "data": {
+      "name": "Leonel Monti",
+      "current_club": "Racing (Cba)",
+      "market_value": 50000,
+      "age": 23,
+      "position": "Midfielder",
+      "height": "1,73 m",
+      "foot": "Right",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/default.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T15:45:08.720349"
+  },
+  "ghaylen chaalali": {
+    "data": {
+      "name": "Ghaylen Chaalali",
+      "current_club": "Al-Ahli",
+      "market_value": 600000,
+      "age": 31,
+      "position": "Midfielder",
+      "height": "1,79 m",
+      "foot": "Right",
+      "nationality": "Libya",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/346776-1566986149.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T15:52:25.540269"
+  },
+  "klaudio slebodnik": {
+    "data": {
+      "name": "Klaudio Slebodnik",
+      "current_club": "Spisska N. Ves",
+      "market_value": null,
+      "age": 20,
+      "position": "Attack                        \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPlayer data \n\n\n\n\n\n\n\n                Facts and data            \n\nName in home country",
+      "height": null,
+      "foot": null,
+      "nationality": "Slovakia",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/default.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T16:04:09.274076"
+  },
+  "Jordi Alba": {
+    "data": {
+      "name": "Jordi Alba",
+      "current_club": "Miami",
+      "market_value": 1500000,
+      "age": 36,
+      "position": "Defender",
+      "height": "1,70 m",
+      "foot": "Left",
+      "nationality": "United States",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/69751-1740774854.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T16:13:17.676594"
+  },
+  "Jordi Altena": {
+    "data": {
+      "name": "Jordi Altena",
+      "current_club": "RKC Waalwijk",
+      "market_value": 300000,
+      "age": 21,
+      "position": "Defender",
+      "height": null,
+      "foot": "Right",
+      "nationality": "Netherlands",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/607173-1704798511.jpg?lm=1"
+    },
+    "timestamp": "2025-10-20T16:17:34.563638"
   }
 }
