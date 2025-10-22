@@ -64,6 +64,12 @@ class MaximumPricePredictor2025:
         
         # 1. Edad extrema (-10%)
         age = player_data.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+        
         if age < 18 or age > 33:
             penalties += 10
             print(f"   ⚠️ Edad extrema ({age} años): -10% confianza")
@@ -103,6 +109,12 @@ class MaximumPricePredictor2025:
     def _prepare_features(self, player_data):
         """Preparar 14 features del jugador"""
         age = player_data.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         height = player_data.get('height', 180)
         market_value = player_data.get('market_value', 1000000)
         position = player_data.get('position', 'Attack')

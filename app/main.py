@@ -326,6 +326,12 @@ def generate_ml_performance_analysis(player_data, club_name):
         
         # Obtener datos del jugador
         age = player_data.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         position = str(player_data.get('position', '')).lower()
         nationality = str(player_data.get('nationality', '')).lower()
         market_value = player_data.get('market_value', 0) or 0
@@ -552,6 +558,12 @@ def prepare_ml_features(player_data, similar_transfers):
     """Preparar caracteristicas para modelos ML"""
     try:
         age = player_data.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         position = str(player_data.get('position', '')).lower()
         nationality = str(player_data.get('nationality', '')).lower()
         market_value = player_data.get('market_value', 0)
@@ -606,6 +618,12 @@ def prepare_ml_features(player_data, similar_transfers):
 def generate_fallback_analysis(player_data):
     """Analisis de fallback cuando no hay datos suficientes"""
     age = player_data.get('age', 25)
+    # Convertir edad a entero si es posible, sino usar valor por defecto
+    try:
+        age = int(float(age)) if age != "--" and age is not None else 25
+    except (ValueError, TypeError):
+        age = 25
+        
     position = str(player_data.get('position', '')).lower()
     nationality = str(player_data.get('nationality', '')).lower()
     
@@ -738,6 +756,11 @@ def analyze_similar_players_performance(player_info, club_destino):
             position = str(player_info.get('position', '')).lower()
             nationality = str(player_info.get('nationality', '')).lower()
             age = player_info.get('age', 25)
+            # Convertir edad a entero si es posible, sino usar valor por defecto
+            try:
+                age = int(float(age)) if age != "--" and age is not None else 25
+            except (ValueError, TypeError):
+                age = 25
             
             # Mapear posiciones a espanol
             position_text = {
@@ -905,6 +928,12 @@ def analyze_similar_players_performance(player_info, club_destino):
         
         # Calcular tiempo de adaptacion basado en edad
         age = player_info.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         if age <= 22:
             adaptation_months = 4
         elif age <= 25:
@@ -956,6 +985,11 @@ def analyze_similar_players_performance(player_info, club_destino):
         position = str(player_info.get('position', '')).lower()
         nationality = str(player_info.get('nationality', '')).lower()
         age = player_info.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
         
         # Mapear posiciones a espanol
         position_text = {
@@ -1611,6 +1645,12 @@ def calculate_recent_performance(player_data, nombre_jugador):
     try:
         # Simular rendimiento basado en posición y edad
         age = player_data.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         position = player_data.get('position', 'Midfielder').lower()
         
         base_performance = 0.7
@@ -1666,6 +1706,11 @@ def get_injuries_last_2_years(player_data, nombre_jugador):
     """Obtener número de lesiones en los últimos 2 años"""
     try:
         age = player_data.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
         
         # Jóvenes tienen menos lesiones, veteranos más
         if age <= 22:
@@ -1842,6 +1887,12 @@ def calcular_precio_perfecto_definitivo(nombre_jugador, club_destino, jugador_in
         # Formatear resultado para el frontend
         market_value = jugador_info.get('market_value', 0)
         age = jugador_info.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         position = jugador_info.get('position', 'Midfielder')
         
         # Calcular factores dinámicos
@@ -2256,6 +2307,12 @@ def calcular_precio_inteligente(jugador_info, club_destino):
         # Obtener datos del jugador
         position = jugador_info.get('position', 'Midfielder')
         age = jugador_info.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         nationality = jugador_info.get('citizenship', 'Unknown')
         player_id = jugador_info.get('player_id')
         
@@ -2518,10 +2575,11 @@ def calcular_precio_basico(jugador_info, club_destino):
     
     position = jugador_info.get('position', 'Midfielder')
     age = jugador_info.get('age', 25)
-    
-    # Calcular edad si no esta disponible
-    if age == '--' or age is None:
-        age = 25  # Valor por defecto
+    # Convertir edad a entero si es posible, sino usar valor por defecto
+    try:
+        age = int(float(age)) if age != "--" and age is not None else 25
+    except (ValueError, TypeError):
+        age = 25
     
     precio_base = base_values.get(position, 30000000)
     
@@ -3574,9 +3632,25 @@ def search_player():
             
             # Para campos numéricos
             if is_numeric:
-                if cleaned == 0 and value != 0:
+                # Asegurar que cleaned sea un número
+                try:
+                    if isinstance(cleaned, str):
+                        # Si es string, intentar convertir a número
+                        cleaned = float(cleaned)
+                    elif not isinstance(cleaned, (int, float)):
+                        # Si no es número ni string, usar default
+                        return default
+                    
+                    # Verificar que sea un número válido
+                    if pd.isna(cleaned) or str(cleaned).lower() in ['--', 'nan', 'none', '', 'null']:
+                        return default
+                    
+                    if cleaned == 0 and value != 0:
+                        return default
+                    
+                    return cleaned
+                except (ValueError, TypeError):
                     return default
-                return cleaned
             
             # Para campos de texto
             if not cleaned or str(cleaned).lower() in ['--', 'nan', 'none', '', 'null', '0']:
@@ -3669,6 +3743,12 @@ def search_player():
                     'england': 'ingles', 'portugal': 'portugues', 'netherlands': 'holandes'
                 }.get(nationality, nationality.title())
                 
+                # Asegurar que age sea un entero
+                try:
+                    age = int(float(age)) if age != "--" and age is not None else 25
+                except (ValueError, TypeError):
+                    age = 25
+                
                 if age <= 22:
                     adaptation_months = 4
                 elif age <= 25:
@@ -3682,6 +3762,12 @@ def search_player():
             
             if 'adaptation_months' not in perf_analysis:
                 age = player_data.get('age', 25)
+                # Asegurar que age sea un entero
+                try:
+                    age = int(float(age)) if age != "--" and age is not None else 25
+                except (ValueError, TypeError):
+                    age = 25
+                    
                 if age <= 22:
                     perf_analysis['adaptation_months'] = 4
                 elif age <= 25:
@@ -3738,7 +3824,10 @@ def search_player():
         })
         
     except Exception as e:
+        import traceback
         print(f" Error en busqueda: {e}")
+        print(f" Traceback completo:")
+        traceback.print_exc()
         return jsonify({
             'error': f'Error interno del servidor: {str(e)}',
             'error_code': 'INTERNAL_SERVER_ERROR',
@@ -3963,8 +4052,15 @@ def is_user_expired(username):
         # Convertir string a fecha
         if isinstance(expires_at, str):
             expiry_date = datetime.strptime(expires_at, '%Y-%m-%d').date()
-        else:
+        elif isinstance(expires_at, date):
             expiry_date = expires_at
+        else:
+            # Si no es string ni date, intentar convertir
+            try:
+                expiry_date = datetime.strptime(str(expires_at), '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                # Si no se puede convertir, asumir que no expira
+                return False, None
         
         # Comparar con fecha actual
         today = date.today()
@@ -4008,8 +4104,20 @@ def get_user_expiry_info(username):
     try:
         if isinstance(expires_at, str):
             expiry_date = datetime.strptime(expires_at, '%Y-%m-%d').date()
-        else:
+        elif isinstance(expires_at, date):
             expiry_date = expires_at
+        else:
+            # Si no es string ni date, intentar convertir
+            try:
+                expiry_date = datetime.strptime(str(expires_at), '%Y-%m-%d').date()
+            except (ValueError, TypeError):
+                # Si no se puede convertir, asumir que no expira
+                return {
+                    'expired': False,
+                    'message': 'Acceso permanente',
+                    'expires_at': expires_at,
+                    'days_left': None
+                }
         
         today = date.today()
         days_left = (expiry_date - today).days
