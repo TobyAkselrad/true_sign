@@ -1266,6 +1266,15 @@
                         localStorage.setItem('username', username);
                         localStorage.setItem('userRole', data.user.role);
                         
+                        // Store expiry info if available
+                        if (data.expiry_info) {
+                            localStorage.setItem('expiryInfo', JSON.stringify(data.expiry_info));
+                            // Show expiry warning if needed
+                            if (data.expiry_info.message && data.expiry_info.message.includes('⚠️')) {
+                                showNotification(data.expiry_info.message, 'warning');
+                            }
+                        }
+                        
                         // Update user display
                         updateUserDisplay(username);
                         
@@ -1275,8 +1284,13 @@
                         // Show success message
                         showNotification('Login exitoso! Bienvenido ' + username, 'success');
                     } else {
-                        // Show secure error message without revealing credentials
-                        showNotification('Usuario o contraseña incorrectos. Verifica tus credenciales e intenta nuevamente.', 'error');
+                        // Check if user has expired
+                        if (data.expired) {
+                            showNotification(data.message, 'error');
+                        } else {
+                            // Show secure error message without revealing credentials
+                            showNotification('Usuario o contraseña incorrectos. Verifica tus credenciales e intenta nuevamente.', 'error');
+                        }
                     }
                 })
                 .catch(error => {
@@ -1297,6 +1311,15 @@
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('username');
             localStorage.removeItem('userRole');
+            
+            // Clear expiry info
+            localStorage.removeItem('expiryInfo');
+            
+            // Hide any expiry banner
+            const expiryBanner = document.getElementById('expiryBanner');
+            if (expiryBanner) {
+                expiryBanner.style.display = 'none';
+            }
             
             // Reset logos to default
             resetLogosToDefault();
@@ -1358,6 +1381,62 @@
             
             // Update logos based on user
             updateUserLogos(username);
+            
+            // Check and display expiry information
+            checkAndDisplayExpiryInfo();
+        }
+
+        function checkAndDisplayExpiryInfo() {
+            const expiryInfo = localStorage.getItem('expiryInfo');
+            if (expiryInfo) {
+                try {
+                    const info = JSON.parse(expiryInfo);
+                    
+                    // Create or update expiry banner
+                    let expiryBanner = document.getElementById('expiryBanner');
+                    if (!expiryBanner) {
+                        expiryBanner = document.createElement('div');
+                        expiryBanner.id = 'expiryBanner';
+                        expiryBanner.className = 'fixed top-0 left-0 right-0 z-50 p-4 text-center text-white font-medium';
+                        
+                        // Insert at the beginning of mainApp
+                        const mainApp = document.getElementById('mainApp');
+                        if (mainApp) {
+                            mainApp.insertBefore(expiryBanner, mainApp.firstChild);
+                        }
+                    }
+                    
+                    // Update banner content based on expiry status
+                    if (info.expired) {
+                        expiryBanner.className = 'fixed top-0 left-0 right-0 z-50 p-4 text-center text-white font-medium bg-red-600';
+                        expiryBanner.innerHTML = `
+                            <div class="flex items-center justify-center space-x-2">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>${info.message}</span>
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="ml-4 text-white hover:text-gray-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else if (info.message && info.message.includes('⚠️')) {
+                        expiryBanner.className = 'fixed top-0 left-0 right-0 z-50 p-4 text-center text-white font-medium bg-yellow-600';
+                        expiryBanner.innerHTML = `
+                            <div class="flex items-center justify-center space-x-2">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>${info.message}</span>
+                                <button onclick="this.parentElement.parentElement.style.display='none'" class="ml-4 text-white hover:text-gray-200">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else {
+                        // Hide banner if no warning needed
+                        expiryBanner.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.error('Error parsing expiry info:', e);
+                }
+            }
         }
 
         function updateUserLogos(username) {
@@ -1371,6 +1450,8 @@
                 logoPath = '/static/nacional.png';
             } else if (username === "VelezSarsfield") {
                 logoPath = '/static/velez.png';
+            } else if (username === "Independiente") {
+                logoPath = '/static/independiente.png';
             } 
             
             // Update all logo elements
@@ -1500,16 +1581,59 @@
             const isLoggedIn = localStorage.getItem('isLoggedIn');
             if (isLoggedIn === 'true') {
                 const username = localStorage.getItem('username');
-                document.getElementById('landing').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
                 
-                // Update user display if username exists
+                // Check if user has expired before showing the app
                 if (username) {
-                    updateUserDisplay(username);
+                    checkUserExpiryOnLoad(username);
+                } else {
+                    // No username, logout
+                    logout();
                 }
             } else {
                 document.getElementById('landing').classList.remove('hidden');
                 document.getElementById('mainApp').classList.add('hidden');
+            }
+        }
+
+        async function checkUserExpiryOnLoad(username) {
+            try {
+                const response = await fetch('/user/check-expiry', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username: username })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    // Update stored expiry info
+                    localStorage.setItem('expiryInfo', JSON.stringify(data.expiry_info));
+                    
+                    // Check if user has expired
+                    if (data.expiry_info.expired) {
+                        // User has expired, logout and show message
+                        logout();
+                        showNotification(data.expiry_info.message, 'error');
+                        return;
+                    }
+                    
+                    // User is still valid, show the app
+                    document.getElementById('landing').classList.add('hidden');
+                    document.getElementById('mainApp').classList.remove('hidden');
+                    
+                    // Update user display
+                    updateUserDisplay(username);
+                } else {
+                    // Error checking expiry, logout for security
+                    logout();
+                    showNotification('Error verificando acceso. Por favor, inicia sesión nuevamente.', 'error');
+                }
+            } catch (error) {
+                console.error('Error checking expiry on load:', error);
+                // On error, logout for security
+                logout();
+                showNotification('Error de conexión. Por favor, inicia sesión nuevamente.', 'error');
             }
         }
 
@@ -2500,7 +2624,49 @@
             
             // Load saved language preference - Manejado por translations.js
             // La inicialización se hace en translations.js y en DOMContentLoaded más arriba
+            
+            // Initialize periodic expiry check
+            initializeExpiryCheck();
         });
+
+        // Initialize periodic expiry check
+        function initializeExpiryCheck() {
+            // Check expiry status every 5 minutes
+            setInterval(async () => {
+                const username = localStorage.getItem('username');
+                const isLoggedIn = localStorage.getItem('isLoggedIn');
+                
+                if (isLoggedIn === 'true' && username) {
+                    try {
+                        const response = await fetch('/user/check-expiry', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ username: username })
+                        });
+                        
+                        const data = await response.json();
+                        if (data.success) {
+                            // Update stored expiry info
+                            localStorage.setItem('expiryInfo', JSON.stringify(data.expiry_info));
+                            
+                            // Check if user has expired
+                            if (data.expiry_info.expired) {
+                                // User has expired, logout and show message
+                                logout();
+                                showNotification(data.expiry_info.message, 'error');
+                            } else {
+                                // Update display with new expiry info
+                                checkAndDisplayExpiryInfo();
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error checking expiry:', error);
+                    }
+                }
+            }, 5 * 60 * 1000); // 5 minutes
+        }
 
         // Initialize autocomplete for different pages
         function initializeAutocompleteForPage(inputId, dropdownId) {
