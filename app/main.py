@@ -17,6 +17,7 @@ import unicodedata
 import re
 import random
 import uuid
+from datetime import datetime, date
 from flask import Flask, render_template, request, jsonify, send_file
 
 # Modelos sintéticos eliminados - usando solo modelos reales
@@ -3866,7 +3867,8 @@ users_db = {
         'role': 'admin',
         'email': 'admin@truesign.com',
         'created_at': '2024-01-01',
-        'icon': '👑'
+        'icon': '👑',
+        'expires_at': None  # Admin no expira
     },
     'ariel': {
         'username': 'ariel',
@@ -3874,7 +3876,8 @@ users_db = {
         'role': 'user',
         'email': 'ariel@truesign.com',
         'created_at': '2025-10-17',
-        'icon': '👑'
+        'icon': '👑',
+        'expires_at': None  # Ariel no expira
     },
     'TalleresDeCordoba': {
         'username': 'TalleresDeCordoba',
@@ -3882,7 +3885,8 @@ users_db = {
         'role': 'user',
         'email': 'talleres@truesign.com',
         'created_at': '2024-10-03',
-        'icon': '⚽'
+        'icon': '⚽',
+        'expires_at': None  # Talleres no expira
     },
     'NacionalDeUruguay': {
         'username': 'NacionalDeUruguay',
@@ -3890,7 +3894,8 @@ users_db = {
         'role': 'user',
         'email': 'nacional@truesign.com',
         'created_at': '2024-10-03',
-        'icon': '🏆'
+        'icon': '🏆',
+        'expires_at': None  # Nacional no expira
     },
     'DireccionDeportivaCat': {
         'username': 'DireccionDeportivaCat',
@@ -3898,7 +3903,8 @@ users_db = {
         'role': 'user',
         'email': 'direccion@talleres.com.ar',
         'created_at': '2024-10-09',
-        'icon': '🎯'
+        'icon': '🎯',
+        'expires_at': None  # DireccionDeportivaCat no expira
     },
     'VelezSarsfield': {
         'username': 'VelezSarsfield',
@@ -3907,7 +3913,18 @@ users_db = {
         'email': 'velez@truesign.com',
         'created_at': '2024-10-16',
         'icon': '⚡',
-        'logo': '/static/velez.png'
+        'logo': '/static/velez.png',
+        'expires_at': None  # Velez no expira
+    },
+    'Independiente': {
+        'username': 'Independiente',
+        'password': 'independiente2025',
+        'role': 'user',
+        'email': 'independiente@truesign.com',
+        'created_at': '2024-10-16',
+        'icon': '⚡',
+        'logo': '/static/independiente.png',
+        'expires_at': '2025-10-29'  # Expira el miércoles que viene (15 de enero de 2025)
     },
     'ScoutingCat': {
         'username': 'ScoutingCat',
@@ -3915,7 +3932,8 @@ users_db = {
         'role': 'user',
         'email': 'scouting@talleres.com.ar',
         'created_at': '2024-10-09',
-        'icon': '🔍'
+        'icon': '🔍',
+        'expires_at': None  # ScoutingCat no expira
     }
 }
 
@@ -3926,6 +3944,106 @@ admin_sessions = {}
 login_attempts = {}
 MAX_LOGIN_ATTEMPTS = 5
 LOGIN_LOCKOUT_TIME = 300  # 5 minutos en segundos
+
+# ==================== FUNCIONES DE UTILIDAD PARA EXPIRACIÓN ====================
+
+def is_user_expired(username):
+    """Verificar si un usuario ha expirado"""
+    if username not in users_db:
+        return True, "Usuario no encontrado"
+    
+    user = users_db[username]
+    expires_at = user.get('expires_at')
+    
+    # Si no tiene fecha de expiración, no expira
+    if expires_at is None:
+        return False, None
+    
+    try:
+        # Convertir string a fecha
+        if isinstance(expires_at, str):
+            expiry_date = datetime.strptime(expires_at, '%Y-%m-%d').date()
+        else:
+            expiry_date = expires_at
+        
+        # Comparar con fecha actual
+        today = date.today()
+        
+        if today > expiry_date:
+            return True, f"Tu versión de prueba expiró el {expires_at}. Contacta al administrador para renovar tu acceso."
+        elif today == expiry_date:
+            return False, f"⚠️ Tu versión de prueba expira HOY ({expires_at}). Contacta al administrador para renovar."
+        else:
+            days_left = (expiry_date - today).days
+            if days_left <= 3:
+                return False, f"⚠️ Tu versión de prueba expira en {days_left} días ({expires_at})."
+            else:
+                return False, None
+                
+    except Exception as e:
+        print(f"Error verificando expiración para {username}: {e}")
+        return False, None
+
+def get_user_expiry_info(username):
+    """Obtener información detallada sobre la expiración del usuario"""
+    if username not in users_db:
+        return {
+            'expired': True,
+            'message': 'Usuario no encontrado',
+            'expires_at': None,
+            'days_left': 0
+        }
+    
+    user = users_db[username]
+    expires_at = user.get('expires_at')
+    
+    if expires_at is None:
+        return {
+            'expired': False,
+            'message': 'Acceso permanente',
+            'expires_at': None,
+            'days_left': None
+        }
+    
+    try:
+        if isinstance(expires_at, str):
+            expiry_date = datetime.strptime(expires_at, '%Y-%m-%d').date()
+        else:
+            expiry_date = expires_at
+        
+        today = date.today()
+        days_left = (expiry_date - today).days
+        
+        if days_left < 0:
+            return {
+                'expired': True,
+                'message': f'Tu versión de prueba expiró el {expires_at}',
+                'expires_at': expires_at,
+                'days_left': 0
+            }
+        elif days_left == 0:
+            return {
+                'expired': False,
+                'message': f'Tu versión de prueba expira HOY',
+                'expires_at': expires_at,
+                'days_left': 0
+            }
+        else:
+            return {
+                'expired': False,
+                'message': f'Tu versión de prueba expira en {days_left} días',
+                'expires_at': expires_at,
+                'days_left': days_left
+            }
+            
+    except Exception as e:
+        print(f"Error obteniendo info de expiración para {username}: {e}")
+        return {
+            'expired': False,
+            'message': 'Error verificando expiración',
+            'expires_at': expires_at,
+            'days_left': None
+        }
 
 @app.route('/admin/login', methods=['GET'])
 def admin_login_page():
@@ -4207,9 +4325,21 @@ def user_login():
         
         # Verificar credenciales en la base de datos de usuarios
         if username in users_db and users_db[username]['password'] == password:
+            # Verificar si el usuario ha expirado
+            expired, expiry_message = is_user_expired(username)
+            if expired:
+                return jsonify({
+                    'success': False,
+                    'message': expiry_message,
+                    'expired': True
+                }), 403
+            
             # Login exitoso - limpiar intentos fallidos
             if client_ip in login_attempts:
                 del login_attempts[client_ip]
+            
+            # Obtener información de expiración para mostrar al usuario
+            expiry_info = get_user_expiry_info(username)
             
             return jsonify({
                 'success': True,
@@ -4218,7 +4348,8 @@ def user_login():
                     'username': username,
                     'role': users_db[username]['role'],
                     'email': users_db[username]['email']
-                }
+                },
+                'expiry_info': expiry_info
             })
         else:
             # Login fallido - incrementar contador de intentos
@@ -4239,6 +4370,41 @@ def user_login():
     except Exception as e:
         # Log del error para debugging pero no exponer detalles al usuario
         print(f"Error en login: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': 'Error interno del servidor'
+        }), 500
+
+@app.route('/user/check-expiry', methods=['POST'])
+def check_user_expiry():
+    """Verificar estado de expiración de un usuario"""
+    try:
+        data = request.get_json()
+        username = data.get('username', '').strip()
+        
+        if not username:
+            return jsonify({
+                'success': False,
+                'message': 'Nombre de usuario requerido'
+            }), 400
+        
+        # Verificar si el usuario existe
+        if username not in users_db:
+            return jsonify({
+                'success': False,
+                'message': 'Usuario no encontrado'
+            }), 404
+        
+        # Obtener información de expiración
+        expiry_info = get_user_expiry_info(username)
+        
+        return jsonify({
+            'success': True,
+            'expiry_info': expiry_info
+        })
+        
+    except Exception as e:
+        print(f"Error verificando expiración: {str(e)}")
         return jsonify({
             'success': False,
             'message': 'Error interno del servidor'
