@@ -41,6 +41,12 @@ class LLMAnalyzer:
             # Preparar datos para el prompt
             player_name = player_data.get('name', 'el jugador')
             age = player_data.get('age', 25)
+            # Convertir edad a entero si es posible, sino usar valor por defecto
+            try:
+                age = int(float(age)) if age != "--" and age is not None else 25
+            except (ValueError, TypeError):
+                age = 25
+                
             position = player_data.get('position', 'jugador')
             current_club = player_data.get('club', 'su club actual')
             market_value = player_data.get('market_value', 0) / 1_000_000
@@ -176,6 +182,12 @@ Análisis:"""
         
         player_name = player_data.get('name', 'El jugador' if language == 'es' else 'The player')
         age = player_data.get('age', 25)
+        # Convertir edad a entero si es posible, sino usar valor por defecto
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+            
         position = player_data.get('position', 'jugador' if language == 'es' else 'player')
         roi_percentage = analysis_data.get('roi_estimate', {}).get('percentage', 0)
         fair_price = analysis_data.get('fair_price', 0) / 1_000_000
