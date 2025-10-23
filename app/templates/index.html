@@ -4023,6 +4023,37 @@
             translateDynamicTexts();
         }
 
+        // Funciones del sistema de estado
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('/system/status');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const status = await response.json();
+                console.log('System Status:', status);
+                return status;
+            } catch (error) {
+                console.error('Error fetching system status:', error);
+                return { models: { hybrid_model: { available: false } } };
+            }
+        }
+
+        async function testSystemModel() {
+            try {
+                const response = await fetch('/system/test-model');
+                const result = await response.json();
+                if (response.ok) {
+                    alert(`Test de Modelo Híbrido Exitoso:\nPrecio Máximo: €${formatValue(result.test_result.maximum_price)}M\nROI: ${result.test_result.roi_percentage.toFixed(2)}%\nConfianza: ${result.test_result.confidence}%`);
+                } else {
+                    alert(`Error en Test de Modelo Híbrido:\n${result.message}\n${result.traceback || ''}`);
+                }
+            } catch (error) {
+                console.error('Error testing system model:', error);
+                alert('Error al intentar probar el modelo híbrido.');
+            }
+        }
+
         // Override the original search functions to include translation
         const originalSearchPlayer1 = searchPlayer1;
         const originalSearchPlayer2 = searchPlayer2;
