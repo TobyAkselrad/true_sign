@@ -1270,8 +1270,68 @@ def check_cache_for_market_value(player_name):
         print(f"Error verificando cache: {e}")
         return 0
 
+def buscar_con_api_externa(nombre):
+    """Buscar jugador usando API externa de Transfermarkt"""
+    try:
+        import requests
+        import urllib.parse
+        
+        # URL de la API externa
+        api_url = "https://transfermarkt-api.fly.dev/players/search/"
+        encoded_name = urllib.parse.quote(nombre)
+        full_url = f"{api_url}{encoded_name}?page_number=1"
+        
+        print(f"🌐 Consultando API externa: {full_url}")
+        
+        # Headers para evitar bloqueos
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.9',
+        }
+        
+        response = requests.get(full_url, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            results = data.get('results', [])
+            
+            if results:
+                # Tomar el primer resultado (el más relevante)
+                player_data = results[0]
+                
+                # Convertir datos de la API al formato del modelo
+                model_data = {
+                    'player_id': player_data.get('id', ''),
+                    'player_name': player_data.get('name', nombre),
+                    'current_club_name': player_data.get('club', {}).get('name', ''),
+                    'market_value': player_data.get('marketValue', 0),
+                    'age': player_data.get('age', 25),
+                    'position': player_data.get('position', ''),
+                    'height': 180,  # Valor por defecto
+                    'foot': 'right',  # Valor por defecto
+                    'nationality': ', '.join(player_data.get('nationalities', [])),
+                    'citizenship': ', '.join(player_data.get('nationalities', [])),
+                    'contract_until': '',
+                    'photo_url': '',
+                    'source': 'external_api'
+                }
+                
+                print(f"✅ Encontrado con API externa: {model_data['player_name']} (€{model_data['market_value']:,.0f})")
+                return model_data
+            else:
+                print(f"⚠️ API externa: No se encontraron resultados para {nombre}")
+                return None
+        else:
+            print(f"⚠️ API externa: Error {response.status_code}")
+            return None
+            
+    except Exception as e:
+        print(f"⚠️ Error en API externa: {e}")
+        return None
+
 def buscar_jugador_robusto(nombre):
-    """Buscar jugador con sistema robusto: cache -> scraper -> API -> BD local"""
+    """Buscar jugador con sistema robusto: cache -> API externa -> scraper -> API local -> BD local"""
     print(f"🔍 Búsqueda robusta para: {nombre}")
     
     # 1. VERIFICAR CACHE PRIMERO (para evitar scraping innecesario)
@@ -1286,7 +1346,17 @@ def buscar_jugador_robusto(nombre):
         }
         return cache_data
     
-    # 2. Intentar con sistema híbrido (scraper + cache)
+    # 2. Intentar con API externa (alternativa al scraping)
+    try:
+        print("🌐 Intentando con API externa...")
+        api_data = buscar_con_api_externa(nombre)
+        if api_data is not None:
+            print(f"✅ Encontrado con API externa: {api_data.get('player_name', 'N/A')}")
+            return api_data
+    except Exception as e:
+        print(f"⚠️ Error en API externa: {e}")
+    
+    # 3. Intentar con sistema híbrido (scraper + cache)
     try:
         if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
             print("📡 Intentando con sistema híbrido...")
@@ -1299,7 +1369,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en sistema híbrido: {e}")
     
-    # 3. Intentar con TransfermarktScraper directo
+    # 4. Intentar con TransfermarktScraper directo
     try:
         print("🌐 Intentando con TransfermarktScraper...")
         from scraping.transfermarkt_scraper import TransfermarktScraper
@@ -1313,7 +1383,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en TransfermarktScraper: {e}")
     
-    # 4. Intentar con API de jugadores conocidos (simulada)
+    # 5. Intentar con API de jugadores conocidos (simulada)
     try:
         print("🔌 Intentando con API de jugadores...")
         api_data = buscar_con_api(nombre)
@@ -1323,7 +1393,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en API: {e}")
     
-    # 5. Fallback a BD local
+    # 6. Fallback a BD local
     try:
         print("💾 Intentando con BD local...")
         local_data = buscar_jugador(nombre)
@@ -1333,7 +1403,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
     
-    # 6. Crear datos simulados como último recurso
+    # 7. Crear datos simulados como último recurso
     print("🎭 Creando datos simulados...")
     return crear_datos_simulados(nombre)
 
