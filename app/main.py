@@ -1248,11 +1248,45 @@ def get_default_club_multiplier(club_name):
     # Por defecto
     return 1.0
 
+def check_cache_for_market_value(player_name):
+    """Verificar si hay valor de mercado en el cache para un jugador"""
+    try:
+        import json
+        with open('transfermarkt_cache.json', 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
+        
+        # Buscar en el cache por nombre normalizado
+        normalized_name = normalize_name(player_name)
+        cache_key = normalized_name.lower()
+        
+        if cache_key in cache_data:
+            player_data = cache_data[cache_key].get('data', {})
+            market_value = player_data.get('market_value', 0)
+            if market_value and market_value > 0:
+                return market_value
+        
+        return 0
+    except Exception as e:
+        print(f"Error verificando cache: {e}")
+        return 0
+
 def buscar_jugador_robusto(nombre):
-    """Buscar jugador con sistema robusto: scraper -> API -> BD local"""
+    """Buscar jugador con sistema robusto: cache -> scraper -> API -> BD local"""
     print(f"🔍 Búsqueda robusta para: {nombre}")
     
-    # 1. Intentar con sistema híbrido (scraper + cache)
+    # 1. VERIFICAR CACHE PRIMERO (para evitar scraping innecesario)
+    cache_market_value = check_cache_for_market_value(nombre)
+    if cache_market_value and cache_market_value > 0:
+        print(f"💰 Valor encontrado en cache: €{cache_market_value:,.0f}")
+        # Crear datos básicos del cache
+        cache_data = {
+            'player_name': nombre,
+            'market_value': cache_market_value,
+            'source': 'cache'
+        }
+        return cache_data
+    
+    # 2. Intentar con sistema híbrido (scraper + cache)
     try:
         if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
             print("📡 Intentando con sistema híbrido...")
@@ -1265,7 +1299,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en sistema híbrido: {e}")
     
-    # 2. Intentar con TransfermarktScraper directo
+    # 3. Intentar con TransfermarktScraper directo
     try:
         print("🌐 Intentando con TransfermarktScraper...")
         from scraping.transfermarkt_scraper import TransfermarktScraper
@@ -1279,7 +1313,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en TransfermarktScraper: {e}")
     
-    # 3. Intentar con API de jugadores conocidos (simulada)
+    # 4. Intentar con API de jugadores conocidos (simulada)
     try:
         print("🔌 Intentando con API de jugadores...")
         api_data = buscar_con_api(nombre)
@@ -1289,7 +1323,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en API: {e}")
     
-    # 4. Fallback a BD local
+    # 5. Fallback a BD local
     try:
         print("💾 Intentando con BD local...")
         local_data = buscar_jugador(nombre)
@@ -1299,7 +1333,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
     
-    # 5. Crear datos simulados como último recurso
+    # 6. Crear datos simulados como último recurso
     print("🎭 Creando datos simulados...")
     return crear_datos_simulados(nombre)
 
@@ -5031,12 +5065,19 @@ def convert_scraped_to_model_format(scraped_data):
         
         player_id = f"scraped_{hash(player_name.lower())}"
         
+        # PRIORIZAR CACHE: Si hay datos del cache con valor de mercado, usarlos
+        cache_market_value = scraped_data.get('market_value', 0)
+        if cache_market_value and cache_market_value > 0:
+            print(f"💰 Usando valor de mercado del cache: €{cache_market_value:,.0f}")
+        else:
+            print(f"⚠️ Valor de mercado del cache no disponible: {cache_market_value}")
+        
         # Mapear datos del scraper al formato del modelo
         model_data = {
             'player_id': player_id,
             'player_name': player_name,
             'current_club_name': scraped_data.get('current_club', '') or scraped_data.get('current_club_name', ''),
-            'market_value': scraped_data.get('market_value', 0),
+            'market_value': cache_market_value,  # Usar valor del cache
             'age': scraped_data.get('age', 0),
             'position': scraped_data.get('position', ''),
             'height': convert_height_to_cm(scraped_data.get('height', '')),
