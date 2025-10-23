@@ -32,17 +32,34 @@ except ImportError as e:
     hybrid_roi_model_real = None
 
 # INICIALIZAR MODELO HÍBRIDO GLOBAL INMEDIATAMENTE (para producción)
+print("=" * 80)
+print("🚀 INICIALIZACIÓN DEL SISTEMA - LOGS DETALLADOS")
+print("=" * 80)
 print("🔄 Inicializando modelo híbrido global...")
+print(f"📊 hybrid_roi_model_real: {type(hybrid_roi_model_real)}")
+print(f"📊 hybrid_roi_model_real is None: {hybrid_roi_model_real is None}")
+
 try:
     if hybrid_roi_model_real is not None:
         hybrid_model = hybrid_roi_model_real
         print("✅ Modelo híbrido global inicializado correctamente")
+        print(f"✅ hybrid_model asignado: {type(hybrid_model)}")
+        print(f"✅ hybrid_model is None: {hybrid_model is None}")
     else:
         hybrid_model = None
-        print("❌ Modelo híbrido global no disponible")
+        print("❌ Modelo híbrido global no disponible - hybrid_roi_model_real es None")
 except Exception as e:
     print(f"❌ Error inicializando modelo híbrido global: {e}")
+    import traceback
+    traceback.print_exc()
     hybrid_model = None
+
+print("=" * 80)
+print("📊 ESTADO FINAL DE INICIALIZACIÓN:")
+print(f"   - hybrid_roi_model_real: {type(hybrid_roi_model_real)}")
+print(f"   - hybrid_model: {type(hybrid_model)}")
+print(f"   - hybrid_model is None: {hybrid_model is None}")
+print("=" * 80)
 
 from datetime import datetime
 
@@ -1995,18 +2012,35 @@ def calcular_precio_perfecto_fallback(nombre_jugador, club_destino, jugador_info
 
 def calcular_precio_maximo(jugador_info, club_destino):
     """Calcular precio maximo usando el modelo híbrido ROI"""
+    print("\n" + "=" * 80)
+    print("🎯 CALCULAR_PRECIO_MAXIMO - LOGS DETALLADOS")
+    print("=" * 80)
+    print(f"📥 INPUT:")
+    print(f"   - Jugador: {jugador_info.get('player_name', 'N/A')}")
+    print(f"   - Club: {club_destino}")
+    print(f"📊 ESTADO DE MODELOS:")
+    print(f"   - hybrid_model: {type(hybrid_model)}")
+    print(f"   - hybrid_model is None: {hybrid_model is None}")
+    print(f"   - hybrid_roi_model_real: {type(hybrid_roi_model_real)}")
+    print(f"   - hybrid_roi_model_real is None: {hybrid_roi_model_real is None}")
+    
     try:
         # Usar modelo híbrido si está disponible
         if hybrid_model is not None:
-            print(f"🎯 Usando modelo híbrido ROI para: {jugador_info.get('player_name', 'N/A')}")
+            print(f"✅ Usando modelo híbrido ROI para: {jugador_info.get('player_name', 'N/A')}")
+            print(f"✅ Tipo de modelo: {type(hybrid_model)}")
             return calcular_precio_maximo_hibrido(jugador_info, club_destino)
         
         # Error si no hay modelo híbrido REAL
         print(f"❌ Modelo híbrido REAL no disponible")
+        print(f"❌ hybrid_model is None: {hybrid_model is None}")
+        print(f"❌ hybrid_roi_model_real is None: {hybrid_roi_model_real is None}")
         raise Exception("❌ SISTEMA REQUIERE MODELOS REALES")
         
     except Exception as e:
         print(f"❌ Error en modelo híbrido: {e}")
+        import traceback
+        traceback.print_exc()
         raise Exception(f"❌ SISTEMA REQUIERE MODELOS REALES: {e}")
 
 # Función eliminada - usando directamente hybrid_roi_model_real
@@ -3902,6 +3936,93 @@ def calculate_roi():
         return jsonify({
             'error': f'Error calculando ROI: {str(e)}'
         })
+
+@app.route('/system/status')
+def system_status():
+    """Endpoint para monitorear el estado del sistema"""
+    try:
+        status = {
+            'timestamp': datetime.now().isoformat(),
+            'system_status': 'running',
+            'models': {
+                'hybrid_roi_model_real': {
+                    'type': str(type(hybrid_roi_model_real)),
+                    'is_none': hybrid_roi_model_real is None,
+                    'available': hybrid_roi_model_real is not None
+                },
+                'hybrid_model': {
+                    'type': str(type(hybrid_model)),
+                    'is_none': hybrid_model is None,
+                    'available': hybrid_model is not None
+                }
+            },
+            'initialization_logs': [
+                "🚀 Sistema iniciado",
+                f"📊 hybrid_roi_model_real: {type(hybrid_roi_model_real)}",
+                f"📊 hybrid_model: {type(hybrid_model)}",
+                f"✅ Modelo híbrido disponible: {hybrid_model is not None}"
+            ]
+        }
+        
+        return jsonify(status)
+        
+    except Exception as e:
+        return jsonify({
+            'timestamp': datetime.now().isoformat(),
+            'system_status': 'error',
+            'error': str(e),
+            'models': {
+                'hybrid_roi_model_real': {'error': 'No disponible'},
+                'hybrid_model': {'error': 'No disponible'}
+            }
+        }), 500
+
+@app.route('/system/test-model')
+def test_model():
+    """Endpoint para probar el modelo híbrido con datos de prueba"""
+    try:
+        if hybrid_model is None:
+            return jsonify({
+                'status': 'error',
+                'message': 'Modelo híbrido no disponible',
+                'hybrid_model': str(type(hybrid_model)),
+                'hybrid_model_is_none': hybrid_model is None
+            }), 500
+        
+        # Datos de prueba
+        test_player = {
+            'player_name': 'Test Player',
+            'age': 25,
+            'market_value': 1000000,
+            'position': 'Midfielder',
+            'height': 180,
+            'foot': 'Right',
+            'nationality': 'Brazil'
+        }
+        
+        test_club = {'name': 'Test Club'}
+        
+        print(f"🧪 Probando modelo híbrido con datos de prueba...")
+        result = hybrid_model.calculate_hybrid_analysis(test_player, test_club)
+        
+        return jsonify({
+            'status': 'success',
+            'message': 'Modelo híbrido funcionando correctamente',
+            'test_result': {
+                'maximum_price': result.get('maximum_price', 0),
+                'roi_percentage': result.get('roi_percentage', 0),
+                'confidence': result.get('confidence', 0),
+                'model_used': result.get('model_used', 'N/A')
+            }
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({
+            'status': 'error',
+            'message': f'Error probando modelo: {str(e)}',
+            'traceback': traceback.format_exc()
+        }), 500
 
 @app.route('/dashboard/stats')
 def dashboard_stats():
