@@ -31,6 +31,19 @@ except ImportError as e:
     print(f"❌ No se pudo importar modelo híbrido 2025: {e}")
     hybrid_roi_model_real = None
 
+# INICIALIZAR MODELO HÍBRIDO GLOBAL INMEDIATAMENTE (para producción)
+print("🔄 Inicializando modelo híbrido global...")
+try:
+    if hybrid_roi_model_real is not None:
+        hybrid_model = hybrid_roi_model_real
+        print("✅ Modelo híbrido global inicializado correctamente")
+    else:
+        hybrid_model = None
+        print("❌ Modelo híbrido global no disponible")
+except Exception as e:
+    print(f"❌ Error inicializando modelo híbrido global: {e}")
+    hybrid_model = None
+
 from datetime import datetime
 
 # Configurar Flask
@@ -4936,29 +4949,15 @@ def convert_scraped_to_model_format(scraped_data):
         return None
 
 def initialize_hybrid_model():
-    """Inicializar el modelo híbrido ROI"""
+    """Inicializar el modelo híbrido ROI (ya inicializado globalmente)"""
     global hybrid_model
     
-    try:
-        print("🔄 Inicializando modelo híbrido ROI 2025...")
-        from models.predictors.hybrid_roi_model_2025 import HybridROIModel2025
-        
-        # Asignar directamente a la variable global (MODELO 2025)
-        hybrid_model = HybridROIModel2025()
-        
-        if hybrid_model is not None:
-            print("✅ Modelo híbrido ROI 2025 inicializado correctamente")
-            print(f"✅ Variable global hybrid_model: {type(hybrid_model)}")
-            # Verificar que la asignación global funcionó
-            print(f"✅ Verificación global: {type(hybrid_model) if hybrid_model else 'None'}")
-            return True
-        else:
-            print("❌ Modelo híbrido no se pudo inicializar")
-            hybrid_model = None
-            return False
-    except Exception as e:
-        print(f"❌ Error inicializando modelo híbrido: {e}")
-        hybrid_model = None
+    # El modelo ya se inicializó globalmente, solo verificar
+    if hybrid_model is not None:
+        print("✅ Modelo híbrido ROI ya inicializado globalmente")
+        return True
+    else:
+        print("❌ Modelo híbrido ROI no disponible")
         return False
 
 def initialize_hybrid_searcher():
