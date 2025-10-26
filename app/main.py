@@ -1410,10 +1410,39 @@ def buscar_con_api_externa(nombre):
         return None
 
 def buscar_jugador_robusto(nombre):
-    """Buscar jugador con sistema robusto: cache -> BD local -> estimación"""
+    """Buscar jugador con sistema robusto: API -> Scraper -> Cache -> Error si no hay valor"""
     print(f"🔍 Búsqueda robusta para: {nombre}")
     
-    # 1. VERIFICAR CACHE PRIMERO (más rápido y confiable)
+    # 1. Intentar con API externa PRIMERO
+    api_failed = False
+    try:
+        print("🌐 Intentando con API externa (3 reintentos)...")
+        api_data = buscar_con_api_externa(nombre)
+        if api_data is not None and api_data.get('market_value', 0) > 0:
+            print(f"✅ Encontrado con API externa: {api_data.get('player_name', 'N/A')} (€{api_data.get('market_value', 0):,.0f})")
+            return api_data
+        else:
+            api_failed = True
+    except Exception as e:
+        print(f"⚠️ Error en API externa: {e}")
+        api_failed = True
+    
+    # 2. Intentar con Scraper si API falló
+    global hybrid_searcher
+    if api_failed:
+        try:
+            print("📡 API externa falló, intentando scraping...")
+            if hybrid_searcher is not None:
+                normalized_name = normalize_name(nombre)
+                scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
+                
+                if scraped_data is not None and scraped_data.get('market_value', 0) > 0:
+                    print(f"✅ Encontrado con scraping: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
+                    return convert_scraped_to_model_format(scraped_data)
+        except Exception as e:
+            print(f"⚠️ Error en scraping: {e}")
+    
+    # 3. VERIFICAR CACHE como backup
     cache_market_value = check_cache_for_market_value(nombre)
     if cache_market_value and cache_market_value > 0:
         print(f"💰 Valor encontrado en cache: €{cache_market_value:,.0f}")
@@ -1425,52 +1454,18 @@ def buscar_jugador_robusto(nombre):
         }
         return cache_data
     
-    # 2. Intentar con BD local
+    # 4. Intentar con BD local SOLO si tiene market_value
     try:
-        print("💾 Intentando con BD local...")
+        print("💾 Intentando con BD local (solo si tiene market_value)...")
         local_data = buscar_jugador(nombre)
-        if local_data is not None:
-            # Si tiene market_value válido, usarlo
-            if local_data.get('market_value', 0) > 0:
-                print(f"✅ Encontrado en BD local: {local_data.get('player_name', 'N/A')}")
-                return local_data
-            else:
-                # Estimar market_value basado en edad, posición, club
-                print(f"⚠️ BD local no tiene market_value, usando estimación...")
-                estimated_value = estimate_market_value_from_profile(local_data)
-                local_data['market_value'] = estimated_value
-                local_data['source'] = 'estimated'
-                print(f"✅ Estimado market_value: €{estimated_value:,.0f}")
-                return local_data
+        if local_data is not None and local_data.get('market_value', 0) > 0:
+            print(f"✅ Encontrado en BD local: {local_data.get('player_name', 'N/A')}")
+            return local_data
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
     
-    # 3. Intentar con API externa (solo si todo falló, puede fallar con 403)
-    api_failed = False
-    try:
-        print("🌐 Intentando con API externa (puede fallar con 403)...")
-        api_data = buscar_con_api_externa(nombre)
-        if api_data is not None and api_data.get('market_value', 0) > 0:
-            print(f"✅ Encontrado con API externa: {api_data.get('player_name', 'N/A')} (€{api_data.get('market_value', 0):,.0f})")
-            return api_data
-        else:
-            api_failed = True
-    except Exception as e:
-        print(f"⚠️ Error en API externa: {e}")
-        api_failed = True
-    
-    # 4. Intentar con API de jugadores conocidos (simulada) como último recurso
-    try:
-        print("🔌 Intentando con API de jugadores conocidos...")
-        api_data = buscar_con_api(nombre)
-        if api_data is not None:
-            print(f"✅ Encontrado con API: {api_data.get('player_name', 'N/A')}")
-            return api_data
-    except Exception as e:
-        print(f"⚠️ Error en API: {e}")
-    
-    # 5. Retornar None si no se encuentra nada
-    print("❌ No se encontraron datos para el jugador")
+    # 5. NO HAY VALOR - Retornar error
+    print("❌ No se encontró market_value para el jugador en ninguna fuente")
     return None
 
 def buscar_con_api(nombre):
