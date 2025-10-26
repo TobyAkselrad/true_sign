@@ -1270,6 +1270,46 @@ def check_cache_for_market_value(player_name):
         print(f"Error verificando cache: {e}")
         return 0
 
+def estimate_market_value_from_profile(player_data):
+    """Estimar valor de mercado basado en perfil del jugador"""
+    try:
+        # Obtener edad
+        age = player_data.get('age', 25)
+        try:
+            age = int(float(age)) if age != "--" and age is not None else 25
+        except (ValueError, TypeError):
+            age = 25
+        
+        # Obtener posición
+        position = str(player_data.get('position', '')).lower()
+        
+        # Estimar valor basado en edad (jugadores jóvenes tienen más valor)
+        if age < 21:
+            base_value = 5_000_000  # 5M para promesas
+        elif age < 24:
+            base_value = 8_000_000  # 8M para jóvenes talento
+        elif age < 27:
+            base_value = 10_000_000  # 10M para jugadores en su mejor momento
+        elif age < 30:
+            base_value = 7_000_000  # 7M para jugadores maduros
+        else:
+            base_value = 3_000_000  # 3M para jugadores mayores de 30
+        
+        # Ajustar por posición (delanteros y mediocampistas ofensivos valen más)
+        if 'forward' in position or 'striker' in position or 'winger' in position:
+            base_value *= 1.3
+        elif 'attacking' in position or 'midfield' in position and 'defensive' not in position:
+            base_value *= 1.2
+        elif 'defender' in position or 'defensive' in position:
+            base_value *= 0.9
+        elif 'goalkeeper' in position:
+            base_value *= 0.7
+        
+        return int(base_value)
+    except Exception as e:
+        print(f"Error estimando valor: {e}")
+        return 5_000_000  # Valor por defecto: 5M
+
 def buscar_con_api_externa(nombre):
     """Buscar jugador usando API externa de Transfermarkt"""
     try:
@@ -1356,15 +1396,23 @@ def buscar_jugador_robusto(nombre):
         }
         return cache_data
     
-    # 3. Fallback a BD local - SOLO devolver si tiene market_value > 0
+    # 3. Fallback a BD local - Si no tiene market_value válido, usar estimación
     try:
         print("💾 Intentando con BD local...")
         local_data = buscar_jugador(nombre)
-        if local_data is not None and local_data.get('market_value', 0) > 0:
-            print(f"✅ Encontrado en BD local: {local_data.get('player_name', 'N/A')}")
-            return local_data
-        else:
-            print(f"⚠️ BD local no tiene market_value válido")
+        if local_data is not None:
+            # Si tiene market_value válido, usarlo
+            if local_data.get('market_value', 0) > 0:
+                print(f"✅ Encontrado en BD local: {local_data.get('player_name', 'N/A')}")
+                return local_data
+            else:
+                # Estimar market_value basado en edad, posición, club
+                print(f"⚠️ BD local no tiene market_value, usando estimación...")
+                estimated_value = estimate_market_value_from_profile(local_data)
+                local_data['market_value'] = estimated_value
+                local_data['source'] = 'estimated'
+                print(f"✅ Estimado market_value: €{estimated_value:,.0f}")
+                return local_data
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
     
