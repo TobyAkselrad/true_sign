@@ -2053,8 +2053,15 @@ def calcular_precio_perfecto_definitivo(nombre_jugador, club_destino, jugador_in
     print(f"=== USANDO MODELO HÍBRIDO 2025 PARA REPORTE ===")
     print(f"Jugador: {nombre_jugador} -> Club: {club_destino}")
     
+    global hybrid_model
+    global hybrid_roi_model_real
+    
     try:
         # Usar el modelo híbrido 2025 global
+        if hybrid_model is None and hybrid_roi_model_real is not None:
+            hybrid_model = hybrid_roi_model_real
+            print("✅ Modelo híbrido asignado desde hybrid_roi_model_real")
+        
         if hybrid_model is None:
             print("❌ Modelo híbrido no disponible")
             return None
