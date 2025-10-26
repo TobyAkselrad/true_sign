@@ -1356,30 +1356,19 @@ def buscar_jugador_robusto(nombre):
         }
         return cache_data
     
-    # 3. Fallback a BD local
+    # 3. Fallback a BD local - SOLO devolver si tiene market_value > 0
     try:
         print("💾 Intentando con BD local...")
         local_data = buscar_jugador(nombre)
-        if local_data is not None:
+        if local_data is not None and local_data.get('market_value', 0) > 0:
             print(f"✅ Encontrado en BD local: {local_data.get('player_name', 'N/A')}")
             return local_data
+        else:
+            print(f"⚠️ BD local no tiene market_value válido")
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
     
-    # 4. Intentar con sistema híbrido (scraper + cache) - SOLO SI TODO LO ANTERIOR FALLA
-    try:
-        if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
-            print("📡 Intentando con sistema híbrido (última opción)...")
-            normalized_name = normalize_name(nombre)
-            scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=False)  # NO usar scraping en producción
-            
-            if scraped_data is not None:
-                print(f"✅ Encontrado con sistema híbrido: {scraped_data.get('player_name', 'N/A')}")
-                return convert_scraped_to_model_format(scraped_data)
-    except Exception as e:
-        print(f"⚠️ Error en sistema híbrido: {e}")
-    
-    # 5. Intentar con API de jugadores conocidos (simulada)
+    # 4. Intentar con API de jugadores conocidos (simulada)
     try:
         print("🔌 Intentando con API de jugadores...")
         api_data = buscar_con_api(nombre)
@@ -1389,9 +1378,9 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en API: {e}")
     
-    # 6. Crear datos simulados como último recurso
-    print("🎭 Creando datos simulados...")
-    return crear_datos_simulados(nombre)
+    # 5. NO USAR SCRAPING EN PRODUCCIÓN - Retornar None si no se encuentra nada
+    print("❌ No se encontraron datos para el jugador")
+    return None
 
 def buscar_con_api(nombre):
     """Buscar jugador con API simulada de jugadores conocidos"""
