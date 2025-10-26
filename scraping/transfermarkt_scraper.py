@@ -77,7 +77,13 @@ class TransfermarktScraper:
             logger.info(f"Cache hit para {player_name}")
             return self.cache[player_name]['data']
         
-        # 2. Scraping en vivo
+        # 2. Rotar User-Agent antes de hacer request
+        self.rotate_user_agent()
+        
+        # 3. Esperar un poco para evitar rate limiting
+        time.sleep(random.uniform(1, 3))
+        
+        # 4. Scraping en vivo
         try:
             logger.info(f"Scraping en vivo para {player_name}")
             player_data = self._scrape_player_data(player_name)
@@ -96,35 +102,63 @@ class TransfermarktScraper:
             return None
     
     def _scrape_player_data(self, player_name):
-        """Scraping real de Transfermarkt"""
-        # Rotar User-Agent
-        self.rotate_user_agent()
-        
-        # Delay aleatorio
-        time.sleep(random.uniform(1, 3))
-        
+        """Scraping real de Transfermarkt con reintentos"""
         # URL de búsqueda
         search_url = f"https://www.transfermarkt.com/schnellsuche/ergebnis/schnellsuche?query={quote(player_name)}"
         
-        try:
-            response = self.session.get(search_url, timeout=10)
-            response.raise_for_status()
-            
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Buscar enlace del jugador
-            player_link = self._find_player_link(soup, player_name)
-            if not player_link:
-                # Intentar búsqueda alternativa con diferentes variaciones del nombre
-                logger.info(f"Intentando búsqueda alternativa para {player_name}")
-                return self._try_alternative_search(player_name)
-            
-            # Scraping de datos del jugador
-            return self._scrape_player_details(player_link)
-            
-        except Exception as e:
-            logger.error(f"Error en request: {e}")
-            return None
+        # Intentar hasta 3 veces con diferentes User-Agents
+        for attempt in range(3):
+            try:
+                # Rotar User-Agent en cada intento
+                self.rotate_user_agent()
+                
+                # Delay aleatorio
+                time.sleep(random.uniform(1, 3))
+                
+                logger.info(f"Intento {attempt + 1}/3 para {player_name}")
+                
+                response = self.session.get(search_url, timeout=10)
+                
+                # Si es 403, esperar más y reintentar
+                if response.status_code == 403:
+                    logger.warning(f"403 en intento {attempt + 1}/3")
+                    if attempt < 2:  # No es el último intento
+                        wait_time = (attempt + 1) * 3  # 3s, 6s, 9s
+                        logger.info(f"Esperando {wait_time}s antes del siguiente intento...")
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        logger.error(f"3 intentos fallidos con 403 para {player_name}")
+                        return None
+                
+                response.raise_for_status()
+                
+                soup = BeautifulSoup(response.content, 'html.parser')
+                
+                # Buscar enlace del jugador
+                player_link = self._find_player_link(soup, player_name)
+                if not player_link:
+                    # Intentar búsqueda alternativa con diferentes variaciones del nombre
+                    logger.info(f"Intentando búsqueda alternativa para {player_name}")
+                    return self._try_alternative_search(player_name)
+                
+                # Scraping de datos del jugador
+                return self._scrape_player_details(player_link)
+                
+            except requests.exceptions.RequestException as e:
+                logger.error(f"Error en request (intento {attempt + 1}/3): {e}")
+                if attempt < 2:  # No es el último intento
+                    time.sleep((attempt + 1) * 2)  # 2s, 4s
+                    continue
+                return None
+            except Exception as e:
+                logger.error(f"Error en scraping: {e}")
+                if attempt < 2:
+                    time.sleep((attempt + 1) * 2)
+                    continue
+                return None
+        
+        return None
     
     def _try_alternative_search(self, player_name):
         """Intentar búsqueda alternativa con variaciones del nombre"""
