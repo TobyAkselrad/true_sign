@@ -54,11 +54,25 @@ except Exception as e:
     traceback.print_exc()
     hybrid_model = None
 
+# INICIALIZAR SISTEMA HÍBRIDO DE BÚSQUEDA (SCRAPER)
+print("=" * 80)
+print("🔄 INICIALIZANDO SISTEMA HÍBRIDO DE BÚSQUEDA")
+print("=" * 80)
+try:
+    from scraping.hybrid_player_search import HybridPlayerSearch
+    hybrid_searcher = HybridPlayerSearch()
+    print("✅ Sistema híbrido de búsqueda inicializado")
+except Exception as e:
+    print(f"⚠️ Sistema híbrido no disponible: {e}")
+    hybrid_searcher = None
+
 print("=" * 80)
 print("📊 ESTADO FINAL DE INICIALIZACIÓN:")
 print(f"   - hybrid_roi_model_real: {type(hybrid_roi_model_real)}")
 print(f"   - hybrid_model: {type(hybrid_model)}")
 print(f"   - hybrid_model is None: {hybrid_model is None}")
+print(f"   - hybrid_searcher: {type(hybrid_searcher)}")
+print(f"   - hybrid_searcher is None: {hybrid_searcher is None}")
 print("=" * 80)
 
 from datetime import datetime
@@ -74,6 +88,7 @@ club_data = None
 club_multipliers = None
 value_predictor = None  # Modelo de predicción de cambio de valor (Singleton)
 hybrid_model = None     # Modelo híbrido (Singleton)
+hybrid_searcher = None # Sistema híbrido de búsqueda (scraper)
 
 # Sistema de cache mejorado
 cache = {
@@ -1395,18 +1410,22 @@ def buscar_con_api_externa(nombre):
         return None
 
 def buscar_jugador_robusto(nombre):
-    """Buscar jugador con sistema robusto: API externa -> cache -> BD local"""
+    """Buscar jugador con sistema robusto: API externa -> cache -> scraping -> BD local"""
     print(f"🔍 Búsqueda robusta para: {nombre}")
     
     # 1. Intentar con API externa PRIMERO (más confiable en producción)
+    api_failed = False
     try:
         print("🌐 Intentando con API externa...")
         api_data = buscar_con_api_externa(nombre)
         if api_data is not None and api_data.get('market_value', 0) > 0:
             print(f"✅ Encontrado con API externa: {api_data.get('player_name', 'N/A')} (€{api_data.get('market_value', 0):,.0f})")
             return api_data
+        else:
+            api_failed = True
     except Exception as e:
         print(f"⚠️ Error en API externa: {e}")
+        api_failed = True
     
     # 2. VERIFICAR CACHE (para evitar scraping innecesario)
     cache_market_value = check_cache_for_market_value(nombre)
@@ -1420,7 +1439,22 @@ def buscar_jugador_robusto(nombre):
         }
         return cache_data
     
-    # 3. Fallback a BD local - Si no tiene market_value válido, usar estimación
+    # 3. Si API externa falló (403/404), intentar scraping como respaldo PRIMERO
+    global hybrid_searcher
+    if api_failed:
+        try:
+            print("📡 API externa falló (3 reintentos), intentando scraping como respaldo...")
+            if hybrid_searcher is not None:
+                normalized_name = normalize_name(nombre)
+                scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
+                
+                if scraped_data is not None and scraped_data.get('market_value', 0) > 0:
+                    print(f"✅ Encontrado con scraping: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
+                    return convert_scraped_to_model_format(scraped_data)
+        except Exception as e:
+            print(f"⚠️ Error en scraping: {e}")
+    
+    # 4. Fallback a BD local - Si no tiene market_value válido, usar estimación
     try:
         print("💾 Intentando con BD local...")
         local_data = buscar_jugador(nombre)
@@ -1439,19 +1473,6 @@ def buscar_jugador_robusto(nombre):
                 return local_data
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
-    
-    # 4. Si API externa falló con 403, intentar scraping como último recurso
-    try:
-        print("📡 API externa falló, intentando scraping como respaldo...")
-        if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
-            normalized_name = normalize_name(nombre)
-            scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
-            
-            if scraped_data is not None and scraped_data.get('market_value', 0) > 0:
-                print(f"✅ Encontrado con scraping: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
-                return convert_scraped_to_model_format(scraped_data)
-    except Exception as e:
-        print(f"⚠️ Error en scraping: {e}")
     
     # 5. Intentar con API de jugadores conocidos (simulada)
     try:
