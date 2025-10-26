@@ -4918,24 +4918,8 @@ def health():
 def generate_player_report(player_name):
     """Generar reporte detallado de un jugador"""
     try:
-        # Buscar datos del jugador usando la misma lógica que search_player
-        try:
-            # Intentar con sistema híbrido primero si está disponible
-            if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
-                normalized_name = player_name.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('ñ', 'n')
-                scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
-                
-                if scraped_data is not None:
-                    jugador_info = convert_scraped_to_model_format(scraped_data)
-                else:
-                    # Fallback a búsqueda local
-                    jugador_info = buscar_jugador(player_name)
-            else:
-                # Solo búsqueda local si no hay sistema híbrido
-                jugador_info = buscar_jugador(player_name)
-        except Exception as e:
-            print(f"Error en búsqueda: {e}")
-            jugador_info = buscar_jugador(player_name)
+        # Buscar datos del jugador usando buscar_jugador_robusto
+        jugador_info = buscar_jugador_robusto(player_name)
         if not jugador_info:
             return jsonify({'error': 'Jugador no encontrado'}), 404
         
@@ -5019,22 +5003,10 @@ def compare_players():
         if not player1_name or not player2_name:
             return jsonify({'error': 'Se requieren ambos jugadores'}), 400
         
-        # Buscar datos de ambos jugadores usando la misma lógica que search_player
+        # Buscar datos de ambos jugadores usando buscar_jugador_robusto
         def buscar_jugador_para_comparacion(nombre):
-            try:
-                if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
-                    normalized_name = nombre.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('ñ', 'n')
-                    scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
-                    
-                    if scraped_data is not None:
-                        return convert_scraped_to_model_format(scraped_data)
-                    else:
-                        return buscar_jugador(nombre)
-                else:
-                    return buscar_jugador(nombre)
-            except Exception as e:
-                print(f"Error en búsqueda para {nombre}: {e}")
-                return buscar_jugador(nombre)
+            """Usar la misma lógica robusta de búsqueda que search_player"""
+            return buscar_jugador_robusto(nombre)
         
         jugador1_info = buscar_jugador_para_comparacion(player1_name)
         jugador2_info = buscar_jugador_para_comparacion(player2_name)
