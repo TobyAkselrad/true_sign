@@ -1331,10 +1331,20 @@ def buscar_con_api_externa(nombre):
         return None
 
 def buscar_jugador_robusto(nombre):
-    """Buscar jugador con sistema robusto: cache -> API externa -> scraper -> API local -> BD local"""
+    """Buscar jugador con sistema robusto: API externa -> cache -> BD local"""
     print(f"🔍 Búsqueda robusta para: {nombre}")
     
-    # 1. VERIFICAR CACHE PRIMERO (para evitar scraping innecesario)
+    # 1. Intentar con API externa PRIMERO (más confiable en producción)
+    try:
+        print("🌐 Intentando con API externa...")
+        api_data = buscar_con_api_externa(nombre)
+        if api_data is not None and api_data.get('market_value', 0) > 0:
+            print(f"✅ Encontrado con API externa: {api_data.get('player_name', 'N/A')} (€{api_data.get('market_value', 0):,.0f})")
+            return api_data
+    except Exception as e:
+        print(f"⚠️ Error en API externa: {e}")
+    
+    # 2. VERIFICAR CACHE (para evitar scraping innecesario)
     cache_market_value = check_cache_for_market_value(nombre)
     if cache_market_value and cache_market_value > 0:
         print(f"💰 Valor encontrado en cache: €{cache_market_value:,.0f}")
@@ -1346,42 +1356,28 @@ def buscar_jugador_robusto(nombre):
         }
         return cache_data
     
-    # 2. Intentar con API externa (alternativa al scraping)
+    # 3. Fallback a BD local
     try:
-        print("🌐 Intentando con API externa...")
-        api_data = buscar_con_api_externa(nombre)
-        if api_data is not None:
-            print(f"✅ Encontrado con API externa: {api_data.get('player_name', 'N/A')}")
-            return api_data
+        print("💾 Intentando con BD local...")
+        local_data = buscar_jugador(nombre)
+        if local_data is not None:
+            print(f"✅ Encontrado en BD local: {local_data.get('player_name', 'N/A')}")
+            return local_data
     except Exception as e:
-        print(f"⚠️ Error en API externa: {e}")
+        print(f"⚠️ Error en BD local: {e}")
     
-    # 3. Intentar con sistema híbrido (scraper + cache)
+    # 4. Intentar con sistema híbrido (scraper + cache) - SOLO SI TODO LO ANTERIOR FALLA
     try:
         if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
-            print("📡 Intentando con sistema híbrido...")
+            print("📡 Intentando con sistema híbrido (última opción)...")
             normalized_name = normalize_name(nombre)
-            scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
+            scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=False)  # NO usar scraping en producción
             
             if scraped_data is not None:
                 print(f"✅ Encontrado con sistema híbrido: {scraped_data.get('player_name', 'N/A')}")
                 return convert_scraped_to_model_format(scraped_data)
     except Exception as e:
         print(f"⚠️ Error en sistema híbrido: {e}")
-    
-    # 4. Intentar con TransfermarktScraper directo
-    try:
-        print("🌐 Intentando con TransfermarktScraper...")
-        from scraping.transfermarkt_scraper import TransfermarktScraper
-        scraper = TransfermarktScraper()
-        normalized_name = normalize_name(nombre)
-        scraped_data = scraper.search_player(normalized_name)
-        
-        if scraped_data is not None:
-            print(f"✅ Encontrado con TransfermarktScraper: {scraped_data.get('player_name', 'N/A')}")
-            return convert_scraped_to_model_format(scraped_data)
-    except Exception as e:
-        print(f"⚠️ Error en TransfermarktScraper: {e}")
     
     # 5. Intentar con API de jugadores conocidos (simulada)
     try:
@@ -1393,17 +1389,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en API: {e}")
     
-    # 6. Fallback a BD local
-    try:
-        print("💾 Intentando con BD local...")
-        local_data = buscar_jugador(nombre)
-        if local_data is not None:
-            print(f"✅ Encontrado en BD local: {local_data.get('player_name', 'N/A')}")
-            return local_data
-    except Exception as e:
-        print(f"⚠️ Error en BD local: {e}")
-    
-    # 7. Crear datos simulados como último recurso
+    # 6. Crear datos simulados como último recurso
     print("🎭 Creando datos simulados...")
     return crear_datos_simulados(nombre)
 
