@@ -1311,17 +1311,16 @@ def estimate_market_value_from_profile(player_data):
         return 5_000_000  # Valor por defecto: 5M
 
 def buscar_con_api_externa(nombre):
-    """Buscar jugador usando API externa de Transfermarkt"""
+    """Buscar jugador usando API externa de Transfermarkt con reintentos"""
     try:
         import requests
         import urllib.parse
+        import time
         
         # URL de la API externa
         api_url = "https://transfermarkt-api.fly.dev/players/search/"
         encoded_name = urllib.parse.quote(nombre)
         full_url = f"{api_url}{encoded_name}?page_number=1"
-        
-        print(f"🌐 Consultando API externa: {full_url}")
         
         # Headers para evitar bloqueos
         headers = {
@@ -1330,41 +1329,66 @@ def buscar_con_api_externa(nombre):
             'Accept-Language': 'en-US,en;q=0.9',
         }
         
-        response = requests.get(full_url, headers=headers, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            results = data.get('results', [])
+        # Intentar hasta 3 veces
+        for intento in range(3):
+            print(f"🌐 Consultando API externa (intento {intento + 1}/3): {full_url}")
             
-            if results:
-                # Tomar el primer resultado (el más relevante)
-                player_data = results[0]
+            try:
+                response = requests.get(full_url, headers=headers, timeout=10)
                 
-                # Convertir datos de la API al formato del modelo
-                model_data = {
-                    'player_id': player_data.get('id', ''),
-                    'player_name': player_data.get('name', nombre),
-                    'current_club_name': player_data.get('club', {}).get('name', ''),
-                    'market_value': player_data.get('marketValue', 0),
-                    'age': player_data.get('age', 25),
-                    'position': player_data.get('position', ''),
-                    'height': 180,  # Valor por defecto
-                    'foot': 'right',  # Valor por defecto
-                    'nationality': ', '.join(player_data.get('nationalities', [])),
-                    'citizenship': ', '.join(player_data.get('nationalities', [])),
-                    'contract_until': '',
-                    'photo_url': '',
-                    'source': 'external_api'
-                }
-                
-                print(f"✅ Encontrado con API externa: {model_data['player_name']} (€{model_data['market_value']:,.0f})")
-                return model_data
-            else:
-                print(f"⚠️ API externa: No se encontraron resultados para {nombre}")
-                return None
-        else:
-            print(f"⚠️ API externa: Error {response.status_code}")
-            return None
+                if response.status_code == 200:
+                    data = response.json()
+                    results = data.get('results', [])
+                    
+                    if results:
+                        # Tomar el primer resultado (el más relevante)
+                        player_data = results[0]
+                        
+                        # Convertir datos de la API al formato del modelo
+                        model_data = {
+                            'player_id': player_data.get('id', ''),
+                            'player_name': player_data.get('name', nombre),
+                            'current_club_name': player_data.get('club', {}).get('name', ''),
+                            'market_value': player_data.get('marketValue', 0),
+                            'age': player_data.get('age', 25),
+                            'position': player_data.get('position', ''),
+                            'height': 180,  # Valor por defecto
+                            'foot': 'right',  # Valor por defecto
+                            'nationality': ', '.join(player_data.get('nationalities', [])),
+                            'citizenship': ', '.join(player_data.get('nationalities', [])),
+                            'contract_until': '',
+                            'photo_url': '',
+                            'source': 'external_api'
+                        }
+                        
+                        print(f"✅ Encontrado con API externa: {model_data['player_name']} (€{model_data['market_value']:,.0f})")
+                        return model_data
+                    else:
+                        print(f"⚠️ API externa: No se encontraron resultados para {nombre}")
+                        return None
+                elif response.status_code == 403:
+                    print(f"⚠️ API externa: Error 403 (Forbidden) en intento {intento + 1}/3")
+                    if intento < 2:  # No es el último intento
+                        wait_time = (intento + 1) * 2  # Esperar 2s, 4s, 6s
+                        print(f"⏳ Esperando {wait_time}s antes del siguiente intento...")
+                        time.sleep(wait_time)
+                        continue
+                    else:
+                        print(f"❌ API externa: 3 reintentos fallidos con 403")
+                        return None
+                else:
+                    print(f"⚠️ API externa: Error {response.status_code}")
+                    return None
+                    
+            except requests.exceptions.RequestException as e:
+                print(f"⚠️ Error en API externa (intento {intento + 1}/3): {e}")
+                if intento < 2:  # No es el último intento
+                    time.sleep(2)
+                    continue
+                else:
+                    return None
+        
+        return None
             
     except Exception as e:
         print(f"⚠️ Error en API externa: {e}")
@@ -1416,7 +1440,20 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
     
-    # 4. Intentar con API de jugadores conocidos (simulada)
+    # 4. Si API externa falló con 403, intentar scraping como último recurso
+    try:
+        print("📡 API externa falló, intentando scraping como respaldo...")
+        if 'hybrid_searcher' in globals() and hybrid_searcher is not None:
+            normalized_name = normalize_name(nombre)
+            scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
+            
+            if scraped_data is not None and scraped_data.get('market_value', 0) > 0:
+                print(f"✅ Encontrado con scraping: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
+                return convert_scraped_to_model_format(scraped_data)
+    except Exception as e:
+        print(f"⚠️ Error en scraping: {e}")
+    
+    # 5. Intentar con API de jugadores conocidos (simulada)
     try:
         print("🔌 Intentando con API de jugadores...")
         api_data = buscar_con_api(nombre)
@@ -1426,7 +1463,7 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en API: {e}")
     
-    # 5. NO USAR SCRAPING EN PRODUCCIÓN - Retornar None si no se encuentra nada
+    # 6. Retornar None si no se encuentra nada
     print("❌ No se encontraron datos para el jugador")
     return None
 
