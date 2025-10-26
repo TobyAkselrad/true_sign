@@ -1,7 +1,7 @@
 {
   "santiago sosa": {
     "data": null,
-    "timestamp": "2025-10-22T17:53:13.890954"
+    "timestamp": "2025-10-26T19:11:55.070249"
   },
   "Matias Zaracho": {
     "data": {
@@ -151,7 +151,7 @@
       "contract_until": null,
       "photo_url": "https://img.a.transfermarkt.technology/portrait/header/1057316-1755702696.jpg?lm=1"
     },
-    "timestamp": "2025-10-20T14:17:03.791790"
+    "timestamp": "2025-10-23T10:11:27.668758"
   },
   "michal skvarka": {
     "data": {
@@ -287,5 +287,80 @@
       "photo_url": "https://img.a.transfermarkt.technology/portrait/header/607173-1704798511.jpg?lm=1"
     },
     "timestamp": "2025-10-20T16:17:34.563638"
+  },
+  "jorge carrascal": {
+    "data": {
+      "name": "Jorge Carrascal",
+      "current_club": "Flamengo",
+      "market_value": 7000000,
+      "age": 27,
+      "position": "Midfielder",
+      "height": "1,80 m",
+      "foot": "Right",
+      "nationality": "Brazil",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/354145-1693158631.png?lm=1"
+    },
+    "timestamp": "2025-10-23T10:12:18.133589"
+  },
+  "giovani lo celso": {
+    "data": {
+      "name": "Giovani Lo Celso",
+      "current_club": "Real Betis",
+      "market_value": 15000000,
+      "age": 29,
+      "position": "Midfielder",
+      "height": "1,77 m",
+      "foot": "Left",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/348795-1726734706.jpg?lm=1"
+    },
+    "timestamp": "2025-10-26T19:12:24.692494"
+  },
+  "giovanni simeone": {
+    "data": {
+      "name": "Giovanni Simeone",
+      "current_club": "Torino",
+      "market_value": 5000000,
+      "age": 30,
+      "position": "Forward",
+      "height": "1,80 m",
+      "foot": "Right",
+      "nationality": "Italy",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/282388-1690294694.jpg?lm=1"
+    },
+    "timestamp": "2025-10-26T19:14:35.109746"
+  },
+  "duvan vergara": {
+    "data": {
+      "name": "Duván Vergara",
+      "current_club": "Racing Club",
+      "market_value": 3000000,
+      "age": 29,
+      "position": "Winger",
+      "height": "1,77 m",
+      "foot": "Left",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/413658-1752788468.jpg?lm=1"
+    },
+    "timestamp": "2025-10-26T19:41:06.124637"
+  },
+  "facundo colidio": {
+    "data": {
+      "name": "Facundo Colidio",
+      "current_club": "River Plate",
+      "market_value": 6000000,
+      "age": 25,
+      "position": "Forward",
+      "height": "1,80 m",
+      "foot": "Left",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/491705-1693315193.png?lm=1"
+    },
+    "timestamp": "2025-10-26T19:55:32.193472"
   }
 }
