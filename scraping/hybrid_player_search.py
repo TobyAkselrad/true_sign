@@ -37,12 +37,27 @@ class HybridPlayerSearch:
         """
         Buscar jugador con sistema híbrido:
         1. Cache del scraper (últimas 24h)
-        2. Scraping en vivo
+        2. Scraping en vivo (solo si use_scraping=True)
         3. Fallback a base de datos local
         """
         logger.info(f"Buscando jugador: {player_name}")
         
-        # 1. Intentar scraping en vivo (si está habilitado)
+        # 1. Verificar cache primero (más rápido y evita 403)
+        try:
+            cache_data = self.scraper.cache
+            if cache_data:
+                normalized_cache_key = player_name.lower()
+                if normalized_cache_key in cache_data:
+                    cached_entry = cache_data[normalized_cache_key]
+                    if cached_entry and cached_entry.get('data'):
+                        cached_data = cached_entry['data']
+                        if cached_data and self._validate_scraped_data(cached_data):
+                            logger.info(f"Datos obtenidos del cache para {player_name}")
+                            return self._format_scraped_data(cached_data)
+        except Exception as e:
+            logger.warning(f"Error verificando cache: {e}")
+        
+        # 2. Intentar scraping en vivo (solo si está habilitado)
         if use_scraping:
             try:
                 scraped_data = self.scraper.search_player(player_name)
@@ -51,8 +66,9 @@ class HybridPlayerSearch:
                     return self._format_scraped_data(scraped_data)
             except Exception as e:
                 logger.warning(f"Error en scraping para {player_name}: {e}")
+                # Si falla el scraping en vivo, continuar sin romper
         
-        # 2. Fallback a base de datos local
+        # 3. Fallback a base de datos local
         try:
             db_data = self._search_in_database(player_name)
             if db_data is not None:
@@ -61,7 +77,7 @@ class HybridPlayerSearch:
         except Exception as e:
             logger.warning(f"Error en búsqueda en BD para {player_name}: {e}")
         
-        # 3. No se encontró el jugador
+        # 4. No se encontró el jugador
         logger.warning(f"Jugador no encontrado: {player_name}")
         return None
     

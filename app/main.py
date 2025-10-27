@@ -1285,10 +1285,16 @@ def check_cache_for_market_value(player_name):
         print(f"Error verificando cache: {e}")
         return 0
 
-def estimate_market_value_from_profile(player_data):
-    """Estimar valor de mercado basado en perfil del jugador"""
+def estimate_market_value_from_data(player_data):
+    """Estimar valor de mercado cuando no está disponible - usa cache de Transfermarkt"""
     try:
-        # Obtener edad
+        # Primero intentar buscar en el cache de Transfermarkt jugadores similares
+        estimated_from_cache = estimate_from_transfermarkt_cache(player_data)
+        if estimated_from_cache and estimated_from_cache > 0:
+            print(f"💡 Valor estimado desde cache de Transfermarkt: €{estimated_from_cache:,.0f}")
+            return estimated_from_cache
+        
+        # Fallback a estimación básica
         age = player_data.get('age', 25)
         try:
             age = int(float(age)) if age != "--" and age is not None else 25
@@ -1296,7 +1302,7 @@ def estimate_market_value_from_profile(player_data):
             age = 25
         
         # Obtener posición
-        position = str(player_data.get('position', '')).lower()
+        position = str(player_data.get('position', 'Midfielder')).lower()
         
         # Estimar valor basado en edad (jugadores jóvenes tienen más valor)
         if age < 21:
@@ -1320,10 +1326,103 @@ def estimate_market_value_from_profile(player_data):
         elif 'goalkeeper' in position:
             base_value *= 0.7
         
+        print(f"💡 Valor estimado (sin cache): €{int(base_value):,.0f}")
         return int(base_value)
     except Exception as e:
         print(f"Error estimando valor: {e}")
         return 5_000_000  # Valor por defecto: 5M
+
+def estimate_from_transfermarkt_cache(player_data):
+    """Estimar market_value buscando jugadores similares en el cache de Transfermarkt"""
+    try:
+        import json
+        
+        # Cargar cache de Transfermarkt
+        with open('transfermarkt_cache.json', 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
+        
+        # Obtener datos del jugador
+        player_age = player_data.get('age', 25)
+        try:
+            player_age = int(float(player_age)) if player_age != "--" and player_age is not None else 25
+        except (ValueError, TypeError):
+            player_age = 25
+        
+        player_position = str(player_data.get('position', 'Midfielder')).lower()
+        player_club = str(player_data.get('current_club_name', '')).lower()
+        
+        print(f"🔍 Buscando similares en cache: edad={player_age}, pos={player_position}, club={player_club}")
+        
+        # Buscar jugadores similares en el cache
+        similar_values = []
+        
+        for cache_key, cache_entry in cache_data.items():
+            cached_data = cache_entry.get('data')
+            if not cached_data:
+                continue
+            
+            cached_market_value = cached_data.get('market_value', 0)
+            if not cached_market_value or cached_market_value <= 0:
+                continue
+            
+            cached_age = cached_data.get('age', 0)
+            cached_position = str(cached_data.get('position', '')).lower()
+            cached_club = str(cached_data.get('current_club', '')).lower()
+            
+            # Calcular score de similitud
+            similarity_score = 0
+            
+            # Similitud por edad (más importante)
+            if cached_age and abs(cached_age - player_age) <= 2:
+                similarity_score += 40
+            elif cached_age and abs(cached_age - player_age) <= 5:
+                similarity_score += 20
+            
+            # Similitud por posición
+            if player_position and cached_position:
+                if player_position == cached_position:
+                    similarity_score += 30
+                elif any(pos in cached_position for pos in player_position.split()) or any(pos in player_position for pos in cached_position.split()):
+                    similarity_score += 20
+                elif ('forward' in player_position and 'forward' in cached_position) or \
+                     ('midfield' in player_position and 'midfield' in cached_position) or \
+                     ('defender' in player_position and 'defender' in cached_position):
+                    similarity_score += 15
+            
+            # Similitud por club
+            if player_club and cached_club and (player_club in cached_club or cached_club in player_club):
+                similarity_score += 30
+            
+            # Si el score es aceptable, agregar el valor
+            if similarity_score >= 30:  # Threshold mínimo
+                similar_values.append((cached_market_value, similarity_score))
+                print(f"   ✓ {cache_key}: €{cached_market_value:,.0f} (score: {similarity_score})")
+        
+        # Calcular estimación basada en valores similares
+        if similar_values:
+            # Ordenar por score de similitud
+            similar_values.sort(key=lambda x: x[1], reverse=True)
+            
+            # Tomar top 5 más similares
+            top_values = [val[0] for val in similar_values[:5]]
+            
+            if top_values:
+                # Calcular promedio ponderado (valores más similares pesan más)
+                total_score = sum(val[1] for val in similar_values[:5])
+                weighted_sum = sum(val[0] * val[1] for val in similar_values[:5])
+                
+                estimated_value = int(weighted_sum / total_score) if total_score > 0 else int(sum(top_values) / len(top_values))
+                
+                print(f"📊 {len(top_values)} jugadores similares encontrados en cache")
+                print(f"💰 Promedio ponderado: €{estimated_value:,.0f}")
+                return estimated_value
+        
+        print("⚠️ No se encontraron jugadores similares en cache")
+        return 0
+        
+    except Exception as e:
+        print(f"Error estimando desde cache: {e}")
+        return 0
 
 def buscar_con_api_externa(nombre):
     """Buscar jugador usando API externa de Transfermarkt con reintentos"""
@@ -1337,11 +1436,19 @@ def buscar_con_api_externa(nombre):
         encoded_name = urllib.parse.quote(nombre)
         full_url = f"{api_url}{encoded_name}?page_number=1"
         
-        # Headers para evitar bloqueos
+        # Headers más robustos para evitar bloqueos 403
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Accept': 'application/json',
-            'Accept-Language': 'en-US,en;q=0.9',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.9,es;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Referer': 'https://www.transfermarkt.com/',
+            'Origin': 'https://www.transfermarkt.com',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'cross-site',
+            'Cache-Control': 'no-cache',
         }
         
         # Intentar hasta 3 veces
@@ -1427,18 +1534,24 @@ def buscar_jugador_robusto(nombre):
         print(f"⚠️ Error en API externa: {e}")
         api_failed = True
     
-    # 2. Intentar con Scraper si API falló
+    # 2. Intentar con Scraper si API falló (ACTIVO - cache primero, luego scraping en vivo)
     global hybrid_searcher
     if api_failed:
         try:
             print("📡 API externa falló, intentando scraping...")
             if hybrid_searcher is not None:
                 normalized_name = normalize_name(nombre)
+                
+                # Usar cache primero (más rápido), luego scraping en vivo si es necesario
                 scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
                 
                 if scraped_data is not None and scraped_data.get('market_value', 0) > 0:
-                    print(f"✅ Encontrado con scraping: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
+                    print(f"✅ Encontrado con scraper: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
                     return convert_scraped_to_model_format(scraped_data)
+                else:
+                    print("⚠️ Jugador no encontrado en scraper")
+                    # Continuar con el flujo normal (cache JSON, BD local, estimación)
+                        
         except Exception as e:
             print(f"⚠️ Error en scraping: {e}")
     
@@ -1464,7 +1577,22 @@ def buscar_jugador_robusto(nombre):
     except Exception as e:
         print(f"⚠️ Error en BD local: {e}")
     
-    # 5. NO HAY VALOR - Retornar error
+    # 5. Intentar estimar market_value si el jugador existe pero no tiene valor
+    try:
+        print("💡 Jugador encontrado sin market_value, intentando estimación...")
+        local_data = buscar_jugador(nombre)
+        if local_data is not None:
+            # Intentar estimar market_value
+            estimated_value = estimate_market_value_from_data(local_data)
+            if estimated_value and estimated_value > 0:
+                local_data['market_value'] = estimated_value
+                local_data['market_value_estimated'] = True
+                print(f"💰 Valor estimado: €{estimated_value:,.0f}")
+                return local_data
+    except Exception as e:
+        print(f"⚠️ Error estimando valor: {e}")
+    
+    # 6. NO HAY VALOR - Retornar error
     print("❌ No se encontró market_value para el jugador en ninguna fuente")
     return None
 

@@ -19,14 +19,22 @@ class TransfermarktScraper:
         self.cache_file = "transfermarkt_cache.json"
         self.cache = self.load_cache()
         
-        # Headers realistas para evitar detección
+        # Headers más robustos para evitar detección 403
         self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'Cache-Control': 'max-age=0',
         }
         self.session.headers.update(self.headers)
         
@@ -72,33 +80,38 @@ class TransfermarktScraper:
     
     def search_player(self, player_name):
         """Buscar jugador en Transfermarkt"""
-        # 1. Verificar cache
+        # 1. Verificar cache primero
         if self.is_cache_valid(player_name):
-            logger.info(f"Cache hit para {player_name}")
+            logger.info(f"✅ Cache hit para {player_name}")
             return self.cache[player_name]['data']
         
         # 2. Rotar User-Agent antes de hacer request
         self.rotate_user_agent()
         
-        # 3. Esperar un poco para evitar rate limiting
-        time.sleep(random.uniform(1, 3))
+        # 3. Esperar un poco para evitar rate limiting (más tiempo en producción)
+        time.sleep(random.uniform(2, 4))
         
-        # 4. Scraping en vivo
+        # 4. Scraping en vivo con manejo robusto de 403
         try:
-            logger.info(f"Scraping en vivo para {player_name}")
+            logger.info(f"🌐 Scraping en vivo para {player_name}")
             player_data = self._scrape_player_data(player_name)
             
-            # Guardar en cache
-            self.cache[player_name] = {
-                'data': player_data,
-                'timestamp': datetime.now().isoformat()
-            }
-            self.save_cache()
-            
-            return player_data
+            # Solo guardar en cache si obtuvimos datos válidos
+            if player_data and player_data.get('market_value', 0) > 0:
+                self.cache[player_name] = {
+                    'data': player_data,
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_cache()
+                logger.info(f"✅ Datos guardados en cache para {player_name}")
+                return player_data
+            else:
+                logger.warning(f"⚠️ Scraping no obtuvo datos válidos para {player_name}")
+                return None
             
         except Exception as e:
-            logger.error(f"Error scraping {player_name}: {e}")
+            logger.error(f"❌ Error scraping {player_name}: {e}")
+            # Retornar None para que el sistema use fallbacks
             return None
     
     def _scrape_player_data(self, player_name):
@@ -106,29 +119,38 @@ class TransfermarktScraper:
         # URL de búsqueda
         search_url = f"https://www.transfermarkt.com/schnellsuche/ergebnis/schnellsuche?query={quote(player_name)}"
         
-        # Intentar hasta 3 veces con diferentes User-Agents
+        # Intentar hasta 3 veces con diferentes User-Agents y headers mejorados
         for attempt in range(3):
             try:
                 # Rotar User-Agent en cada intento
                 self.rotate_user_agent()
                 
-                # Delay aleatorio
-                time.sleep(random.uniform(1, 3))
+                # Headers adicionales para evitar 403
+                custom_headers = {
+                    'Referer': 'https://www.transfermarkt.com/',
+                    'Origin': 'https://www.transfermarkt.com',
+                }
+                
+                # Delay aleatorio más largo para parecer humano
+                time.sleep(random.uniform(2, 5))
                 
                 logger.info(f"Intento {attempt + 1}/3 para {player_name}")
                 
-                response = self.session.get(search_url, timeout=10)
+                # Combinar headers por defecto con los custom
+                full_headers = {**self.session.headers, **custom_headers}
+                response = self.session.get(search_url, headers=full_headers, timeout=15)
                 
                 # Si es 403, esperar más y reintentar
                 if response.status_code == 403:
-                    logger.warning(f"403 en intento {attempt + 1}/3")
+                    logger.warning(f"403 en intento {attempt + 1}/3 - Bloqueado por Transfermarkt")
                     if attempt < 2:  # No es el último intento
-                        wait_time = (attempt + 1) * 3  # 3s, 6s, 9s
+                        wait_time = (attempt + 1) * 5  # 5s, 10s (más tiempo)
                         logger.info(f"Esperando {wait_time}s antes del siguiente intento...")
                         time.sleep(wait_time)
                         continue
                     else:
-                        logger.error(f"3 intentos fallidos con 403 para {player_name}")
+                        logger.error(f"❌ 3 intentos fallidos con 403 para {player_name} - Considerar usar base de datos local o estimación")
+                        # Retornar None para que el sistema use el fallback
                         return None
                 
                 response.raise_for_status()
