@@ -566,25 +566,31 @@ class BeSoccerScraper:
                             except:
                                 continue
             
-            # Buscar todos los data-box que contengan "M.€" en el info
+            # Buscar todos los data-box que contengan "M.€" o "K.€" en el info
             data_boxes = soup.find_all('div', class_='data-box')
             
             for box in data_boxes:
-                # Buscar si tiene "M.€" en el info
+                # Buscar si tiene "M.€" o "K.€" en el info
                 info_elem = box.find('p', class_='info')
-                if info_elem and 'M.€' in info_elem.get_text():
-                    # Buscar el número
-                    number_elem = box.find('p', class_='number')
-                    if number_elem:
-                        value_text = number_elem.get_text(strip=True)
-                        try:
-                            # Convertir a millones de euros
-                            value_millions = float(value_text)
-                            value_euros = int(value_millions * 1_000_000)  # Convertir a euros
-                            logger.info(f"💰 Market value encontrado: {value_text} M€ = €{value_euros:,}")
-                            return value_euros
-                        except ValueError:
-                            continue
+                if info_elem:
+                    info_text = info_elem.get_text(strip=True)
+                    if 'M.€' in info_text or 'K.€' in info_text:
+                        # Buscar el número
+                        number_elem = box.find('p', class_='number')
+                        if number_elem:
+                            value_text = number_elem.get_text(strip=True)
+                            try:
+                                value = float(value_text)
+                                # Convertir según la unidad
+                                if 'M.€' in info_text:
+                                    value_euros = int(value * 1_000_000)
+                                    logger.info(f"💰 Market value encontrado (data-box): {value_text} M€ = €{value_euros:,}")
+                                elif 'K.€' in info_text:
+                                    value_euros = int(value * 1_000)
+                                    logger.info(f"💰 Market value encontrado (data-box): {value_text} K€ = €{value_euros:,}")
+                                return value_euros
+                            except ValueError:
+                                continue
             
             # Fallback: buscar en texto
             all_text = soup.get_text()
