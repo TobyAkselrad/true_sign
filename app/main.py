@@ -5464,6 +5464,13 @@ def convert_besoccer_to_model_format(besoccer_data):
         player_id = f"besoccer_{hash(player_name.lower())}"
         
         # Extraer datos reales de BeSoccer
+        # Manejar foot y height que pueden ser None
+        foot_value = besoccer_data.get('foot') or 'Right'
+        foot_str = str(foot_value).lower().capitalize() if foot_value else 'Right'
+        
+        height_value = besoccer_data.get('height') or ''
+        height_cm = convert_height_to_cm(height_value)
+        
         model_data = {
             'player_id': player_id,
             'player_name': player_name,
@@ -5471,8 +5478,8 @@ def convert_besoccer_to_model_format(besoccer_data):
             'market_value': besoccer_data.get('market_value', 0),
             'age': besoccer_data.get('age', 0),
             'position': besoccer_data.get('position', ''),  # Ya normalizado (Midfielder, etc.)
-            'height': convert_height_to_cm(besoccer_data.get('height', '')),  # Ya normalizado (1.80 m)
-            'foot': besoccer_data.get('foot', 'Right').lower().capitalize(),  # Right/Left (ya normalizado)
+            'height': height_cm,
+            'foot': foot_str,
             'nationality': besoccer_data.get('nationality', ''),
             'citizenship': besoccer_data.get('nationality', ''),
             'contract_until': '',
