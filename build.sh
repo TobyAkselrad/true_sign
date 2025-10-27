@@ -18,10 +18,28 @@ git lfs install
 
 # Descargar archivos LFS
 echo "⬇️ Descargando archivos LFS (.pkl)..."
-echo "🔄 Ejecutando: git lfs fetch --all"
-git lfs fetch --all
+echo "🔄 Ejecutando: git lfs pull"
+git lfs pull
+
+# También intentar checkout manual
 echo "🔄 Ejecutando: git lfs checkout"
 git lfs checkout
+
+# Forzar checkout de archivos específicos
+echo "📥 Forzando descarga de modelos grandes..."
+if [ -f "models/trained/maximum_price_model.pkl" ]; then
+    echo "✅ maximum_price_model.pkl presente"
+else
+    echo "⚠️ maximum_price_model.pkl faltante, intentando descargar..."
+    git lfs pull --include="models/trained/maximum_price_model.pkl" || echo "❌ No se pudo descargar"
+fi
+
+if [ -f "models/trained/value_change_model.pkl" ]; then
+    echo "✅ value_change_model.pkl presente"  
+else
+    echo "⚠️ value_change_model.pkl faltante, intentando descargar..."
+    git lfs pull --include="models/trained/value_change_model.pkl" || echo "❌ No se pudo descargar"
+fi
 
 # Listar archivos descargados
 echo "📋 Archivos en models/trained después de git lfs checkout:"
