@@ -1446,7 +1446,7 @@ def buscar_con_api_externa(nombre):
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept': 'application/json, text/plain, */*',
             'Accept-Language': 'en-US,en;q=0.9,es;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
+            # NO especificar Accept-Encoding para que requests maneje automáticamente
             'Connection': 'keep-alive',
             'Referer': 'https://www.transfermarkt.com/',
             'Origin': 'https://www.transfermarkt.com',
@@ -1461,10 +1461,28 @@ def buscar_con_api_externa(nombre):
             print(f"🌐 Consultando API externa (intento {intento + 1}/3): {full_url}")
             
             try:
+                print(f"🔗 URL completa: {full_url}")
                 response = requests.get(full_url, headers=headers, timeout=10)
+                print(f"📥 API response: Status {response.status_code}")
+                print(f"📋 Headers: {dict(response.headers)}")
                 
                 if response.status_code == 200:
-                    data = response.json()
+                    # Verificar que la respuesta sea JSON antes de parsear
+                    print(f"📄 Content-Type: {response.headers.get('content-type', 'unknown')}")
+                    print(f"📝 Respuesta raw (primeros 500 chars): {response.text[:500]}")
+                    
+                    # Intentar parsear JSON con manejo de errores
+                    try:
+                        data = response.json()
+                    except ValueError as json_error:
+                        print(f"❌ Error parseando JSON: {json_error}")
+                        print(f"📄 Respuesta recibida (primeros 500 caracteres): {response.text[:500]}")
+                        if intento < 2:
+                            time.sleep(2)
+                            continue
+                        else:
+                            return None
+                    
                     results = data.get('results', [])
                     
                     if results:
@@ -1510,6 +1528,14 @@ def buscar_con_api_externa(nombre):
             except requests.exceptions.RequestException as e:
                 print(f"⚠️ Error en API externa (intento {intento + 1}/3): {e}")
                 if intento < 2:  # No es el último intento
+                    time.sleep(2)
+                    continue
+                else:
+                    return None
+            except ValueError as json_error:
+                # Error al parsear JSON (capturado si no se manejó arriba)
+                print(f"⚠️ Error parseando JSON en API externa (intento {intento + 1}/3): {json_error}")
+                if intento < 2:
                     time.sleep(2)
                     continue
                 else:
@@ -3121,7 +3147,14 @@ def autocomplete():
             response = requests.get(url, headers={'accept': 'application/json'}, timeout=3)
             
             if response.status_code == 200:
-                data = response.json()
+                # Verificar que la respuesta sea JSON antes de parsear
+                try:
+                    data = response.json()
+                except ValueError as json_error:
+                    print(f"❌ Error parseando JSON en autocomplete: {json_error}")
+                    print(f"📄 Respuesta recibida: {response.text[:200]}")
+                    data = {}
+                
                 results = data.get('results', [])
                 
                 suggestions = []
@@ -3220,7 +3253,14 @@ def clubs():
             response = requests.get(url, headers=headers, timeout=5)
             
             if response.status_code == 200:
-                data = response.json()
+                # Verificar que la respuesta sea JSON antes de parsear
+                try:
+                    data = response.json()
+                except ValueError as json_error:
+                    print(f"❌ Error parseando JSON en clubs API: {json_error}")
+                    print(f"📄 Respuesta recibida: {response.text[:200]}")
+                    data = {}
+                
                 results = data.get('results', [])
                 print(f"   📊 API: {len(results)} clubes")
                 
@@ -3627,7 +3667,14 @@ def get_club_info(club_name):
         response = requests.get(url, headers=headers, timeout=5)
         
         if response.status_code == 200:
-            data = response.json()
+            # Verificar que la respuesta sea JSON antes de parsear
+            try:
+                data = response.json()
+            except ValueError as json_error:
+                print(f"❌ Error parseando JSON en club info: {json_error}")
+                print(f"📄 Respuesta recibida: {response.text[:200]}")
+                data = {}
+            
             results = data.get('results', [])
             
             # Buscar el club (coincidencia exacta o parcial)
@@ -3719,7 +3766,14 @@ def clubs_autocomplete():
         response = requests.get(url, headers=headers, timeout=5)
         
         if response.status_code == 200:
-            data = response.json()
+            # Verificar que la respuesta sea JSON antes de parsear
+            try:
+                data = response.json()
+            except ValueError as json_error:
+                print(f"❌ Error parseando JSON en clubs autocomplete (route): {json_error}")
+                print(f"📄 Respuesta recibida: {response.text[:200]}")
+                data = {}
+            
             results = data.get('results', [])
             
             # Procesar y filtrar resultados

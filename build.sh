@@ -43,8 +43,8 @@ else
 fi
 
 # Verificar que el archivo principal existe
-if [ ! -f "truesign_perfect_app.py" ]; then
-    echo "❌ Error: truesign_perfect_app.py no encontrado"
+if [ ! -f "app/run.py" ]; then
+    echo "❌ Error: app/run.py no encontrado"
     exit 1
 fi
 
