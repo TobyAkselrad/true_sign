@@ -58,6 +58,10 @@ except Exception as e:
 print("=" * 80)
 print("🔄 INICIALIZANDO SISTEMA HÍBRIDO DE BÚSQUEDA")
 print("=" * 80)
+
+# Inicializar variables globales ANTES del try-except
+besoccer_scraper = None
+
 try:
     from scraping.hybrid_player_search import HybridPlayerSearch
     hybrid_searcher = HybridPlayerSearch()
