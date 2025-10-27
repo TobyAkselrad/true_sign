@@ -119,8 +119,8 @@ class TransfermarktScraper:
         # URL de búsqueda
         search_url = f"https://www.transfermarkt.com/schnellsuche/ergebnis/schnellsuche?query={quote(player_name)}"
         
-        # Intentar hasta 3 veces con diferentes User-Agents y headers mejorados
-        for attempt in range(3):
+        # Intentar 1 vez con User-Agent y headers mejorados
+        for attempt in range(1):
             try:
                 # Rotar User-Agent en cada intento
                 self.rotate_user_agent()
@@ -134,24 +134,18 @@ class TransfermarktScraper:
                 # Delay aleatorio más largo para parecer humano
                 time.sleep(random.uniform(2, 5))
                 
-                logger.info(f"Intento {attempt + 1}/3 para {player_name}")
+                logger.info(f"Intento {attempt + 1}/1 para {player_name}")
                 
                 # Combinar headers por defecto con los custom
                 full_headers = {**self.session.headers, **custom_headers}
                 response = self.session.get(search_url, headers=full_headers, timeout=15)
                 
-                # Si es 403, esperar más y reintentar
+                # Si es 403, fallar inmediatamente y usar fallback
                 if response.status_code == 403:
-                    logger.warning(f"403 en intento {attempt + 1}/3 - Bloqueado por Transfermarkt")
-                    if attempt < 2:  # No es el último intento
-                        wait_time = (attempt + 1) * 5  # 5s, 10s (más tiempo)
-                        logger.info(f"Esperando {wait_time}s antes del siguiente intento...")
-                        time.sleep(wait_time)
-                        continue
-                    else:
-                        logger.error(f"❌ 3 intentos fallidos con 403 para {player_name} - Considerar usar base de datos local o estimación")
-                        # Retornar None para que el sistema use el fallback
-                        return None
+                    logger.warning(f"403 en intento {attempt + 1}/1 - Bloqueado por Transfermarkt")
+                    logger.error(f"❌ Transfermarkt bloqueado para {player_name} - Usando BeSoccer/BD local como fallback")
+                    # Retornar None para que el sistema use el fallback (BeSoccer o BD)
+                    return None
                 
                 response.raise_for_status()
                 
@@ -168,16 +162,10 @@ class TransfermarktScraper:
                 return self._scrape_player_details(player_link)
                 
             except requests.exceptions.RequestException as e:
-                logger.error(f"Error en request (intento {attempt + 1}/3): {e}")
-                if attempt < 2:  # No es el último intento
-                    time.sleep((attempt + 1) * 2)  # 2s, 4s
-                    continue
+                logger.error(f"Error en request: {e}")
                 return None
             except Exception as e:
                 logger.error(f"Error en scraping: {e}")
-                if attempt < 2:
-                    time.sleep((attempt + 1) * 2)
-                    continue
                 return None
         
         return None
