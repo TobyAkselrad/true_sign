@@ -28,7 +28,14 @@ pip install -r requirements.txt
 
 # Verificar que los modelos estén presentes
 echo "📊 Verificando modelos entrenados..."
-ls -la models/trained/
+if [ -d "models/trained" ]; then
+    echo "✅ Directorio models/trained existe"
+    ls -la models/trained/
+    echo "📋 Total archivos .pkl: $(find models/trained -name '*.pkl' | wc -l)"
+else
+    echo "❌ ERROR: Directorio models/trained no existe"
+    exit 1
+fi
 
 # Verificar que el archivo principal existe
 if [ ! -f "truesign_perfect_app.py" ]; then
