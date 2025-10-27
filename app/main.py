@@ -1602,11 +1602,8 @@ def buscar_jugador_robusto(nombre):
     global besoccer_scraper
     if transfermarkt_failed:
         try:
-            print("⚽ Intentando BeSoccer scraping...")
-            print(f"🔍 BeSoccer scraper disponible: {besoccer_scraper is not None}")
-            print(f"🔍 BeSoccer scraper tipo: {type(besoccer_scraper)}")
-            
             if besoccer_scraper is not None:
+                print("⚽ Intentando BeSoccer scraping...")
                 normalized_name = normalize_name(nombre)
                 print(f"🌐 BeSoccer: Buscando '{normalized_name}'...")
                 
@@ -1615,12 +1612,10 @@ def buscar_jugador_robusto(nombre):
                 
                 if besoccer_data is not None and besoccer_data.get('market_value', 0) > 0:
                     print(f"✅ Encontrado con BeSoccer: {besoccer_data.get('name', 'N/A')} (€{besoccer_data.get('market_value', 0):,.0f})")
-                    # Convertir formato de BeSoccer al formato esperado
                     return convert_besoccer_to_model_format(besoccer_data)
                 else:
                     print("⚠️ Jugador no encontrado en BeSoccer o sin market_value")
-            else:
-                print("⚠️ BeSoccer scraper NO disponible en este entorno")
+            # Si besoccer_scraper es None, simplemente seguir al siguiente paso sin error
                         
         except Exception as e:
             print(f"⚠️ Error en scraping BeSoccer: {e}")
