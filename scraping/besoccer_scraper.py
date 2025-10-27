@@ -91,14 +91,20 @@ class BeSoccerScraper:
             player_data = self._scrape_with_selenium(player_name)
             
             # Solo guardar si obtuvimos datos válidos
-            if player_data and player_data.get('market_value', 0) > 0:
-                self.cache[player_name] = {
-                    'data': player_data,
-                    'timestamp': datetime.now().isoformat()
-                }
-                self.save_cache()
-                logger.info(f"✅ Datos guardados en cache para {player_name}")
-                return player_data
+            if player_data and player_data.get('name'):
+                # Verificar si tiene market_value válido (no None)
+                market_value = player_data.get('market_value')
+                if market_value is not None and market_value > 0:
+                    self.cache[player_name] = {
+                        'data': player_data,
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    self.save_cache()
+                    logger.info(f"✅ Datos guardados en cache para {player_name}")
+                    return player_data
+                else:
+                    logger.warning(f"⚠️ BeSoccer no tiene market_value para {player_name} (valor: {market_value})")
+                    return None
             else:
                 logger.warning(f"⚠️ BeSoccer no obtuvo datos válidos para {player_name}")
                 return None
@@ -201,6 +207,16 @@ class BeSoccerScraper:
             autocomplete_values = driver.find_elements(By.CSS_SELECTOR, "#autocomplete_values li")
             logger.info(f"📋 Encontrados {len(autocomplete_values)} elementos en autocomplete")
             
+            # Log de todos los elementos del autocomplete para debug
+            for i, li_element in enumerate(autocomplete_values):
+                links = li_element.find_elements(By.TAG_NAME, "a")
+                for link in links:
+                    href = link.get_attribute("href")
+                    text_parts = link.find_elements(By.CSS_SELECTOR, ".text-box .main-text")
+                    if text_parts:
+                        main_text = text_parts[0].text
+                        logger.info(f"   [{i}] Link: {href} - Text: {main_text}")
+            
             player_link = None
             for li_element in autocomplete_values:
                 # Buscar links dentro del li
@@ -213,8 +229,11 @@ class BeSoccerScraper:
                         text_parts = link.find_elements(By.CSS_SELECTOR, ".text-box .main-text")
                         if text_parts:
                             main_text = text_parts[0].text
-                            # Intentar match con el nombre buscado
-                            if player_name.lower() in main_text.lower() or main_text.lower() in player_name.lower():
+                            logger.info(f"   Probando match: '{player_name.lower()}' in '{main_text.lower()}'")
+                            # Intentar match con el nombre buscado (más flexible)
+                            if (player_name.lower() in main_text.lower() or 
+                                main_text.lower() in player_name.lower() or
+                                any(word in main_text.lower() for word in player_name.lower().split() if len(word) > 3)):
                                 player_link = href
                                 logger.info(f"✅ Enlace de jugador encontrado: {href}")
                                 break
@@ -255,7 +274,11 @@ class BeSoccerScraper:
             logger.info(f"✅ Datos extraídos de BeSoccer:")
             logger.info(f"   Nombre: {player_data.get('name')}")
             logger.info(f"   Club: {player_data.get('current_club')}")
-            logger.info(f"   Valor: €{player_data.get('market_value', 0):,}")
+            market_value = player_data.get('market_value', 0)
+            if market_value:
+                logger.info(f"   Valor: €{market_value:,}")
+            else:
+                logger.info(f"   Valor: {market_value}")
             logger.info(f"   Edad: {player_data.get('age')}")
             logger.info(f"   Posición: {player_data.get('position')}")
             logger.info(f"   Altura: {player_data.get('height')}")
@@ -512,6 +535,36 @@ class BeSoccerScraper:
             #   <p class="number">11.2</p>
             #   <p class="info">M.€</p>
             # </div>
+            # O también:
+            # <div class="panel-body stat-list"> con:
+            #   <div class="big-row">2</div>
+            #   <div class="small-row">K.€</div>
+            
+            # Buscar primero en panel-body stat-list (estructura nueva)
+            panel_body = soup.find('div', class_='panel-body stat-list')
+            if panel_body:
+                stats = panel_body.find_all('div', class_='stat')
+                for stat in stats:
+                    small_rows = stat.find_all('div', class_='small-row')
+                    big_row = stat.find('div', class_='big-row')
+                    for small in small_rows:
+                        small_text = small.get_text(strip=True)
+                        if (small_text in ['M.€', 'K.€'] or small_text.endswith('.€')) and big_row:
+                            value_text = big_row.get_text(strip=True)
+                            if value_text in ['-', '']:
+                                continue
+                            try:
+                                value = float(value_text)
+                                if small_text == 'M.€' or small_text == 'M€':
+                                    value_euros = int(value * 1_000_000)
+                                elif small_text == 'K.€' or small_text == 'K€':
+                                    value_euros = int(value * 1_000)
+                                else:
+                                    value_euros = int(value)
+                                logger.info(f"💰 Market value encontrado: {value_text} {small_text} = €{value_euros:,}")
+                                return value_euros
+                            except:
+                                continue
             
             # Buscar todos los data-box que contengan "M.€" en el info
             data_boxes = soup.find_all('div', class_='data-box')
