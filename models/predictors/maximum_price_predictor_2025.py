@@ -171,7 +171,12 @@ class MaximumPricePredictor2025:
         except:
             nationality_encoded = 0
         
-        foot_encoded = {'right': 1, 'left': 0, 'both': 2}.get(foot.lower(), 1)
+        # Manejar foot como booleano o string
+        if isinstance(foot, bool):
+            foot_str = 'right' if foot else 'left'
+        else:
+            foot_str = str(foot).lower() if foot else 'right'
+        foot_encoded = {'right': 1, 'left': 0, 'both': 2}.get(foot_str, 1)
         
         # Crear 14 features
         features = [

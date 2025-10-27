@@ -5390,6 +5390,10 @@ def clean_dict_for_json(data):
         return int(data)
     elif isinstance(data, (np.floating, np.float64)):
         return float(data)
+    elif isinstance(data, (np.bool_, np.bool)):
+        return bool(data)
+    elif isinstance(data, bool):
+        return data
     elif isinstance(data, pd.Timestamp):
         return data.isoformat()
     else:
