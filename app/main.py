@@ -83,6 +83,8 @@ print(f"   - hybrid_model: {type(hybrid_model)}")
 print(f"   - hybrid_model is None: {hybrid_model is None}")
 print(f"   - hybrid_searcher: {type(hybrid_searcher)}")
 print(f"   - hybrid_searcher is None: {hybrid_searcher is None}")
+print(f"   - besoccer_scraper: {type(besoccer_scraper)}")
+print(f"   - besoccer_scraper is None: {besoccer_scraper is None}")
 print("=" * 80)
 
 from datetime import datetime
