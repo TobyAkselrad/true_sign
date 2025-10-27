@@ -154,13 +154,38 @@ class BeSoccerScraper:
                 options.add_argument('--disable-backgrounding-occluded-windows')
                 options.add_argument('--disable-ipc-flooding-protection')
                 
-                # Configurar ChromeDriver para Render
-                chrome_binary = os.environ.get('CHROME_BIN', '/usr/bin/chromium-browser')
-                chromedriver_path = os.environ.get('CHROMEDRIVER_PATH', '/usr/bin/chromedriver')
+                # Configurar ChromeDriver para Render - usar ubicaciones por defecto
+                from selenium.webdriver.chrome.service import Service
+                from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
                 
+                # Intentar múltiples ubicaciones posibles
+                possible_driver_paths = [
+                    '/usr/bin/chromedriver',
+                    '/usr/local/bin/chromedriver',
+                    'chromedriver'
+                ]
+                
+                chromedriver_path = None
+                for path in possible_driver_paths:
+                    if os.path.exists(path) or not os.path.exists(path):  # Intentar incluso si no existe (selenium lo manejará)
+                        chromedriver_path = path
+                        break
+                
+                chrome_binary = '/usr/bin/chromium-browser'
                 options.binary_location = chrome_binary
-                driver = webdriver.Chrome(options=options, service=Service(chromedriver_path))
-                logger.info(f"✅ ChromeDriver configurado para Render: {chromedriver_path}")
+                
+                try:
+                    if chromedriver_path:
+                        driver = webdriver.Chrome(options=options, service=Service(chromedriver_path))
+                        logger.info(f"✅ ChromeDriver configurado para Render: {chromedriver_path}")
+                    else:
+                        driver = webdriver.Chrome(options=options)
+                        logger.info("✅ ChromeDriver configurado para Render (ruta por defecto)")
+                except Exception as e:
+                    logger.error(f"❌ Error configurando ChromeDriver: {e}")
+                    logger.info("⚠️ Intentando sin service explícito...")
+                    driver = webdriver.Chrome(options=options)
+                    logger.info("✅ ChromeDriver configurado para Render (sin service)")
             else:
                 driver = webdriver.Chrome(options=options)
                 logger.info("✅ ChromeDriver configurado para desarrollo local")

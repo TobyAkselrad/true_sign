@@ -5,7 +5,7 @@
 ```
 1. 🌐 API Externa
    ↓ (si falla o 403)
-2. 📡 Transfermarkt Scraper  
+2. 📡 Transfermarkt Scraper
    ↓ (si falla o no encuentra)
 3. ⚽ BeSoccer Scraper ← NUEVO
    ↓ (si falla o no tiene market_value)
@@ -26,16 +26,16 @@ if transfermarkt_failed:
         print("⚽ Intentando BeSoccer scraping...")
         if besoccer_scraper is not None:
             normalized_name = normalize_name(nombre)
-            
+
             # Buscar en BeSoccer
             besoccer_data = besoccer_scraper.search_player(normalized_name)
-            
+
             if besoccer_data is not None and besoccer_data.get('market_value', 0) > 0:
                 print(f"✅ Encontrado con BeSoccer: {besoccer_data.get('name', 'N/A')} (€{besoccer_data.get('market_value', 0):,.0f})")
                 return convert_besoccer_to_model_format(besoccer_data)
             else:
                 print("⚠️ Jugador no encontrado en BeSoccer")
-                
+
     except Exception as e:
         print(f"⚠️ Error en scraping BeSoccer: {e}")
 ```
@@ -45,11 +45,13 @@ if transfermarkt_failed:
 Los logs aparecerán en el Dashboard de Render con estos mensajes:
 
 ### Inicialización
+
 ```
 ✅ BeSoccer scraper inicializado
 ```
 
 ### Durante la Búsqueda
+
 ```
 ⚽ Intentando BeSoccer scraping...
 🌐 BeSoccer: Scraping en vivo para [nombre jugador]
@@ -68,12 +70,14 @@ Los logs aparecerán en el Dashboard de Render con estos mensajes:
 ```
 
 ### Si No Encuentra
+
 ```
 ⚠️ BeSoccer: No market_value para [nombre] (valor: None)
 ⚠️ Jugador no encontrado en BeSoccer
 ```
 
 ### Si Hay Error
+
 ```
 ❌ BeSoccer ERROR para [nombre]: [descripción del error]
 ⚠️ Error en scraping BeSoccer: [error]
@@ -131,4 +135,3 @@ Cuando buscas un jugador verás:
 - ✅ Soporte K.€ y M.€
 - ✅ Formato normalizado
 - ✅ Cache funcional
-
