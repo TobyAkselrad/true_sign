@@ -60,14 +60,20 @@ print("🔄 INICIALIZANDO SISTEMA HÍBRIDO DE BÚSQUEDA")
 print("=" * 80)
 try:
     from scraping.hybrid_player_search import HybridPlayerSearch
-    from scraping.besoccer_scraper import BeSoccerScraper
     hybrid_searcher = HybridPlayerSearch()
-    besoccer_scraper = BeSoccerScraper()
     print("✅ Sistema híbrido de búsqueda inicializado")
-    print("✅ BeSoccer scraper inicializado")
 except Exception as e:
     print(f"⚠️ Sistema híbrido no disponible: {e}")
     hybrid_searcher = None
+
+try:
+    from scraping.besoccer_scraper import BeSoccerScraper
+    besoccer_scraper = BeSoccerScraper()
+    print("✅ BeSoccer scraper inicializado")
+except Exception as e:
+    print(f"⚠️ BeSoccer scraper NO disponible: {e}")
+    import traceback
+    print(f"📋 Error completo: {traceback.format_exc()}")
     besoccer_scraper = None
 
 print("=" * 80)
