@@ -16,6 +16,21 @@ def main():
     sys.path.insert(0, project_root)
     print(f"📂 Project root: {project_root}")
     
+    # DEBUG: Verificar archivos .pkl
+    models_dir = os.path.join(project_root, "models/trained")
+    print(f"🔍 DEBUG: Verificando modelos en {models_dir}")
+    if os.path.exists(models_dir):
+        files = os.listdir(models_dir)
+        print(f"📋 Archivos en models/trained: {files}")
+        pkl_files = [f for f in files if f.endswith('.pkl')]
+        print(f"📊 Total archivos .pkl: {len(pkl_files)}")
+        for f in pkl_files:
+            path = os.path.join(models_dir, f)
+            size = os.path.getsize(path)
+            print(f"   - {f}: {size} bytes")
+    else:
+        print(f"❌ Directorio models/trained NO existe")
+    
     try:
         # Importar la aplicación
         from app.main import app, initialize_hybrid_model, initialize_hybrid_searcher

@@ -1,1 +1,12 @@
-config/render.yaml
+services:
+  - type: web
+    name: truesign-app
+    env: python
+    buildCommand: bash build.sh
+    startCommand: python app/run.py
+    plan: starter
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONUNBUFFERED
+        value: 1
