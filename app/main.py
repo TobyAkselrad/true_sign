@@ -5375,6 +5375,7 @@ def compare_players():
 
 def clean_dict_for_json(data):
     """Limpiar datos para JSON serializable (eliminar NaN, None, numpy types)"""
+    # Primero manejar contenedores
     if isinstance(data, dict):
         cleaned = {}
         for key, value in data.items():
@@ -5382,22 +5383,36 @@ def clean_dict_for_json(data):
         return cleaned
     elif isinstance(data, list):
         return [clean_dict_for_json(item) for item in data]
-    elif pd.isna(data):
-        if isinstance(data, pd.Series) or isinstance(data, pd.DataFrame):
-            return pd.isna(data).any()
-        return data is None or (isinstance(data, float) and np.isnan(data))
+    
+    # Luego manejar booleans (antes de pd.isna que puede devolver bool)
+    if isinstance(data, bool):
+        return data
+    elif isinstance(data, (np.bool_, np.bool)):
+        return bool(data)
+    
+    # Luego manejar tipos numpy
     elif isinstance(data, (np.integer, np.int64)):
         return int(data)
     elif isinstance(data, (np.floating, np.float64)):
         return float(data)
-    elif isinstance(data, (np.bool_, np.bool)):
-        return bool(data)
-    elif isinstance(data, bool):
-        return data
+    
+    # Luego manejar None y NaN (con protección)
+    elif data is None:
+        return None
     elif isinstance(data, pd.Timestamp):
         return data.isoformat()
-    else:
-        return data
+    
+    # Verificar NaN con protección (puede lanzar excepciones)
+    try:
+        if pd.isna(data):
+            if isinstance(data, pd.Series) or isinstance(data, pd.DataFrame):
+                return pd.isna(data).any()
+            return None
+    except (TypeError, ValueError):
+        pass
+    
+    # Todo lo demás devolverlo tal cual
+    return data
 
 def convert_height_to_cm(height_str):
     """Convertir altura de string a cm (número)"""
