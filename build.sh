@@ -16,14 +16,25 @@ echo "✅ Dependencias del sistema instaladas"
 echo "🔄 Inicializando Git LFS..."
 git lfs install
 
+# Verificar que Git LFS está funcionando
+echo "🔍 Verificando estado de Git LFS..."
+git lfs env
+
 # Descargar archivos LFS
 echo "⬇️ Descargando archivos LFS (.pkl)..."
+echo "🔄 Ejecutando: git lfs fetch --all"
+git lfs fetch --all
+
 echo "🔄 Ejecutando: git lfs pull"
 git lfs pull
 
 # También intentar checkout manual
 echo "🔄 Ejecutando: git lfs checkout"
 git lfs checkout
+
+# Verificar archivos específicos
+echo "🔍 Verificando archivos LFS..."
+git lfs ls-files
 
 # Forzar checkout de archivos específicos
 echo "📥 Forzando descarga de modelos grandes..."
@@ -52,8 +63,45 @@ pip install -r requirements.txt
 echo "📊 Verificando modelos entrenados..."
 if [ -d "models/trained" ]; then
     echo "✅ Directorio models/trained existe"
-    ls -la models/trained/
+    ls -lah models/trained/
     echo "📋 Total archivos .pkl: $(find models/trained -name '*.pkl' | wc -l)"
+    
+    # Verificar archivos críticos
+    if [ ! -f "models/trained/value_change_model.pkl" ]; then
+        echo "❌ ERROR CRÍTICO: value_change_model.pkl faltante"
+        echo "🔄 Intentando verificación adicional de Git LFS..."
+        git lfs pull --include="models/trained/value_change_model.pkl"
+        git lfs checkout models/trained/value_change_model.pkl
+    fi
+    
+    if [ ! -f "models/trained/maximum_price_model.pkl" ]; then
+        echo "❌ ERROR CRÍTICO: maximum_price_model.pkl faltante"
+        echo "🔄 Intentando verificación adicional de Git LFS..."
+        git lfs pull --include="models/trained/maximum_price_model.pkl"
+        git lfs checkout models/trained/maximum_price_model.pkl
+    fi
+    
+    # Verificar tamaño de archivos (no deben ser solo pointers)
+    if [ -f "models/trained/value_change_model.pkl" ]; then
+        SIZE=$(stat -f%z models/trained/value_change_model.pkl 2>/dev/null || stat -c%s models/trained/value_change_model.pkl 2>/dev/null || echo "0")
+        if [ "$SIZE" -lt 1000000 ]; then
+            echo "⚠️ WARNING: value_change_model.pkl parece ser un pointer de LFS en lugar del archivo real"
+            echo "   Tamaño: $SIZE bytes"
+        else
+            echo "✅ value_change_model.pkl tiene tamaño correcto: $SIZE bytes"
+        fi
+    fi
+    
+    if [ -f "models/trained/maximum_price_model.pkl" ]; then
+        SIZE=$(stat -f%z models/trained/maximum_price_model.pkl 2>/dev/null || stat -c%s models/trained/maximum_price_model.pkl 2>/dev/null || echo "0")
+        if [ "$SIZE" -lt 10000000 ]; then
+            echo "⚠️ WARNING: maximum_price_model.pkl parece ser un pointer de LFS en lugar del archivo real"
+            echo "   Tamaño: $SIZE bytes"
+        else
+            echo "✅ maximum_price_model.pkl tiene tamaño correcto: $SIZE bytes"
+        fi
+    fi
+    
 else
     echo "❌ ERROR: Directorio models/trained no existe"
     exit 1
