@@ -1,0 +1,10 @@
+# Dependencias para el scraper de BeSoccer con Selenium
+selenium>=4.0.0
+
+# Para instalar, usar:
+# pip install selenium
+# También necesitas ChromeDriver:
+# - macOS: brew install chromedriver
+# - Linux: apt-get install chromium-chromedriver
+# - Windows: Descargar de https://chromedriver.chromium.org/
+

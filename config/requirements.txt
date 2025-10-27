@@ -37,5 +37,8 @@ html5lib==1.1
 urllib3==2.0.7
 fake-useragent==1.4.0
 
+# Web Scraping con Selenium (para BeSoccer)
+selenium==4.15.2
+
 # Dependencias adicionales para macOS
 # brew install libomp  # Requerido para LightGBM en macOS

@@ -60,11 +60,15 @@ print("🔄 INICIALIZANDO SISTEMA HÍBRIDO DE BÚSQUEDA")
 print("=" * 80)
 try:
     from scraping.hybrid_player_search import HybridPlayerSearch
+    from scraping.besoccer_scraper import BeSoccerScraper
     hybrid_searcher = HybridPlayerSearch()
+    besoccer_scraper = BeSoccerScraper()
     print("✅ Sistema híbrido de búsqueda inicializado")
+    print("✅ BeSoccer scraper inicializado")
 except Exception as e:
     print(f"⚠️ Sistema híbrido no disponible: {e}")
     hybrid_searcher = None
+    besoccer_scraper = None
 
 print("=" * 80)
 print("📊 ESTADO FINAL DE INICIALIZACIÓN:")
@@ -89,6 +93,7 @@ club_multipliers = None
 value_predictor = None  # Modelo de predicción de cambio de valor (Singleton)
 hybrid_model = None     # Modelo híbrido (Singleton)
 hybrid_searcher = None # Sistema híbrido de búsqueda (scraper)
+besoccer_scraper = None # BeSoccer scraper
 
 # Sistema de cache mejorado
 cache = {
@@ -1534,11 +1539,12 @@ def buscar_jugador_robusto(nombre):
         print(f"⚠️ Error en API externa: {e}")
         api_failed = True
     
-    # 2. Intentar con Scraper si API falló (ACTIVO - cache primero, luego scraping en vivo)
+    # 2. Intentar con Transfermarkt Scraper si API falló
+    transfermarkt_failed = False
     global hybrid_searcher
     if api_failed:
         try:
-            print("📡 API externa falló, intentando scraping...")
+            print("📡 API externa falló, intentando Transfermarkt scraping...")
             if hybrid_searcher is not None:
                 normalized_name = normalize_name(nombre)
                 
@@ -1546,14 +1552,40 @@ def buscar_jugador_robusto(nombre):
                 scraped_data = hybrid_searcher.search_player(normalized_name, use_scraping=True)
                 
                 if scraped_data is not None and scraped_data.get('market_value', 0) > 0:
-                    print(f"✅ Encontrado con scraper: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
+                    print(f"✅ Encontrado con Transfermarkt: {scraped_data.get('player_name', 'N/A')} (€{scraped_data.get('market_value', 0):,.0f})")
                     return convert_scraped_to_model_format(scraped_data)
                 else:
-                    print("⚠️ Jugador no encontrado en scraper")
-                    # Continuar con el flujo normal (cache JSON, BD local, estimación)
+                    print("⚠️ Jugador no encontrado en Transfermarkt")
+                    transfermarkt_failed = True
+            else:
+                transfermarkt_failed = True
                         
         except Exception as e:
-            print(f"⚠️ Error en scraping: {e}")
+            print(f"⚠️ Error en scraping Transfermarkt: {e}")
+            transfermarkt_failed = True
+    else:
+        transfermarkt_failed = True
+    
+    # 3. Intentar con BeSoccer Scraper si Transfermarkt falló
+    global besoccer_scraper
+    if transfermarkt_failed:
+        try:
+            print("⚽ Intentando BeSoccer scraping...")
+            if besoccer_scraper is not None:
+                normalized_name = normalize_name(nombre)
+                
+                # Buscar en BeSoccer
+                besoccer_data = besoccer_scraper.search_player(normalized_name)
+                
+                if besoccer_data is not None and besoccer_data.get('market_value', 0) > 0:
+                    print(f"✅ Encontrado con BeSoccer: {besoccer_data.get('name', 'N/A')} (€{besoccer_data.get('market_value', 0):,.0f})")
+                    # Convertir formato de BeSoccer al formato esperado
+                    return convert_besoccer_to_model_format(besoccer_data)
+                else:
+                    print("⚠️ Jugador no encontrado en BeSoccer")
+                        
+        except Exception as e:
+            print(f"⚠️ Error en scraping BeSoccer: {e}")
     
     # 3. VERIFICAR CACHE como backup
     cache_market_value = check_cache_for_market_value(nombre)
@@ -5335,6 +5367,52 @@ def convert_height_to_cm(height_str):
     except Exception as e:
         print(f"⚠️ Error convirtiendo altura '{height_str}': {e}")
         return 175
+
+def convert_besoccer_to_model_format(besoccer_data):
+    """Convertir datos de BeSoccer al formato esperado por el modelo"""
+    try:
+        player_name = besoccer_data.get('name', '')
+        player_id = f"besoccer_{hash(player_name.lower())}"
+        
+        # Extraer datos reales de BeSoccer
+        model_data = {
+            'player_id': player_id,
+            'player_name': player_name,
+            'current_club_name': besoccer_data.get('current_club', ''),
+            'market_value': besoccer_data.get('market_value', 0),
+            'age': besoccer_data.get('age', 0),
+            'position': besoccer_data.get('position', ''),  # Ya normalizado (Midfielder, etc.)
+            'height': convert_height_to_cm(besoccer_data.get('height', '')),  # Ya normalizado (1.80 m)
+            'foot': besoccer_data.get('foot', 'Right').lower().capitalize(),  # Right/Left (ya normalizado)
+            'nationality': besoccer_data.get('nationality', ''),
+            'citizenship': besoccer_data.get('nationality', ''),
+            'contract_until': '',
+            'photo_url': '',
+            'source': 'besoccer'
+        }
+        
+        # Asegurar tipos correctos
+        if isinstance(model_data['market_value'], str):
+            try:
+                model_data['market_value'] = float(model_data['market_value'])
+            except:
+                model_data['market_value'] = 0
+        
+        if isinstance(model_data['age'], str):
+            try:
+                model_data['age'] = int(model_data['age'])
+            except:
+                model_data['age'] = 0
+        
+        print(f"✅ Datos convertidos de BeSoccer: {player_name} (ID: {player_id})")
+        print(f"   - Posición: {model_data['position']}")
+        print(f"   - Altura: {model_data['height']}")
+        print(f"   - Pie: {model_data['foot']}")
+        return model_data
+        
+    except Exception as e:
+        print(f"❌ Error convirtiendo datos de BeSoccer: {e}")
+        return None
 
 def convert_scraped_to_model_format(scraped_data):
     """Convertir datos del scraper al formato esperado por el modelo"""
