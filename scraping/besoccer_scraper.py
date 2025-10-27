@@ -87,6 +87,7 @@ class BeSoccerScraper:
         
         # 2. Scraping con Selenium
         try:
+            print(f"🌐 BeSoccer: Scraping en vivo para {player_name}")
             logger.info(f"🌐 Scraping en vivo en BeSoccer para {player_name}")
             player_data = self._scrape_with_selenium(player_name)
             
@@ -100,16 +101,20 @@ class BeSoccerScraper:
                         'timestamp': datetime.now().isoformat()
                     }
                     self.save_cache()
+                    print(f"✅ BeSoccer: Jugador encontrado - {player_data.get('name')} (€{market_value:,})")
                     logger.info(f"✅ Datos guardados en cache para {player_name}")
                     return player_data
                 else:
+                    print(f"⚠️ BeSoccer: No market_value para {player_name} (valor: {market_value})")
                     logger.warning(f"⚠️ BeSoccer no tiene market_value para {player_name} (valor: {market_value})")
                     return None
             else:
+                print(f"⚠️ BeSoccer: No obtuvo datos válidos para {player_name}")
                 logger.warning(f"⚠️ BeSoccer no obtuvo datos válidos para {player_name}")
                 return None
             
         except Exception as e:
+            print(f"❌ BeSoccer ERROR para {player_name}: {e}")
             logger.error(f"❌ Error scraping BeSoccer {player_name}: {e}")
             return None
     
