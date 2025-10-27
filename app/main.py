@@ -101,7 +101,6 @@ club_multipliers = None
 value_predictor = None  # Modelo de predicción de cambio de valor (Singleton)
 hybrid_model = None     # Modelo híbrido (Singleton)
 hybrid_searcher = None # Sistema híbrido de búsqueda (scraper)
-besoccer_scraper = None # BeSoccer scraper
 
 # Sistema de cache mejorado
 cache = {
