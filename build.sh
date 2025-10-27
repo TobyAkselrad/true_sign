@@ -66,7 +66,9 @@ if [ ! -f "models/trained/value_change_model.pkl" ] || [ ! -s "models/trained/va
     echo "⚠️ value_change_model.pkl no encontrado, intentando extraer de archivo comprimido..."
     
     # Intentar descargar desde archivo comprimido si existe
-    if [ -f "data/models_compressed.tar.gz" ]; then
+    if [ -f "data/models_compressed.tar.gz.partaa" ]; then
+        echo "📦 Juntando partes del archivo comprimido..."
+        cat data/models_compressed.tar.gz.part* > data/models_compressed.tar.gz
         echo "📦 Extrayendo modelos desde archivo comprimido..."
         tar -xzf data/models_compressed.tar.gz -C models/trained/
         echo "✅ Modelos extraídos"
@@ -82,7 +84,9 @@ fi
 if [ ! -f "models/trained/maximum_price_model.pkl" ] || [ ! -s "models/trained/maximum_price_model.pkl" ]; then
     echo "⚠️ maximum_price_model.pkl no encontrado, intentando extraer de archivo comprimido..."
     
-    if [ -f "data/models_compressed.tar.gz" ]; then
+    if [ -f "data/models_compressed.tar.gz.partaa" ]; then
+        echo "📦 Juntando partes del archivo comprimido..."
+        cat data/models_compressed.tar.gz.part* > data/models_compressed.tar.gz
         echo "📦 Extrayendo modelos desde archivo comprimido..."
         tar -xzf data/models_compressed.tar.gz -C models/trained/
         echo "✅ Modelos extraídos"
