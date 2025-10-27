@@ -192,23 +192,35 @@ class BeSoccerScraper:
             
             logger.info(f"🔍 Buscando en BeSoccer con Selenium: {player_name}")
             
+            # TIMEOUT TOTAL: 30 segundos para todo el proceso
+            start_time = time.time()
+            max_duration = 30
+            
             # 1. Ir a la página principal
             driver.get("https://www.besoccer.com")
-            logger.info("📄 Página cargada, esperando...")
-            time.sleep(3)  # Dar tiempo a que cargue todo
+            logger.info("📄 Página cargada")
+            
+            # Verificar timeout
+            if time.time() - start_time > max_duration:
+                logger.error("⏱️ Timeout excedido antes de buscar")
+                return None
             
             # Log: Verificar que la página cargó
             logger.info(f"📄 Título de la página: {driver.title}")
             
-            # 2. Cerrar popups/cookies si aparecen
+            # 2. Cerrar popups/cookies si aparecen (rápido, max 2s)
             try:
-                # Intentar cerrar cookie banner si existe
                 cookie_button = driver.find_elements(By.CSS_SELECTOR, "button[data-action='accept']")
                 if cookie_button:
                     cookie_button[0].click()
                     time.sleep(0.5)
             except:
                 pass
+            
+            # Verificar timeout
+            if time.time() - start_time > max_duration:
+                logger.error("⏱️ Timeout excedido después de cerrar popup")
+                return None
             
             # 3. Encontrar el input de búsqueda y escribir usando JavaScript directamente
             logger.info("🔍 Buscando input de búsqueda...")
@@ -223,19 +235,28 @@ class BeSoccerScraper:
                 }
             """)
             
-            logger.info(f"⌨️ Texto escrito usando JavaScript directo")
-            time.sleep(3)  # Dar tiempo para que aparezca el autocomplete
+            logger.info(f"⌨️ Texto escrito")
+            time.sleep(2)  # Menos tiempo de espera
+            
+            # Verificar timeout
+            if time.time() - start_time > max_duration:
+                logger.error("⏱️ Timeout excedido después de escribir")
+                return None
+            
             logger.info(f"⏳ Esperando autocomplete...")
             
-            # 4. Esperar a que aparezca el autocomplete y buscar jugadores
+            # 4. Esperar a que aparezca el autocomplete (reducido a 5s)
             try:
-                WebDriverWait(driver, 8).until(
+                WebDriverWait(driver, 5).until(
                     EC.presence_of_element_located((By.ID, "autocomplete_values"))
                 )
                 logger.info("✅ Autocomplete apareció")
             except TimeoutException:
-                logger.warning("⚠️ Autocomplete no apareció después de escribir")
-                # Reintentar con click en el input
+                logger.warning("⚠️ Autocomplete no apareció - timeout de 5s excedido")
+                logger.warning("⚠️ Retornando None - no se puede completar búsqueda sin autocomplete")
+                return None  # Retornar temprano para evitar más esperas
+                
+                # Reintentar con click en el input (SOLO si eliminamos el return de arriba)
                 try:
                     search_input = driver.find_element(By.ID, "search_input")
                     search_input.click()
