@@ -5135,6 +5135,9 @@ def generate_player_report(player_name):
         if not jugador_info:
             return jsonify({'error': 'Jugador no encontrado'}), 404
         
+        # Limpiar jugador_info para JSON serializable
+        jugador_info = clean_dict_for_json(jugador_info)
+        
         # Realizar análisis completo
         analisis = calcular_precio_perfecto_definitivo(
             player_name, 
@@ -5144,6 +5147,9 @@ def generate_player_report(player_name):
         
         if not analisis:
             return jsonify({'error': 'Error al analizar jugador'}), 500
+        
+        # Limpiar analisis también
+        analisis = clean_dict_for_json(analisis)
         
         # Calcular tendencia de valor basada en el ROI predicho
         roi_percentage = analisis.get('roi_estimate', {}).get('percentage', 0)
@@ -5271,6 +5277,28 @@ def compare_players():
     except Exception as e:
         print(f"Error comparando jugadores: {str(e)}")
         return jsonify({'error': 'Error en la comparación'}), 500
+
+def clean_dict_for_json(data):
+    """Limpiar datos para JSON serializable (eliminar NaN, None, numpy types)"""
+    if isinstance(data, dict):
+        cleaned = {}
+        for key, value in data.items():
+            cleaned[key] = clean_dict_for_json(value)
+        return cleaned
+    elif isinstance(data, list):
+        return [clean_dict_for_json(item) for item in data]
+    elif pd.isna(data):
+        if isinstance(data, pd.Series) or isinstance(data, pd.DataFrame):
+            return pd.isna(data).any()
+        return data is None or (isinstance(data, float) and np.isnan(data))
+    elif isinstance(data, (np.integer, np.int64)):
+        return int(data)
+    elif isinstance(data, (np.floating, np.float64)):
+        return float(data)
+    elif isinstance(data, pd.Timestamp):
+        return data.isoformat()
+    else:
+        return data
 
 def convert_height_to_cm(height_str):
     """Convertir altura de string a cm (número)"""
