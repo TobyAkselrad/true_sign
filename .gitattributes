@@ -1,1 +1,2 @@
 data/extracted/player_performances/player_performances.csv filter=lfs diff=lfs merge=lfs -text
+models/trained/maximum_price_model.pkl filter=lfs diff=lfs merge=lfs -text
