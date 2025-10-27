@@ -21,6 +21,11 @@ if [ -n "$RENDER" ]; then
     export CHROMEDRIVER_PATH=/usr/bin/chromedriver
     
     echo "✅ Chrome y ChromeDriver configurados"
+    
+    # Forzar descarga de archivos LFS
+    echo "📥 Descargando archivos LFS..."
+    git lfs install
+    git lfs pull || echo "⚠️ No se pudieron descargar todos los archivos LFS"
 fi
 
 # Instalar dependencias
