@@ -1597,8 +1597,12 @@ def buscar_jugador_robusto(nombre):
     if transfermarkt_failed:
         try:
             print("⚽ Intentando BeSoccer scraping...")
+            print(f"🔍 BeSoccer scraper disponible: {besoccer_scraper is not None}")
+            print(f"🔍 BeSoccer scraper tipo: {type(besoccer_scraper)}")
+            
             if besoccer_scraper is not None:
                 normalized_name = normalize_name(nombre)
+                print(f"🌐 BeSoccer: Buscando '{normalized_name}'...")
                 
                 # Buscar en BeSoccer
                 besoccer_data = besoccer_scraper.search_player(normalized_name)
@@ -1608,10 +1612,14 @@ def buscar_jugador_robusto(nombre):
                     # Convertir formato de BeSoccer al formato esperado
                     return convert_besoccer_to_model_format(besoccer_data)
                 else:
-                    print("⚠️ Jugador no encontrado en BeSoccer")
+                    print("⚠️ Jugador no encontrado en BeSoccer o sin market_value")
+            else:
+                print("⚠️ BeSoccer scraper NO disponible en este entorno")
                         
         except Exception as e:
             print(f"⚠️ Error en scraping BeSoccer: {e}")
+            import traceback
+            print(f"📋 Traceback: {traceback.format_exc()}")
     
     # 3. VERIFICAR CACHE como backup
     cache_market_value = check_cache_for_market_value(nombre)
