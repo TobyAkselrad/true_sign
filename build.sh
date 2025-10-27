@@ -56,8 +56,43 @@ fi
 echo "📋 Archivos en models/trained después de git lfs checkout:"
 ls -la models/trained/ || echo "⚠️ models/trained no existe todavía"
 
-# Instalar dependencias
+# Instalar dependencias de Python PRIMERO
+echo "📦 Instalando dependencias de Python..."
 pip install -r requirements.txt
+
+# Verificar si los modelos grandes están presentes
+echo "🔍 Verificando si los modelos grandes están presentes..."
+if [ ! -f "models/trained/value_change_model.pkl" ] || [ ! -s "models/trained/value_change_model.pkl" ]; then
+    echo "⚠️ value_change_model.pkl no encontrado, intentando extraer de archivo comprimido..."
+    
+    # Intentar descargar desde archivo comprimido si existe
+    if [ -f "data/models_compressed.tar.gz" ]; then
+        echo "📦 Extrayendo modelos desde archivo comprimido..."
+        tar -xzf data/models_compressed.tar.gz -C models/trained/
+        echo "✅ Modelos extraídos"
+    fi
+    
+    # Si aún no están, intentar LFS
+    if [ ! -f "models/trained/value_change_model.pkl" ] || [ ! -s "models/trained/value_change_model.pkl" ]; then
+        echo "⚠️ Reintentando descarga desde Git LFS..."
+        git lfs pull --include="models/trained/value_change_model.pkl" || true
+    fi
+fi
+
+if [ ! -f "models/trained/maximum_price_model.pkl" ] || [ ! -s "models/trained/maximum_price_model.pkl" ]; then
+    echo "⚠️ maximum_price_model.pkl no encontrado, intentando extraer de archivo comprimido..."
+    
+    if [ -f "data/models_compressed.tar.gz" ]; then
+        echo "📦 Extrayendo modelos desde archivo comprimido..."
+        tar -xzf data/models_compressed.tar.gz -C models/trained/
+        echo "✅ Modelos extraídos"
+    fi
+    
+    if [ ! -f "models/trained/maximum_price_model.pkl" ] || [ ! -s "models/trained/maximum_price_model.pkl" ]; then
+        echo "⚠️ Reintentando descarga desde Git LFS..."
+        git lfs pull --include="models/trained/maximum_price_model.pkl" || true
+    fi
+fi
 
 # Verificar que los modelos estén presentes
 echo "📊 Verificando modelos entrenados..."
