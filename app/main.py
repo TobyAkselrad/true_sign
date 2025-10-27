@@ -1582,15 +1582,31 @@ def buscar_jugador_robusto(nombre):
         print("💡 Jugador encontrado sin market_value, intentando estimación...")
         local_data = buscar_jugador(nombre)
         if local_data is not None:
-            # Intentar estimar market_value
-            estimated_value = estimate_market_value_from_data(local_data)
-            if estimated_value and estimated_value > 0:
-                local_data['market_value'] = estimated_value
-                local_data['market_value_estimated'] = True
-                print(f"💰 Valor estimado: €{estimated_value:,.0f}")
-                return local_data
+            # Convertir pandas Series/DataFrame a dict si es necesario
+            if hasattr(local_data, 'to_dict'):
+                local_data = local_data.to_dict()
+            elif isinstance(local_data, pd.Series):
+                local_data = local_data.to_dict()
+            elif not isinstance(local_data, dict):
+                local_data = dict(local_data) if local_data is not None else {}
+            
+            # Asegurar que no esté vacío
+            if local_data and len(local_data) > 0:
+                # Asegurar que tenga player_name
+                if 'player_name' not in local_data and 'name' in local_data:
+                    local_data['player_name'] = local_data['name']
+                
+                # Intentar estimar market_value
+                estimated_value = estimate_market_value_from_data(local_data)
+                if estimated_value and estimated_value > 0:
+                    local_data['market_value'] = estimated_value
+                    local_data['market_value_estimated'] = True
+                    print(f"💰 Valor estimado: €{estimated_value:,.0f}")
+                    return local_data
     except Exception as e:
         print(f"⚠️ Error estimando valor: {e}")
+        import traceback
+        traceback.print_exc()
     
     # 6. NO HAY VALOR - Retornar error
     print("❌ No se encontró market_value para el jugador en ninguna fuente")
