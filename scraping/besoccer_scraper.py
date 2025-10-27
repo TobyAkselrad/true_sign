@@ -245,24 +245,32 @@ class BeSoccerScraper:
             
             logger.info(f"⏳ Esperando autocomplete...")
             
-            # 4. Esperar a que aparezca el autocomplete (reducido a 5s)
-            try:
-                WebDriverWait(driver, 5).until(
-                    EC.presence_of_element_located((By.ID, "autocomplete_values"))
-                )
-                logger.info("✅ Autocomplete apareció")
-            except TimeoutException:
-                logger.warning("⚠️ Autocomplete no apareció - timeout de 5s excedido")
-                logger.warning("⚠️ Retornando None - no se puede completar búsqueda sin autocomplete")
-                return None  # Retornar temprano para evitar más esperas
-                
-                # Reintentar con click en el input (SOLO si eliminamos el return de arriba)
+            # 4. Esperar a que aparezca el autocomplete (solo 3s y verificar manualmente)
+            autocomplete_found = False
+            for attempt in range(3):  # 3 intentos de 1 segundo cada uno
                 try:
-                    search_input = driver.find_element(By.ID, "search_input")
-                    search_input.click()
-                    time.sleep(2)
+                    if driver.find_element(By.ID, "autocomplete_values"):
+                        autocomplete_found = True
+                        logger.info("✅ Autocomplete apareció")
+                        break
                 except:
                     pass
+                
+                # Verificar timeout global
+                if time.time() - start_time > max_duration:
+                    logger.error("⏱️ Timeout global excedido durante espera de autocomplete")
+                    if driver:
+                        driver.quit()
+                    return None
+                
+                time.sleep(1)
+            
+            if not autocomplete_found:
+                logger.warning("⚠️ Autocomplete no apareció después de 3 segundos")
+                logger.warning("⚠️ Retornando None - no se puede completar búsqueda sin autocomplete")
+                if driver:
+                    driver.quit()
+                return None
             
             # Buscar el segundo <li> en el autocomplete que sea jugador
             autocomplete_values = driver.find_elements(By.CSS_SELECTOR, "#autocomplete_values li")
