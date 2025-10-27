@@ -1603,6 +1603,8 @@ def buscar_jugador_robusto(nombre):
     # 3. Intentar con BeSoccer Scraper si Transfermarkt falló
     global besoccer_scraper
     if transfermarkt_failed:
+        print(f"🔍 DEBUG: besoccer_scraper antes de intentar uso: {besoccer_scraper}")
+        print(f"🔍 DEBUG: tipo de besoccer_scraper: {type(besoccer_scraper)}")
         try:
             if besoccer_scraper is not None:
                 print("⚽ Intentando BeSoccer scraping...")
