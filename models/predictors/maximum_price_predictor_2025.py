@@ -17,7 +17,14 @@ class MaximumPricePredictor2025:
     """MaximumPricePredictor con modelos modernos (2025)"""
     
     def __init__(self):
-        self.models_path = "models/trained"
+        # Usar path absoluto basado en la ubicación del archivo
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        self.models_path = os.path.join(project_root, "models", "trained")
+        print(f"📂 Models path: {self.models_path}")
+        print(f"📂 Models path exists: {os.path.exists(self.models_path)}")
+        if os.path.exists(self.models_path):
+            print(f"📋 Archivos en models/trained: {os.listdir(self.models_path)}")
         self.model = None
         self.scaler = None
         self.position_encoder = None
@@ -29,28 +36,60 @@ class MaximumPricePredictor2025:
         print("🔄 Cargando modelos 2025 de MaximumPricePredictor...")
         
         try:
+            # Verificar que el directorio existe
+            if not os.path.exists(self.models_path):
+                raise FileNotFoundError(f"Directorio de modelos no encontrado: {self.models_path}")
+            
             # Modelo principal
-            with open(os.path.join(self.models_path, "maximum_price_model.pkl"), 'rb') as f:
+            model_file = os.path.join(self.models_path, "maximum_price_model.pkl")
+            if not os.path.exists(model_file):
+                print("⚠️ WARNING: maximum_price_model.pkl no encontrado - deshabilitando predictores de precio máximo")
+                self.model = None
+                self.scaler = None
+                self.position_encoder = None
+                self.nationality_encoder = None
+                return
+            
+            with open(model_file, 'rb') as f:
                 self.model = pickle.load(f)
             print("✅ Modelo 2025 cargado")
             
             # Scaler
-            with open(os.path.join(self.models_path, "maximum_price_scaler.pkl"), 'rb') as f:
+            scaler_file = os.path.join(self.models_path, "maximum_price_scaler.pkl")
+            if not os.path.exists(scaler_file):
+                raise FileNotFoundError(f"Scaler no encontrado: {scaler_file}")
+            
+            with open(scaler_file, 'rb') as f:
                 self.scaler = pickle.load(f)
             print("✅ Scaler cargado")
             
             # Encoders
-            with open(os.path.join(self.models_path, "position_encoder_price.pkl"), 'rb') as f:
+            position_file = os.path.join(self.models_path, "position_encoder_price.pkl")
+            if not os.path.exists(position_file):
+                raise FileNotFoundError(f"Position encoder no encontrado: {position_file}")
+            
+            with open(position_file, 'rb') as f:
                 self.position_encoder = pickle.load(f)
             print("✅ Position encoder cargado")
             
-            with open(os.path.join(self.models_path, "nationality_encoder_price.pkl"), 'rb') as f:
+            nationality_file = os.path.join(self.models_path, "nationality_encoder_price.pkl")
+            if not os.path.exists(nationality_file):
+                raise FileNotFoundError(f"Nationality encoder no encontrado: {nationality_file}")
+            
+            with open(nationality_file, 'rb') as f:
                 self.nationality_encoder = pickle.load(f)
             print("✅ Nationality encoder cargado")
             
         except Exception as e:
             print(f"❌ ERROR cargando modelos 2025: {e}")
-            raise
+            print(f"📂 Current directory: {os.getcwd()}")
+            print(f"📂 Models path: {self.models_path}")
+            print(f"⚠️ Continuando sin modelos de precio máximo...")
+            # No hacer raise - permitir que la app funcione sin este modelo
+            self.model = None
+            self.scaler = None
+            self.position_encoder = None
+            self.nationality_encoder = None
     
     def _calculate_confidence(self, player_data, predicted_price):
         """
