@@ -4727,6 +4727,16 @@ users_db = {
         'logo': '/static/athletic.png',
         'expires_at': "2025-11-12"  
     },
+    'America': {
+        'username': 'America',
+        'password': 'america2025',
+        'role': 'user',
+        'email': 'america@truesign.com',
+        'created_at': '2024-10-16',
+        'icon': '⚡',
+        'logo': '/static/america.png',
+        'expires_at': "2025-11-01"  
+    },
     'ScoutingCat': {
         'username': 'ScoutingCat',
         'password': 'Talleres1913',
