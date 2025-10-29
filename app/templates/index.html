@@ -1452,6 +1452,8 @@
                 logoPath = '/static/velez.png';
             } else if (username === "Independiente") {
                 logoPath = '/static/independiente.png';
+            } else if (username === "AthleticBilbao") {
+                logoPath = '/static/bilbao.png';
             } 
             
             // Update all logo elements
@@ -1693,7 +1695,13 @@
             
             try {
                 const currentLanguage = localStorage.getItem('language') || 'es';
-                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&roi_target=${encodeURIComponent(roiTarget)}&language=${currentLanguage}`);
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&roi_target=${encodeURIComponent(roiTarget)}&language=${currentLanguage}` , {
+                    headers: {
+                        'X-User': localStorage.getItem('username') || '',
+                        'X-Role': localStorage.getItem('userRole') || '',
+                        'X-Logged-In': localStorage.getItem('isLoggedIn') || 'false'
+                    }
+                });
                 const data = await response.json();
                 
                 if (data.error) {
@@ -1907,7 +1915,13 @@
             `;
             
             try {
-                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}`);
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}`, {
+                    headers: {
+                        'X-User': localStorage.getItem('username') || '',
+                        'X-Role': localStorage.getItem('userRole') || '',
+                        'X-Logged-In': localStorage.getItem('isLoggedIn') || 'false'
+                    }
+                });
                 const data = await response.json();
                 console.log('✅ Player data received:', data);
                 
@@ -2782,7 +2796,13 @@
 
             try {
                 const currentLanguage = localStorage.getItem('language') || 'es';
-                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&language=${currentLanguage}`);
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&language=${currentLanguage}`, {
+                    headers: {
+                        'X-User': localStorage.getItem('username') || '',
+                        'X-Role': localStorage.getItem('userRole') || '',
+                        'X-Logged-In': localStorage.getItem('isLoggedIn') || 'false'
+                    }
+                });
                 const data = await response.json();
                 
                 if (data.error) {
@@ -2885,7 +2905,13 @@
 
             try {
                 const currentLanguage = localStorage.getItem('language') || 'es';
-                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&language=${currentLanguage}`);
+                const response = await fetch(`/search?name=${encodeURIComponent(playerName)}&club=${encodeURIComponent(clubName)}&language=${currentLanguage}`, {
+                    headers: {
+                        'X-User': localStorage.getItem('username') || '',
+                        'X-Role': localStorage.getItem('userRole') || '',
+                        'X-Logged-In': localStorage.getItem('isLoggedIn') || 'false'
+                    }
+                });
                 const data = await response.json();
                 
                 if (data.error) {

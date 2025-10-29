@@ -40,5 +40,8 @@ fake-useragent==1.4.0
 # Web Scraping con Selenium (para BeSoccer)
 selenium==4.15.2
 
+# Email sending
+resend==2.4.0
+
 # Dependencias adicionales para macOS
 # brew install libomp  # Requerido para LightGBM en macOS

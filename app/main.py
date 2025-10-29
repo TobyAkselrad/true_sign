@@ -4279,6 +4279,93 @@ def search_player():
             roi = truesign_analysis.get('roi_estimate', {}).get('percentage', 0)
             analysis_text = f"Análisis de la transferencia de {player_data.get('name')} al {club_name}: ROI estimado de {roi:+.1f}% con {truesign_analysis.get('confidence', 85)}% de confianza."
         
+        # Si el usuario está logueado y NO es admin, enviar email con la búsqueda
+        try:
+            req_username = request.headers.get('X-User', '').strip()
+            req_role = request.headers.get('X-Role', 'user').strip().lower()
+            req_logged_in = request.headers.get('X-Logged-In', 'false').strip().lower() == 'true'
+
+            if req_logged_in and req_role != 'admin' and req_username:
+                def _send_mail_async():
+                    try:
+                        # Importar localmente para no tocar imports globales
+                        import os
+                        import resend
+
+                        recipients = [
+                            'tobias@truesignfootball.com',
+                            'sebastian@truesignfootball.com'
+                        ]
+
+                        # Modo test Resend: forzar envío a una sola casilla permitida (desactivado por defecto si hay dominio verificado)
+                        if os.getenv('RESEND_TEST_MODE', 'false').lower() in ('1','true','yes'):
+                            test_to = os.getenv('RESEND_TEST_TO', 'takselrad@gmail.com')
+                            recipients = [test_to]
+                            print(f"[EMAIL-RESEND-TEST] Modo test activado, enviando solo a: {test_to}")
+
+                        roi_val = truesign_analysis.get('roi_estimate', {}).get('percentage', 0)
+                        fair_price = truesign_analysis.get('fair_price') or truesign_analysis.get('precio_maximo')
+                        adjusted_price = truesign_analysis.get('adjusted_price')
+                        confidence = truesign_analysis.get('confidence')
+                        model_used = truesign_analysis.get('model_used')
+
+                        subject = f"Nueva búsqueda: {player_data.get('name')} -> {club_name} (ROI {roi_val}%) por {req_username}"
+
+                        # Construir cuerpo del mensaje (HTML)
+                        html_lines = [
+                            f"<h2>Nueva búsqueda en TrueSign</h2>",
+                            f"<p><strong>Usuario:</strong> {req_username} ({req_role})</p>",
+                            f"<p><strong>Jugador:</strong> {player_data.get('name')} ({player_data.get('position')}, {player_data.get('age')} años)</p>",
+                            f"<p><strong>Club destino:</strong> {club_name}</p>",
+                            f"<p><strong>Valor de mercado:</strong> €{player_data.get('market_value'):,.0f}</p>",
+                            f"<p><strong>Precio justo (modelo):</strong> €{(fair_price or 0):,.0f}</p>",
+                            f"<p><strong>Precio ajustado:</strong> €{(adjusted_price or 0):,.0f}</p>",
+                            f"<p><strong>ROI estimado:</strong> {roi_val}%</p>",
+                            f"<p><strong>Confianza:</strong> {confidence}%</p>",
+                            f"<p><strong>Modelo:</strong> {model_used}</p>",
+                        ]
+
+                        # Incluir valores detallados si existen
+                        five_vals = truesign_analysis.get('detailed_values', {})
+                        if five_vals:
+                            html_lines.append("<h3>Componentes (en millones):</h3>")
+                            html_lines.append("<ul>")
+                            html_lines.append(f"<li>Sporting Value: {five_vals.get('sv_component', 0):.2f}M</li>")
+                            html_lines.append(f"<li>Resale Potential: {five_vals.get('resale_component', 0):.2f}M</li>")
+                            html_lines.append(f"<li>Marketing Impact: {five_vals.get('mv_component', 0):.2f}M</li>")
+                            html_lines.append(f"<li>Similar Transfers: {five_vals.get('similar_transfers', 0):.2f}M</li>")
+                            html_lines.append(f"<li>Market Value: {five_vals.get('different_markets', 0):.2f}M</li>")
+                            html_lines.append("</ul>")
+
+                        html_body = "".join(html_lines)
+
+                        resend_api_key = os.getenv('RESEND_API_KEY', 're_cw9S41yR_4TyYPTnupuLEixuRyeBCjvKy')
+                        # Usar dominio verificado truesignfootball.com
+                        from_email = os.getenv('RESEND_FROM', 'notifications@truesignfootball.com')
+
+                        print(f"[EMAIL-RESEND] Preparando envío | from={from_email} recipients={recipients}")
+
+                        resend.api_key = resend_api_key
+                        
+                        result = resend.Emails.send({
+                            'from': from_email,
+                            'to': recipients,
+                            'subject': subject,
+                            'html': html_body
+                        })
+                        
+                        print(f"[EMAIL-RESEND] ✅ Envío exitoso (search) | ID: {result.get('id', 'N/A')}")
+                    except Exception as mail_err:
+                        import traceback
+                        print(f"⚠️ Error enviando email de búsqueda con Resend: {mail_err}")
+                        print(f"📋 Traceback: {traceback.format_exc()}")
+
+                import threading
+                threading.Thread(target=_send_mail_async, daemon=True).start()
+        except Exception as _e:
+            # No romper la respuesta por error de email
+            print(f"⚠️ Error preparando email de búsqueda: {_e}")
+
         # Devolver estructura original que funcionaba
         return jsonify({
             'player': player_data,
@@ -4287,7 +4374,6 @@ def search_player():
             'club_destino': club_name,  # Incluir club destino en la respuesta
             'analysis_text': analysis_text  # Análisis generado por LLM
         })
-        
     except Exception as e:
         import traceback
         print(f" Error en busqueda: {e}")
@@ -4299,6 +4385,70 @@ def search_player():
             'status': 'error',
             'message': 'Ha ocurrido un error inesperado. Por favor, intenta nuevamente.'
         }), 500
+
+@app.route('/system/test-email')
+def system_test_email():
+    """Enviar un email de prueba usando Resend.
+
+    Parámetros opcionales (query string):
+    - to: email destino (override de destinatarios por defecto)
+    - demo=1: envía el contenido de ejemplo de Resend (Hello World)
+    """
+    try:
+        import os
+        import resend
+        from flask import request
+
+        recipients = [
+            'tobias@truesignfootball.com',
+            'sebastian@truesignfootball.com'
+        ]
+        to_override = (request.args.get('to') or '').strip()
+        if to_override:
+            recipients = [to_override]
+
+        # Modo test Resend: forzar envío a una sola casilla permitida si no se usa override (desactivado por defecto)
+        if not to_override and os.getenv('RESEND_TEST_MODE', 'false').lower() in ('1','true','yes'):
+            recipients = [os.getenv('RESEND_TEST_TO', 'takselrad@gmail.com')]
+            print(f"[EMAIL-TEST-RESEND-TEST] Modo test activado, enviando solo a: {recipients[0]}")
+
+        subject = "Prueba de Resend - TrueSign"
+        html_body = (
+            "<h2>Email de prueba - TrueSign</h2>"
+            "<p>Este es un email de prueba del sistema TrueSign para verificar la configuración de Resend.</p>"
+            "<p><strong>¡Funciona correctamente! ✅</strong></p>"
+        )
+        if (request.args.get('demo') or '').strip() in ('1', 'true', 'yes'):
+            subject = 'Hello World'
+            html_body = '<p>Congrats on sending your <strong>first email</strong>!</p>'
+
+        resend_api_key = os.getenv('RESEND_API_KEY', 're_cw9S41yR_4TyYPTnupuLEixuRyeBCjvKy')
+        # Usar dominio verificado truesignfootball.com
+        from_email = os.getenv('RESEND_FROM', 'notifications@truesignfootball.com')
+
+        print(f"[EMAIL-TEST-RESEND] from={from_email} recipients={recipients}")
+
+        resend.api_key = resend_api_key
+        
+        result = resend.Emails.send({
+            'from': from_email,
+            'to': recipients,
+            'subject': subject,
+            'html': html_body
+        })
+        
+        print(f"[EMAIL-TEST-RESEND] ✅ Envío exitoso | ID: {result.get('id', 'N/A')}")
+        
+        return jsonify({
+            'success': True, 
+            'message': 'Email de prueba enviado con Resend.',
+            'email_id': result.get('id', 'N/A')
+        })
+    except Exception as e:
+        import traceback
+        print(f"[EMAIL-TEST-ERROR] {e}")
+        print(f"📋 Traceback: {traceback.format_exc()}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/analyze', methods=['POST'])
 def analyze_player():
@@ -4565,7 +4715,17 @@ users_db = {
         'created_at': '2024-10-16',
         'icon': '⚡',
         'logo': '/static/independiente.png',
-        'expires_at': '2025-10-29'  # Expira el miércoles que viene (15 de enero de 2025)
+        'expires_at': '2025-10-29'  
+    },
+    'AthleticBilbao': {
+        'username': 'AthleticBilbao',
+        'password': 'athletic2025',
+        'role': 'user',
+        'email': 'athletic@truesign.com',
+        'created_at': '2024-10-16',
+        'icon': '⚡',
+        'logo': '/static/athletic.png',
+        'expires_at': "2025-11-12"  
     },
     'ScoutingCat': {
         'username': 'ScoutingCat',
@@ -5237,8 +5397,12 @@ def generate_player_report(player_name):
         if not jugador_info:
             return jsonify({'error': 'Jugador no encontrado'}), 404
         
+        print(f"🔍 DEBUG REPORT: market_value ANTES de clean: {jugador_info.get('market_value', 'NO EXISTE')}")
+        
         # Limpiar jugador_info para JSON serializable
         jugador_info = clean_dict_for_json(jugador_info)
+        
+        print(f"🔍 DEBUG REPORT: market_value DESPUÉS de clean: {jugador_info.get('market_value', 'NO EXISTE')}")
         
         # Realizar análisis completo
         analisis = calcular_precio_perfecto_definitivo(
@@ -5304,6 +5468,9 @@ def generate_player_report(player_name):
                 'five_values': analisis.get('five_values', {})
             }
         }
+        
+        print(f"🔍 DEBUG REPORT FINAL: player_info['market_value'] = {reporte['player_info'].get('market_value', 'NO EXISTE')}")
+        print(f"🔍 DEBUG REPORT FINAL: detailed_breakdown['current_value'] = {reporte['detailed_breakdown']['market_value_analysis']['current_value']}")
         
         return jsonify(reporte)
         
@@ -5501,6 +5668,7 @@ def convert_besoccer_to_model_format(besoccer_data):
                 model_data['age'] = 0
         
         print(f"✅ Datos convertidos de BeSoccer: {player_name} (ID: {player_id})")
+        print(f"   - market_value: {model_data['market_value']}")
         print(f"   - Posición: {model_data['position']}")
         print(f"   - Altura: {model_data['height']}")
         print(f"   - Pie: {model_data['foot']}")
