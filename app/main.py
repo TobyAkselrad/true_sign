@@ -60,7 +60,7 @@ print("🔄 INICIALIZANDO SISTEMA HÍBRIDO DE BÚSQUEDA")
 print("=" * 80)
 
 # Inicializar variables globales ANTES del try-except
-besoccer_scraper = None
+footballtransfers_scraper = None
 
 try:
     from scraping.hybrid_player_search import HybridPlayerSearch
@@ -71,14 +71,14 @@ except Exception as e:
     hybrid_searcher = None
 
 try:
-    from scraping.besoccer_scraper import BeSoccerScraper
-    besoccer_scraper = BeSoccerScraper()
-    print("✅ BeSoccer scraper inicializado")
+    from scraping.footballtransfers_scraper import FootballTransfersScraper
+    footballtransfers_scraper = FootballTransfersScraper()
+    print("✅ FootballTransfers scraper inicializado")
 except Exception as e:
-    print(f"⚠️ BeSoccer scraper NO disponible: {e}")
+    print(f"⚠️ FootballTransfers scraper NO disponible: {e}")
     import traceback
     print(f"📋 Error completo: {traceback.format_exc()}")
-    besoccer_scraper = None
+    footballtransfers_scraper = None
 
 print("=" * 80)
 print("📊 ESTADO FINAL DE INICIALIZACIÓN:")
@@ -87,8 +87,8 @@ print(f"   - hybrid_model: {type(hybrid_model)}")
 print(f"   - hybrid_model is None: {hybrid_model is None}")
 print(f"   - hybrid_searcher: {type(hybrid_searcher)}")
 print(f"   - hybrid_searcher is None: {hybrid_searcher is None}")
-print(f"   - besoccer_scraper: {type(besoccer_scraper)}")
-print(f"   - besoccer_scraper is None: {besoccer_scraper is None}")
+print(f"   - footballtransfers_scraper: {type(footballtransfers_scraper)}")
+print(f"   - footballtransfers_scraper is None: {footballtransfers_scraper is None}")
 print("=" * 80)
 
 from datetime import datetime
@@ -1559,7 +1559,7 @@ def buscar_con_api_externa(nombre):
         return None
 
 def buscar_jugador_robusto(nombre):
-    """Buscar jugador con sistema robusto: API -> Scraper -> Cache -> Error si no hay valor"""
+    """Buscar jugador con sistema robusto: API -> FootballTransfers -> Scraper -> Cache -> Error si no hay valor"""
     print(f"🔍 Búsqueda robusta para: {nombre}")
     
     # 1. Intentar con API externa PRIMERO
@@ -1576,12 +1576,38 @@ def buscar_jugador_robusto(nombre):
         print(f"⚠️ Error en API externa: {e}")
         api_failed = True
     
-    # 2. Intentar con Transfermarkt Scraper si API falló
-    transfermarkt_failed = False
-    global hybrid_searcher
+    # 2. Intentar con FootballTransfers Scraper si API falló
+    footballtransfers_failed = False
+    global footballtransfers_scraper
     if api_failed:
         try:
-            print("📡 API externa falló, intentando Transfermarkt scraping...")
+            print("🌐 API externa falló, intentando FootballTransfers scraping...")
+            if footballtransfers_scraper is not None:
+                # Pasar el nombre ORIGINAL (con tildes) al scraper
+                # El scraper maneja las variaciones con y sin tildes internamente
+                ft_data = footballtransfers_scraper.search_player(nombre)
+                
+                if ft_data is not None and ft_data.get('market_value', 0) > 0:
+                    print(f"✅ Encontrado con FootballTransfers: {ft_data.get('name', 'N/A')} (€{ft_data.get('market_value', 0):,.0f})")
+                    return convert_footballtransfers_to_model_format(ft_data)
+                else:
+                    print("⚠️ Jugador no encontrado en FootballTransfers")
+                    footballtransfers_failed = True
+            else:
+                footballtransfers_failed = True
+                    
+        except Exception as e:
+            print(f"⚠️ Error en scraping FootballTransfers: {e}")
+            footballtransfers_failed = True
+    else:
+        footballtransfers_failed = True
+    
+    # 3. Intentar con Transfermarkt Scraper si FootballTransfers falló
+    transfermarkt_failed = False
+    global hybrid_searcher
+    if footballtransfers_failed:
+        try:
+            print("📡 FootballTransfers falló, intentando Transfermarkt scraping...")
             if hybrid_searcher is not None:
                 normalized_name = normalize_name(nombre)
                 
@@ -1602,32 +1628,6 @@ def buscar_jugador_robusto(nombre):
             transfermarkt_failed = True
     else:
         transfermarkt_failed = True
-    
-    # 3. Intentar con BeSoccer Scraper si Transfermarkt falló
-    global besoccer_scraper
-    if transfermarkt_failed:
-        print(f"🔍 DEBUG: besoccer_scraper antes de intentar uso: {besoccer_scraper}")
-        print(f"🔍 DEBUG: tipo de besoccer_scraper: {type(besoccer_scraper)}")
-        try:
-            if besoccer_scraper is not None:
-                print("⚽ Intentando BeSoccer scraping...")
-                normalized_name = normalize_name(nombre)
-                print(f"🌐 BeSoccer: Buscando '{normalized_name}'...")
-                
-                # Buscar en BeSoccer
-                besoccer_data = besoccer_scraper.search_player(normalized_name)
-                
-                if besoccer_data is not None and besoccer_data.get('market_value', 0) > 0:
-                    print(f"✅ Encontrado con BeSoccer: {besoccer_data.get('name', 'N/A')} (€{besoccer_data.get('market_value', 0):,.0f})")
-                    return convert_besoccer_to_model_format(besoccer_data)
-                else:
-                    print("⚠️ Jugador no encontrado en BeSoccer o sin market_value")
-            # Si besoccer_scraper es None, simplemente seguir al siguiente paso sin error
-                        
-        except Exception as e:
-            print(f"⚠️ Error en scraping BeSoccer: {e}")
-            import traceback
-            print(f"📋 Traceback: {traceback.format_exc()}")
     
     # 3. VERIFICAR CACHE como backup
     cache_market_value = check_cache_for_market_value(nombre)
@@ -3956,10 +3956,15 @@ def search_player():
                     'suggestions': ['Verifica la ortografia', 'Prueba con el nombre completo', 'Usa el autocompletado']
                 }), 404
         
-        # Si el jugador viene del scraper, usar esos datos directamente
-        if hasattr(jugador_info, 'get') and jugador_info.get('source') == 'scraping':
-            print(f" Usando datos del scraper para {jugador_info.get('player_name', 'N/A')}")
+        # Si el jugador viene del scraper (Transfermarkt, FootballTransfers), usar esos datos directamente
+        scraper_sources = ['scraping', 'footballtransfers']
+        if hasattr(jugador_info, 'get') and jugador_info.get('source') in scraper_sources:
+            source_name = jugador_info.get('source', 'scraper')
+            print(f"✅ Usando datos del scraper ({source_name}) para {jugador_info.get('player_name', 'N/A')}")
             # Los datos del scraper ya estan completos, no necesitamos buscar en player_profiles
+            # Asegurar que sea un dict para procesamiento posterior
+            if not isinstance(jugador_info, dict):
+                jugador_info = dict(jugador_info) if hasattr(jugador_info, 'to_dict') else jugador_info
         else:
             # Solo buscar en player_profiles si el jugador viene de la BD local
             print(f" Buscando perfil completo para jugador de BD local")
@@ -5634,34 +5639,34 @@ def convert_height_to_cm(height_str):
         print(f"⚠️ Error convirtiendo altura '{height_str}': {e}")
         return 175
 
-def convert_besoccer_to_model_format(besoccer_data):
-    """Convertir datos de BeSoccer al formato esperado por el modelo"""
+def convert_footballtransfers_to_model_format(ft_data):
+    """Convertir datos de FootballTransfers al formato esperado por el modelo"""
     try:
-        player_name = besoccer_data.get('name', '')
-        player_id = f"besoccer_{hash(player_name.lower())}"
+        player_name = ft_data.get('name', '')
+        player_id = f"footballtransfers_{hash(player_name.lower())}"
         
-        # Extraer datos reales de BeSoccer
+        # Extraer datos de FootballTransfers
         # Manejar foot y height que pueden ser None
-        foot_value = besoccer_data.get('foot') or 'Right'
+        foot_value = ft_data.get('foot') or 'Right'
         foot_str = str(foot_value).lower().capitalize() if foot_value else 'Right'
         
-        height_value = besoccer_data.get('height') or ''
+        height_value = ft_data.get('height') or ''
         height_cm = convert_height_to_cm(height_value)
         
         model_data = {
             'player_id': player_id,
             'player_name': player_name,
-            'current_club_name': besoccer_data.get('current_club', ''),
-            'market_value': besoccer_data.get('market_value', 0),
-            'age': besoccer_data.get('age', 0),
-            'position': besoccer_data.get('position', ''),  # Ya normalizado (Midfielder, etc.)
+            'current_club_name': ft_data.get('current_club', ''),
+            'market_value': ft_data.get('market_value', 0),
+            'age': ft_data.get('age', 0),
+            'position': ft_data.get('position', ''),  # Ya normalizado
             'height': height_cm,
             'foot': foot_str,
-            'nationality': besoccer_data.get('nationality', ''),
-            'citizenship': besoccer_data.get('nationality', ''),
+            'nationality': ft_data.get('nationality', ''),
+            'citizenship': ft_data.get('nationality', ''),
             'contract_until': '',
             'photo_url': '',
-            'source': 'besoccer'
+            'source': 'footballtransfers'
         }
         
         # Asegurar tipos correctos
@@ -5677,7 +5682,7 @@ def convert_besoccer_to_model_format(besoccer_data):
             except:
                 model_data['age'] = 0
         
-        print(f"✅ Datos convertidos de BeSoccer: {player_name} (ID: {player_id})")
+        print(f"✅ Datos convertidos de FootballTransfers: {player_name} (ID: {player_id})")
         print(f"   - market_value: {model_data['market_value']}")
         print(f"   - Posición: {model_data['position']}")
         print(f"   - Altura: {model_data['height']}")
@@ -5685,7 +5690,9 @@ def convert_besoccer_to_model_format(besoccer_data):
         return model_data
         
     except Exception as e:
-        print(f"❌ Error convirtiendo datos de BeSoccer: {e}")
+        print(f"❌ Error convirtiendo datos de FootballTransfers: {e}")
+        import traceback
+        print(f"📋 Traceback: {traceback.format_exc()}")
         return None
 
 def convert_scraped_to_model_format(scraped_data):

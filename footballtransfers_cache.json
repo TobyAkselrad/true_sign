@@ -1,0 +1,32 @@
+{
+  "santiago sosa": {
+    "data": {
+      "name": "Santiago Sosa",
+      "current_club": "Racing",
+      "market_value": 9000000,
+      "age": 26,
+      "position": "Midfielder",
+      "height": "182 cm",
+      "weight": "78 kg",
+      "foot": "Right",
+      "nationality": null,
+      "etv_range": "€7.7M – €10.4M"
+    },
+    "timestamp": "2025-10-31T13:51:15.456403"
+  },
+  "wilmar barrios": {
+    "data": {
+      "name": "Wilmar Barrios",
+      "current_club": "Zenit",
+      "market_value": 5500000,
+      "age": 32,
+      "position": "Deep Lying Playmaker",
+      "height": "178 cm",
+      "weight": "74 kg",
+      "foot": "Right",
+      "nationality": null,
+      "etv_range": "€4.7M – €6.3M"
+    },
+    "timestamp": "2025-10-31T14:14:52.929667"
+  }
+}

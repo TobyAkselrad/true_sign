@@ -362,5 +362,20 @@
       "photo_url": "https://img.a.transfermarkt.technology/portrait/header/491705-1693315193.png?lm=1"
     },
     "timestamp": "2025-10-26T19:55:32.193472"
+  },
+  "german pezzella": {
+    "data": {
+      "name": "Germán Pezzella",
+      "current_club": "River Plate",
+      "market_value": 1300000,
+      "age": 34,
+      "position": "Defender",
+      "height": "1,87 m",
+      "foot": "Right",
+      "nationality": "Argentina",
+      "contract_until": null,
+      "photo_url": "https://img.a.transfermarkt.technology/portrait/header/113133-1668180931.jpg?lm=1"
+    },
+    "timestamp": "2025-10-31T14:09:31.989167"
   }
 }
